@@ -1,0 +1,49 @@
+{% if page_obj.has_other_pages %}
+    <nav>
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">
+                        Primeira
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                        Anterior
+                    </a>
+                </li>
+            {% endif %}
+
+            {% for page_number in page_obj.paginator.page_range %}
+                {% if page_number <= page_obj.number|add:3 and page_number >= page_obj.number|add:-3 %}
+                    {% if page_obj.number == page_number %}
+                        <li class="page-item active">
+                            <a class="page-link" href="?page={{ page_number }}">
+                                {{ page_number }}
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_number }}">
+                                {{ page_number }}
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                        Próxima
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">
+                        Última
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endif %}

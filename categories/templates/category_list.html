@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    SGE - Categorias
+{% endblock %}
+
+{% block content %}
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <form method="get" action="{% url 'category_list' %}">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="name" placeholder="Nome" value="{{ request.GET.name }}">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <a href="{% url 'category_create' %}" class="btn btn-success float-end">
+                <i class="bi bi-plus"></i> Nova Categoria
+            </a>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Descrição</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for category in categories %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'category_detail' category.id %}" class="text-primary fw-semibold">
+                                {{ category.id }}
+                            </a>
+                        </td>
+                        <td>{{ category.name }}</td>
+                        <td>{{ category.description }}</td>
+                        <td>
+                            <a href="{% url 'category_detail' category.id %}" class="btn btn-info btn-sm">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{% url 'category_update' category.id %}" class="btn btn-warning btn-sm">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="{% url 'category_delete' category.id %}" class="btn btn-danger btn-sm btn-delete">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% include '_pagination.html' %}
+
+{% endblock %}

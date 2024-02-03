@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    SGE - Home
+{% endblock %}
+
+{% block content %}
+  <style>
+    .custom-btn {
+      width: 200px;
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      text-align: center;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
+
+    .btn-fornecedores {
+      background-color: #9d25d5; /* Cor única para Fornecedores */
+      color: #ffffff;
+    }
+
+    .btn-fornecedores:hover {
+      background-color: #70109d; /* Cor no hover para Fornecedores */
+      color: #ffffff;
+    }
+
+    .btn-marcas {
+      background-color: #cfd529; /* Cor única para Marcas */
+      color: #ffffff;
+    }
+
+    .btn-marcas:hover {
+      background-color: #a5aa0c; /* Cor no hover para Marcas */
+      color: #ffffff;
+    }
+
+    .btn-categorias {
+      background-color: #dd762d; /* Cor única para Categorias */
+      color: #ffffff;
+    }
+
+    .btn-categorias:hover {
+      background-color: #ae5414; /* Cor no hover para Categorias */
+      color: #ffffff;
+    }
+
+    .btn-produtos {
+      background-color: #2297d6; /* Cor única para Produtos */
+      color: #ffffff;
+    }
+
+    .btn-produtos:hover {
+      background-color: #0d6c9f; /* Cor no hover para Produtos */
+      color: #ffffff;
+    }
+
+    .btn-entradas {
+      background-color: #16d87a; /* Cor única para Entradas */
+      color: #ffffff;
+    }
+
+    .btn-entradas:hover {
+      background-color: #08a358; /* Cor no hover para Entradas */
+      color: #ffffff;
+    }
+
+    .btn-saidas {
+      background-color: #de3d3d; /* Cor única para Saídas */
+      color: #ffffff;
+    }
+
+    .btn-saidas:hover {
+      background-color: #a32020; /* Cor no hover para Saídas */
+      color: #ffffff;
+    }
+  </style>
+
+  <div class="container mt-5">
+
+    <div class="d-flex justify-content-between">
+      <a href="{% url 'supplier_list' %}" class="btn btn-lg btn-square p-5 flex-grow-1 custom-btn btn-fornecedores">Fornecedores</a>
+      <div class="mx-3"></div>
+      <a href="{% url 'brand_list' %}" class="btn btn-lg btn-square p-5 flex-grow-1 custom-btn btn-marcas">Marcas</a>
+    </div>
+
+    <div class="my-3"></div>
+
+    <div class="d-flex justify-content-between">
+      <a href="{% url 'category_list' %}" class="btn btn-lg btn-square p-5 flex-grow-1 custom-btn btn-categorias">Categorias</a>
+      <div class="mx-3"></div>
+      <a href="{% url 'product_list' %}" class="btn btn-lg btn-square p-5 flex-grow-1 custom-btn btn-produtos">Produtos</a>
+    </div>
+
+    <div class="my-3"></div>
+
+    <div class="d-flex justify-content-between">
+      <a href="{% url 'inflow_list' %}" class="btn btn-lg btn-square p-5 flex-grow-1 custom-btn btn-entradas">Entradas</a>
+      <div class="mx-3"></div>
+      <a href="{% url 'outflow_list' %}" class="btn btn-lg btn-square p-5 flex-grow-1 custom-btn btn-saidas">Saídas</a>
+    </div>
+  </div>
+{% endblock %}

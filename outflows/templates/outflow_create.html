@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container mt-4">
+    <h3 class="display-4">Cadastrar Saída</h3>
+
+    <div class="card">
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit" class="btn btn-primary">Registrar Saída</button>
+        </form>
+      </div>
+    </div>
+    <a href="{% url 'outflow_list' %}" class="btn btn-secondary mt-3">Cancelar e Voltar para a Lista de Saídas</a>
+  </div>
+{% endblock %}

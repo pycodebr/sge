@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container mt-4">
+    <h3 class="display-4">Detalhes da Entrada</h3>
+
+    <div class="card">
+      <div class="card-body">
+        <h3 class="card-title">{{ object.product }}</h3>
+        <p class="card-text">Fornecedor: <strong>{{ object.supplier }}</strong></p>
+        <p class="card-text">Quantidade: <strong>{{ object.quantity }}</strong></p>
+        <p class="card-text">{{ object.description }}</p>
+      </div>
+    </div>
+
+    <a href="{% url 'inflow_list' %}" class="btn btn-secondary mt-3">Voltar para a Lista de Entradas</a>
+  </div>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    SGE - Saídas
+{% endblock %}
+
+{% block content %}
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <form method="get" action="{% url 'outflow_list' %}">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="product" placeholder="Produto" value="{{ request.GET.product }}">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <a href="{% url 'outflow_create' %}" class="btn btn-success float-end">
+                <i class="bi bi-plus"></i> Nova Saída
+            </a>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Produto</th>
+                    <th>Fornecedor</th>
+                    <th>Quantidade</th>
+                    <th>Data de entrada</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for outflow in outflows %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'outflow_detail' outflow.id %}" class="text-primary fw-semibold">
+                                {{ outflow.id }}
+                            </a>
+                        </td>
+                        <td>{{ outflow.product }}</td>
+                        <td>{{ outflow.supplier }}</td>
+                        <td>{{ outflow.quantity }}</td>
+                        <td>{{ outflow.created_at }}</td>
+                        <td>
+                            <a href="{% url 'outflow_detail' outflow.id %}" class="btn btn-info btn-sm">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% include '_pagination.html' %}
+
+{% endblock %}
