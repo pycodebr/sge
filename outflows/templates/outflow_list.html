@@ -6,6 +6,10 @@
 
 {% block content %}
 
+    {% include 'components/_sales_metrics.html' %}
+
+    <div class="mb-4"></div>
+
     <div class="row mb-3">
         <div class="col-md-6">
             <form method="get" action="{% url 'outflow_list' %}">
@@ -59,6 +63,6 @@
         </table>
     </div>
 
-    {% include '_pagination.html' %}
+    {% include 'components/_pagination.html' %}
 
 {% endblock %}
