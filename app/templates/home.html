@@ -7,8 +7,8 @@
 {% block content %}
   <style>
     .custom-btn {
-      width: 150px;
-      height: 150px;
+      width: 100px;
+      height: 100px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -88,23 +88,19 @@
 
     <div class="d-flex justify-content-between">
       <a href="{% url 'supplier_list' %}" class="btn btn-lg btn-square p-5 flex-grow-1 custom-btn btn-fornecedores">Fornecedores</a>
-      <div class="mx-3"></div>
+      <div class="mx-2"></div>
       <a href="{% url 'brand_list' %}" class="btn btn-lg btn-square p-5 flex-grow-1 custom-btn btn-marcas">Marcas</a>
-    </div>
-
-    <div class="my-3"></div>
-
-    <div class="d-flex justify-content-between">
+      <div class="mx-2"></div>
       <a href="{% url 'category_list' %}" class="btn btn-lg btn-square p-5 flex-grow-1 custom-btn btn-categorias">Categorias</a>
-      <div class="mx-3"></div>
-      <a href="{% url 'product_list' %}" class="btn btn-lg btn-square p-5 flex-grow-1 custom-btn btn-produtos">Produtos</a>
     </div>
 
     <div class="my-3"></div>
 
     <div class="d-flex justify-content-between">
+      <a href="{% url 'product_list' %}" class="btn btn-lg btn-square p-5 flex-grow-1 custom-btn btn-produtos">Produtos</a>
+      <div class="mx-2"></div>
       <a href="{% url 'inflow_list' %}" class="btn btn-lg btn-square p-5 flex-grow-1 custom-btn btn-entradas">Entradas</a>
-      <div class="mx-3"></div>
+      <div class="mx-2"></div>
       <a href="{% url 'outflow_list' %}" class="btn btn-lg btn-square p-5 flex-grow-1 custom-btn btn-saidas">Saídas</a>
     </div>
   </div>
