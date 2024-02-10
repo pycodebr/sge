@@ -39,6 +39,12 @@
                             <option value="{{ category.id }}" {% if request.GET.category == category.id %} selected {% endif %}>{{ category.name }}</option>
                         {% endfor %}
                     </select>
+                    <select class="form-select" name="brand">
+                        <option value="" {% if not request.GET.brand %} selected {% endif %}>Todas as Marcas</option>
+                        {% for brand in brands %}
+                            <option value="{{ brand.id }}" {% if request.GET.brand == brand.id %} selected {% endif %}>{{ brand.name }}</option>
+                        {% endfor %}
+                    </select>
                     <button type="submit" class="btn btn-primary">
                         <i class="bi bi-filter"></i> Filtrar
                     </button>
