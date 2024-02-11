@@ -1,5 +1,7 @@
 from django.db.models import Sum
 from django.utils.formats import number_format
+from brands.models import Brand
+from categories.models import Category
 from products.models import Product
 from outflows.models import Outflow
 
@@ -32,3 +34,13 @@ def get_sales_metrics():
         total_sales_value=number_format(total_sales_value, decimal_pos=2, force_grouping=True),
         total_sales_profit=number_format(total_sales_profit, decimal_pos=2, force_grouping=True),
     )
+
+
+def get_graphic_product_category_metric():
+    categories = Category.objects.all()
+    return {category.name: Product.objects.filter(category=category).count() for category in categories}
+
+
+def get_graphic_product_brand_metric():
+    brands = Brand.objects.all()
+    return {brand.name: Product.objects.filter(brand=brand).count() for brand in brands}
