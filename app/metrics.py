@@ -1,5 +1,6 @@
-from django.db.models import Sum
+from django.db.models import Sum, F
 from django.utils.formats import number_format
+from django.utils import timezone
 from brands.models import Brand
 from categories.models import Category
 from products.models import Product
@@ -33,6 +34,40 @@ def get_sales_metrics():
         total_products_sold=total_products_sold,
         total_sales_value=number_format(total_sales_value, decimal_pos=2, force_grouping=True),
         total_sales_profit=number_format(total_sales_profit, decimal_pos=2, force_grouping=True),
+    )
+
+
+def get_daily_sales_data():
+    today = timezone.now().date()
+    dates = [str(today - timezone.timedelta(days=i)) for i in range(6, -1, -1)]
+    values = list()
+
+    for date in dates:
+        sales_total = Outflow.objects.filter(
+            created_at__date=date
+        ).aggregate(
+            total_sales=Sum(F('product__selling_price') * F('quantity'))
+        )['total_sales'] or 0
+        values.append(float(sales_total))
+
+    return dict(
+        dates=dates,
+        values=values,
+    )
+
+
+def get_daily_sales_quantity_data():
+    today = timezone.now().date()
+    dates = [str(today - timezone.timedelta(days=i)) for i in range(6, -1, -1)]
+    quantities = list()
+
+    for date in dates:
+        sales_quantity = Outflow.objects.filter(created_at__date=date).count()
+        quantities.append(sales_quantity)
+
+    return dict(
+        dates=dates,
+        values=quantities,
     )
 
 

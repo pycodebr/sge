@@ -2,46 +2,88 @@
 <html lang="pt-br" data-bs-theme="dark">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}{% endblock %}</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{% endblock %}</title>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
-
-    <!-- <script>
-        function toggleDarkMode() {
-            const darkModeToggle = document.getElementById('darkModeToggle');
-            const isDarkModeEnabled = darkModeToggle.checked;
-            document.body.setAttribute('data-bs-theme', isDarkModeEnabled ? 'dark' : 'light');
-            localStorage.setItem('darkModeEnabled', isDarkModeEnabled);
-        }
-        window.onload = function() {
-            const isDarkModeEnabled = localStorage.getItem('darkModeEnabled');
-            if (isDarkModeEnabled === 'true') {
-                document.getElementById('darkModeToggle').checked = true;
-                toggleDarkMode();
-            }
-        };
-    </script>   -->
-
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
 </head>
 
-<body> 
+<body>
+  {% include 'components/_header.html' %}
 
-    {% include 'components/_header.html' %}
+  <div class="container-fluid">
+    <div class="row flex-nowrap">
+      <div class="col-auto col-md-0 col-xl-0 px-0 bg-dark">
+        <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white">
+          <button class="btn btn-dark d-block d-sm-none mb-3" type="button" data-bs-toggle="collapse"
+            data-bs-target="#menuCollapse" aria-expanded="false" aria-controls="menuCollapse">
+            <i class="bi bi-list fs-4"></i>
+          </button>
+          <div class="collapse d-sm-block" id="menuCollapse">
+            <ul class="nav flex-column align-items-start" id="menu">
+              <li>
+                <a href="{% url 'home' %}" class="nav-link px-0 align-middle">
+                  <i class="bi bi-speedometer2 fs-4"></i>
+                  <span class="ms-1">Dashboard</span>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'supplier_list' %}" class="nav-link px-0 align-middle">
+                  <i class="bi bi-truck fs-4"></i>
+                  <span class="ms-1">Fornecedores</span>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'brand_list' %}" class="nav-link px-0 align-middle">
+                  <i class="bi bi-shop fs-4"></i>
+                  <span class="ms-1">Marcas</span>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'category_list' %}" class="nav-link px-0 align-middle">
+                  <i class="bi bi-tags fs-4"></i>
+                  <span class="ms-1">Categorias</span>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'product_list' %}" class="nav-link px-0 align-middle">
+                  <i class="bi bi-box-seam fs-4"></i>
+                  <span class="ms-1">Produtos</span>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'inflow_list' %}" class="nav-link px-0 align-middle">
+                  <i class="bi bi-arrow-down-left-square fs-4"></i>
+                  <span class="ms-1">Entradas</span>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'outflow_list' %}" class="nav-link px-0 align-middle">
+                  <i class="bi bi-arrow-up-right-square fs-4"></i>
+                  <span class="ms-1">Saídas</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <hr>
+        </div>
+      </div>
+      <div class="col py-3">
 
-    <div class="container mt-4">
-        <main>
+        <div class="container mt-4">
+          <main>
             {% block content %}
             {% endblock %}
-        </main>
+          </main>
+        </div>
+
+      </div>
     </div>
-
-    {% include 'components/_footer.html' %}
-
+  </div>
+  {% include 'components/_footer.html' %}
 </body>
 
 </html>
