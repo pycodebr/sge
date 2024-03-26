@@ -59,10 +59,10 @@ class ProductUpdateView(UpdateView):
     form_class = forms.ProductForm
     success_url = reverse_lazy('product_list')
 
+
 class ProductDeleteView(DeleteView):
     def get(self, request, pk):
         object = get_object_or_404(models.Product, pk=pk)
         object.delete()
         messages.success(request, 'Produto Deletado com Sucesso!')
         return redirect('product_list')
-
