@@ -4,6 +4,8 @@ from app import metrics
 from brands.models import Brand
 from categories.models import Category
 from . import models, forms
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
 
 
 class ProductListView(ListView):
@@ -57,8 +59,10 @@ class ProductUpdateView(UpdateView):
     form_class = forms.ProductForm
     success_url = reverse_lazy('product_list')
 
-
 class ProductDeleteView(DeleteView):
-    model = models.Product
-    template_name = 'product_delete.html'
-    success_url = reverse_lazy('product_list')
+    def get(self, request, pk):
+        object = get_object_or_404(models.Product, pk=pk)
+        object.delete()
+        messages.success(request, 'Produto Deletado com Sucesso!')
+        return redirect('product_list')
+
