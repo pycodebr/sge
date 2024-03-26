@@ -1,0 +1,93 @@
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var dailySalesData = JSON.parse('{{ daily_sales_data|safe }}');
+        var dailySalesQuantityData = JSON.parse('{{ daily_sales_quantity_data|safe }}');
+
+        var ctxDailySales = document.getElementById('dailySalesChart').getContext('2d');
+        var dailySalesChart = new Chart(ctxDailySales, {
+            type: 'line',
+            data: {
+            labels: dailySalesData.dates,
+            datasets: [{
+                label: 'Valor em vendas',
+                data: dailySalesData.values,
+                fill: false,
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 2,
+                tension: 0.5
+            }]
+            },
+            options: {
+            scales: {
+                y: {
+                beginAtZero: true
+                }
+            }
+            }
+        });
+
+        var ctxDailySalesQuantity = document.getElementById('dailySalesQuantityChart').getContext('2d');
+        var dailySalesQuantityChart = new Chart(ctxDailySalesQuantity, {
+            type: 'bar',
+            data: {
+            labels: dailySalesQuantityData.dates,
+            datasets: [{
+                label: 'Quantidade de Vendas',
+                data: dailySalesQuantityData.values,
+                backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+            },
+            options: {
+            scales: {
+                y: {
+                beginAtZero: true
+                }
+            }
+            }
+        });
+
+        var productCountByCategory = JSON.parse('{{ product_count_by_category|safe }}');
+        var productCountByBrand = JSON.parse('{{ product_count_by_brand|safe }}');
+
+        var ctxCategory = document.getElementById('productByCategoryChart').getContext('2d');
+        var productByCategoryChart = new Chart(ctxCategory, {
+            type: 'doughnut',
+            data: {
+            labels: Object.keys(productCountByCategory),
+            datasets: [{
+                data: Object.values(productCountByCategory),
+                borderWidth: 1
+            }]
+            },
+            options: {
+            plugins: {
+                legend: {
+                display: false
+                },
+            }
+            }
+        });
+
+        var ctxBrand = document.getElementById('productByBrandChart').getContext('2d');
+        var productByBrandChart = new Chart(ctxBrand, {
+            type: 'doughnut',
+            data: {
+            labels: Object.keys(productCountByBrand),
+            datasets: [{
+                data: Object.values(productCountByBrand),
+                borderWidth: 1
+            }]
+            },
+            options: {
+            plugins: {
+                legend: {
+                display: false
+                },
+            }
+            }
+        });
+    });
+</script>
