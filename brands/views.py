@@ -1,6 +1,8 @@
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from . import models, forms
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
 
 
 class BrandListView(ListView):
@@ -39,6 +41,8 @@ class BrandUpdateView(UpdateView):
 
 
 class BrandDeleteView(DeleteView):
-    model = models.Brand
-    template_name = 'brand_delete.html'
-    success_url = reverse_lazy('brand_list')
+    def get(self, request, pk):
+        object = get_object_or_404(models.Brand, pk=pk)
+        object.delete()
+        messages.success(request, 'Marca Deletada com Sucesso!')
+        return redirect('brand_list')
