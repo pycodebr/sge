@@ -10,7 +10,6 @@ class SupplierListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     template_name = 'supplier_list.html'
     context_object_name = 'suppliers'
     paginate_by = 10
-    login_url = reverse_lazy('login')
     permission_required = 'suppliers.view_supplier'
 
     def get_queryset(self):
@@ -28,14 +27,12 @@ class SupplierCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView
     template_name = 'supplier_create.html'
     form_class = forms.SupplierForm
     success_url = reverse_lazy('supplier_list')
-    login_url = reverse_lazy('login')
     permission_required = 'suppliers.add_supplier'
 
 
 class SupplierDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
     model = models.Supplier
     template_name = 'supplier_detail.html'
-    login_url = reverse_lazy('login')
     permission_required = 'suppliers.view_supplier'
 
 
@@ -44,7 +41,6 @@ class SupplierUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView
     template_name = 'supplier_update.html'
     form_class = forms.SupplierForm
     success_url = reverse_lazy('supplier_list')
-    login_url = reverse_lazy('login')
     permission_required = 'suppliers.change_supplier'
 
 
@@ -52,7 +48,6 @@ class SupplierDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView
     model = models.Supplier
     template_name = 'supplier_delete.html'
     success_url = reverse_lazy('supplier_list')
-    login_url = reverse_lazy('login')
     permission_required = 'suppliers.delete_supplier'
 
 

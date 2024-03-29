@@ -10,7 +10,6 @@ class InflowListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     template_name = 'inflow_list.html'
     context_object_name = 'inflows'
     paginate_by = 10
-    login_url = reverse_lazy('login')
     permission_required = 'inflows.view_inflow'
 
     def get_queryset(self):
@@ -28,14 +27,12 @@ class InflowCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     template_name = 'inflow_create.html'
     form_class = forms.InflowForm
     success_url = reverse_lazy('inflow_list')
-    login_url = reverse_lazy('login')
     permission_required = 'inflows.add_inflow'
 
 
 class InflowDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
     model = models.Inflow
     template_name = 'inflow_detail.html'
-    login_url = reverse_lazy('login')
     permission_required = 'inflows.view_inflow'
 
 

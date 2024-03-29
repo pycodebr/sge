@@ -13,7 +13,6 @@ class ProductListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     template_name = 'product_list.html'
     context_object_name = 'products'
     paginate_by = 10
-    login_url = reverse_lazy('login')
     permission_required = 'products.view_product'
 
     def get_queryset(self):
@@ -48,14 +47,12 @@ class ProductCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView)
     template_name = 'product_create.html'
     form_class = forms.ProductForm
     success_url = reverse_lazy('product_list')
-    login_url = reverse_lazy('login')
     permission_required = 'products.add_product'
 
 
 class ProductDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
     model = models.Product
     template_name = 'product_detail.html'
-    login_url = reverse_lazy('login')
     permission_required = 'products.view_product'
 
 
@@ -64,7 +61,6 @@ class ProductUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView)
     template_name = 'product_update.html'
     form_class = forms.ProductForm
     success_url = reverse_lazy('product_list')
-    login_url = reverse_lazy('login')
     permission_required = 'products.change_product'
 
 
@@ -72,7 +68,6 @@ class ProductDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView)
     model = models.Product
     template_name = 'product_delete.html'
     success_url = reverse_lazy('product_list')
-    login_url = reverse_lazy('login')
     permission_required = 'products.delete_product'
 
 
