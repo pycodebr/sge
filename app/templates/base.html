@@ -15,62 +15,10 @@
   {% include 'components/_header.html' %}
 
   <div class="container-fluid">
-    <div class="row flex-nowrap">
-      <div class="col-auto col-md-0 col-xl-0 px-0 bg-dark">
-        <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white">
-          <button class="btn btn-dark d-block d-sm-none mb-3" type="button" data-bs-toggle="collapse"
-            data-bs-target="#menuCollapse" aria-expanded="false" aria-controls="menuCollapse">
-            <i class="bi bi-list fs-4"></i>
-          </button>
-          <div class="collapse d-sm-block" id="menuCollapse">
-            <ul class="nav flex-column align-items-start" id="menu">
-              <li>
-                <a href="{% url 'home' %}" class="nav-link px-0 align-middle">
-                  <i class="bi bi-speedometer2 fs-4"></i>
-                  <span class="ms-1">Dashboard</span>
-                </a>
-              </li>
-              <li>
-                <a href="{% url 'supplier_list' %}" class="nav-link px-0 align-middle">
-                  <i class="bi bi-truck fs-4"></i>
-                  <span class="ms-1">Fornecedores</span>
-                </a>
-              </li>
-              <li>
-                <a href="{% url 'brand_list' %}" class="nav-link px-0 align-middle">
-                  <i class="bi bi-shop fs-4"></i>
-                  <span class="ms-1">Marcas</span>
-                </a>
-              </li>
-              <li>
-                <a href="{% url 'category_list' %}" class="nav-link px-0 align-middle">
-                  <i class="bi bi-tags fs-4"></i>
-                  <span class="ms-1">Categorias</span>
-                </a>
-              </li>
-              <li>
-                <a href="{% url 'product_list' %}" class="nav-link px-0 align-middle">
-                  <i class="bi bi-box-seam fs-4"></i>
-                  <span class="ms-1">Produtos</span>
-                </a>
-              </li>
-              <li>
-                <a href="{% url 'inflow_list' %}" class="nav-link px-0 align-middle">
-                  <i class="bi bi-arrow-down-left-square fs-4"></i>
-                  <span class="ms-1">Entradas</span>
-                </a>
-              </li>
-              <li>
-                <a href="{% url 'outflow_list' %}" class="nav-link px-0 align-middle">
-                  <i class="bi bi-arrow-up-right-square fs-4"></i>
-                  <span class="ms-1">Saídas</span>
-                </a>
-              </li>
-            </ul>
-          </div>
-          <hr>
-        </div>
-      </div>
+    {% if user.is_authenticated %}
+      {% include 'components/_sidebar.html' %}
+    {% endif %}
+
       <div class="col py-3">
 
         <div class="container mt-4">
