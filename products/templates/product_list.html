@@ -1,105 +1,115 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    SGE - Produtos
+  SGE - Produtos
 {% endblock %}
 
 {% block content %}
 
+  {% if perms.products.view_product and perms.inflows.view_inflow %}
     {% include 'components/_product_metrics.html' %}
+  {% endif %}
 
-    <div class="mb-4"></div>
+  <div class="mb-4"></div>
 
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <form method="get" action="{% url 'product_list' %}">
-                <div class="input-group">
-                    <input type="text" class="form-control" name="title" placeholder="Título" value="{{ request.GET.title }}">
-                    <input type="text" class="form-control" name="serie_number" placeholder="Número de Série" value="{{ request.GET.serie_number }}">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-search"></i>
-                    </button>
-                </div>
-            </form>
+  <div class="row mb-3">
+    <div class="col-md-6">
+      <form method="get" action="{% url 'product_list' %}">
+        <div class="input-group">
+          <input type="text" class="form-control" name="title" placeholder="Título" value="{{ request.GET.title }}">
+          <input type="text" class="form-control" name="serie_number" placeholder="Número de Série" value="{{ request.GET.serie_number }}">
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-search"></i>
+          </button>
         </div>
-        <div class="col-md-6">
-            <a href="{% url 'product_create' %}" class="btn btn-success float-end">
-                <i class="bi bi-plus"></i> Novo Produto
-            </a>
+      </form>
+    </div>
+    {% if perms.products.add_product %}
+      <div class="col-md-6">
+        <a href="{% url 'product_create' %}" class="btn btn-success float-end">
+          <i class="bi bi-plus"></i> Novo Produto
+        </a>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-md-6">
+      <form method="get" action="{% url 'product_list' %}">
+        <div class="input-group">
+          <select class="form-select" name="category">
+            <option value="" {% if not request.GET.category %} selected {% endif %}>Todas as Categorias</option>
+            {% for category in categories %}
+              <option value="{{ category.id }}" {% if request.GET.category == category.id %} selected {% endif %}>{{ category.name }}</option>
+            {% endfor %}
+          </select>
+          <select class="form-select" name="brand">
+            <option value="" {% if not request.GET.brand %} selected {% endif %}>Todas as Marcas</option>
+            {% for brand in brands %}
+              <option value="{{ brand.id }}" {% if request.GET.brand == brand.id %} selected {% endif %}>{{ brand.name }}</option>
+            {% endfor %}
+          </select>
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-filter"></i> Filtrar
+          </button>
         </div>
+      </form>
     </div>
+  </div>
 
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <form method="get" action="{% url 'product_list' %}">
-                <div class="input-group">
-                    <select class="form-select" name="category">
-                        <option value="" {% if not request.GET.category %} selected {% endif %}>Todas as Categorias</option>
-                        {% for category in categories %}
-                            <option value="{{ category.id }}" {% if request.GET.category == category.id %} selected {% endif %}>{{ category.name }}</option>
-                        {% endfor %}
-                    </select>
-                    <select class="form-select" name="brand">
-                        <option value="" {% if not request.GET.brand %} selected {% endif %}>Todas as Marcas</option>
-                        {% for brand in brands %}
-                            <option value="{{ brand.id }}" {% if request.GET.brand == brand.id %} selected {% endif %}>{{ brand.name }}</option>
-                        {% endfor %}
-                    </select>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-filter"></i> Filtrar
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
+  <div class="table-responsive">
+    <table class="table table-striped table-bordered">
+      <thead class="thead-dark">
+        <tr>
+          <th>ID</th>
+          <th>Título</th>
+          <th>Categoria</th>
+          <th>Marca</th>
+          <th>Preço de Custo</th>
+          <th>Preço de Venda</th>
+          <th>Número de Série</th>
+          <th>Quantidade</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for product in products %}
+          <tr>
+            <td>
+                <a href="{% url 'product_detail' product.id %}" class="text-primary fw-semibold">
+                    {{ product.id }}
+                </a>
+            </td>
+            <td>{{ product.title }}</td>
+            <td>{{ product.category }}</td>
+            <td>{{ product.brand }}</td>
+            <td>R$ {{ product.cost_price }}</td>
+            <td>R$ {{ product.selling_price }}</td>
+            <td>{{ product.serie_number }}</td>
+            <td>{{ product.quantity }}</td>
+            <td>
+              <a href="{% url 'product_detail' product.id %}" class="btn btn-info btn-sm">
+                <i class="bi bi-eye"></i>
+              </a>
 
-    <div class="table-responsive">
-        <table class="table table-striped table-bordered">
-            <thead class="thead-dark">
-                <tr>
-                    <th>ID</th>
-                    <th>Título</th>
-                    <th>Categoria</th>
-                    <th>Marca</th>
-                    <th>Preço de Custo</th>
-                    <th>Preço de Venda</th>
-                    <th>Número de Série</th>
-                    <th>Quantidade</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for product in products %}
-                    <tr>
-                        <td>
-                            <a href="{% url 'product_detail' product.id %}" class="text-primary fw-semibold">
-                                {{ product.id }}
-                            </a>
-                        </td>
-                        <td>{{ product.title }}</td>
-                        <td>{{ product.category }}</td>
-                        <td>{{ product.brand }}</td>
-                        <td>R$ {{ product.cost_price }}</td>
-                        <td>R$ {{ product.selling_price }}</td>
-                        <td>{{ product.serie_number }}</td>
-                        <td>{{ product.quantity }}</td>
-                        <td>
-                            <a href="{% url 'product_detail' product.id %}" class="btn btn-info btn-sm">
-                                <i class="bi bi-eye"></i>
-                            </a>
-                            <a href="{% url 'product_update' product.id %}" class="btn btn-warning btn-sm">
-                                <i class="bi bi-pencil"></i>
-                            </a>
-                            <a href="{% url 'product_delete' product.id %}" class="btn btn-danger btn-sm btn-delete">
-                                <i class="bi bi-trash"></i>
-                            </a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+              {% if perms.products.change_product %}
+                <a href="{% url 'product_update' product.id %}" class="btn btn-warning btn-sm">
+                  <i class="bi bi-pencil"></i>
+                </a>
+              {% endif %}
 
-    {% include 'components/_pagination.html' %}
+              {% if perms.products.delete_product %}
+                <a href="{% url 'product_delete' product.id %}" class="btn btn-danger btn-sm btn-delete">
+                  <i class="bi bi-trash"></i>
+                </a>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% include 'components/_pagination.html' %}
 
 {% endblock %}

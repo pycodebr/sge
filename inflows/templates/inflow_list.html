@@ -1,64 +1,66 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    SGE - Entradas
+SGE - Entradas
 {% endblock %}
 
 {% block content %}
 
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <form method="get" action="{% url 'inflow_list' %}">
-                <div class="input-group">
-                    <input type="text" class="form-control" name="product" placeholder="Produto" value="{{ request.GET.product }}">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-search"></i>
-                    </button>
-                </div>
-            </form>
-        </div>
-        <div class="col-md-6">
-            <a href="{% url 'inflow_create' %}" class="btn btn-success float-end">
-                <i class="bi bi-plus"></i> Nova Entrada
-            </a>
-        </div>
-    </div>
+<div class="row mb-3">
+  <div class="col-md-6">
+    <form method="get" action="{% url 'inflow_list' %}">
+      <div class="input-group">
+        <input type="text" class="form-control" name="product" placeholder="Produto" value="{{ request.GET.product }}">
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
+    </form>
+  </div>
+  {% if perms.inflows.add_inflow %}
+  <div class="col-md-6">
+    <a href="{% url 'inflow_create' %}" class="btn btn-success float-end">
+      <i class="bi bi-plus"></i> Nova Entrada
+    </a>
+  </div>
+  {% endif %}
+</div>
 
-    <div class="table-responsive">
-        <table class="table table-striped table-bordered">
-            <thead class="thead-dark">
-                <tr>
-                    <th>ID</th>
-                    <th>Produto</th>
-                    <th>Fornecedor</th>
-                    <th>Quantidade</th>
-                    <th>Data de entrada</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for inflow in inflows %}
-                    <tr>
-                        <td>
-                            <a href="{% url 'inflow_detail' inflow.id %}" class="text-primary fw-semibold">
-                                {{ inflow.id }}
-                            </a>
-                        </td>
-                        <td>{{ inflow.product }}</td>
-                        <td>{{ inflow.supplier }}</td>
-                        <td>{{ inflow.quantity }}</td>
-                        <td>{{ inflow.created_at }}</td>
-                        <td>
-                            <a href="{% url 'inflow_detail' inflow.id %}" class="btn btn-info btn-sm">
-                                <i class="bi bi-eye"></i>
-                            </a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+<div class="table-responsive">
+  <table class="table table-striped table-bordered">
+    <thead class="thead-dark">
+      <tr>
+        <th>ID</th>
+        <th>Produto</th>
+        <th>Fornecedor</th>
+        <th>Quantidade</th>
+        <th>Data de entrada</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for inflow in inflows %}
+      <tr>
+        <td>
+          <a href="{% url 'inflow_detail' inflow.id %}" class="text-primary fw-semibold">
+            {{ inflow.id }}
+          </a>
+        </td>
+        <td>{{ inflow.product }}</td>
+        <td>{{ inflow.supplier }}</td>
+        <td>{{ inflow.quantity }}</td>
+        <td>{{ inflow.created_at }}</td>
+        <td>
+          <a href="{% url 'inflow_detail' inflow.id %}" class="btn btn-info btn-sm">
+            <i class="bi bi-eye"></i>
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 
-    {% include 'components/_pagination.html' %}
+{% include 'components/_pagination.html' %}
 
 {% endblock %}
