@@ -22,6 +22,20 @@
               <button type="submit" class="btn btn-primary">Entrar</button>
             </div>
           </form>
+          {% if form.errors %}
+            <div class="alert alert-danger mt-4">
+              <ul class="mb-0">
+                {% for field in form %}
+                  {% for error in field.errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                  <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
         </div>
       </div>
     </div>
