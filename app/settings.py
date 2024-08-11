@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'products',
     'inflows',
     'outflows',
+    'ai',
 ]
 
 LOGIN_URL = 'login'
@@ -154,3 +155,6 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
 }
+
+OPENAI_MODEL = 'gpt-3.5-turbo'
+OPENAI_API_KEY = ''
