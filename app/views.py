@@ -13,7 +13,11 @@ def home(request):
     graphic_product_brand_metric = metrics.get_graphic_product_brand_metric()
     daily_sales_data = metrics.get_daily_sales_data()
     daily_sales_quantity_data = metrics.get_daily_sales_quantity_data()
-    ai_result = AIResult.objects.first().result
+    ai_result = AIResult.objects.first()
+    if ai_result is not None:
+        ai_result = ai_result.result
+    else:
+        ai_result = 'Nenhum agente disponível'
 
     context = {
         'product_metrics': product_metrics,
