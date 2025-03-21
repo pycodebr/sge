@@ -1,0 +1,1 @@
+* * * * * cd /sge && /usr/local/bin/python manage.py fazer_coisas >> /var/log/cron.log 2>&1
