@@ -92,7 +92,7 @@ WSGI_APPLICATION = 'app.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
+    'prod': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'sge',
         'USER': 'postgres',
@@ -100,7 +100,7 @@ DATABASES = {
         'HOST': 'sge_db',
         'PORT': '5432',
     },
-    'dev': {
+    'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
