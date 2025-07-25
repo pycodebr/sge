@@ -2,3 +2,4 @@ venv
 db.sqlite3
 media
 __pycache__/
+.DS_Store
