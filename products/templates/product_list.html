@@ -1,115 +1,1541 @@
 {% extends 'base.html' %}
+{% load currency_filters %}
 
 {% block title %}
-  SGE - Produtos
+  Produtos - SGE
 {% endblock %}
 
 {% block content %}
+<div class="products-container">
+  <!-- Page Header -->
+  <div class="page-header mb-4">
+    <div class="row align-items-center">
+      <div class="col-lg-6">
+        <h1 class="page-title">
+          <i class="bi bi-box-seam me-3"></i>
+          Gerenciar Produtos
+        </h1>
+        <p class="page-subtitle">
+          Controle completo do seu inventário de produtos
+        </p>
+      </div>
+      <div class="col-lg-6 text-lg-end">
+        {% if perms.products.add_product %}
+        <a href="{% url 'product_create' %}" class="btn btn-primary btn-lg">
+          <i class="bi bi-plus-circle me-2"></i>
+          Novo Produto
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
 
+  <!-- Metrics Section -->
   {% if perms.products.view_product and perms.inflows.view_inflow %}
     {% include 'components/_product_metrics.html' %}
   {% endif %}
 
-  <div class="mb-4"></div>
-
-  <div class="row mb-3">
-    <div class="col-md-6">
-      <form method="get" action="{% url 'product_list' %}">
-        <div class="input-group">
-          <input type="text" class="form-control" name="title" placeholder="Título" value="{{ request.GET.title }}">
-          <input type="text" class="form-control" name="serie_number" placeholder="Número de Série" value="{{ request.GET.serie_number }}">
-          <button type="submit" class="btn btn-primary">
-            <i class="bi bi-search"></i>
-          </button>
-        </div>
-      </form>
-    </div>
-    {% if perms.products.add_product %}
-      <div class="col-md-6">
-        <a href="{% url 'product_create' %}" class="btn btn-success float-end">
-          <i class="bi bi-plus"></i> Novo Produto
-        </a>
+  <!-- Filters Section -->
+  <div class="filters-section mb-4">
+    <div class="filters-card">
+      <div class="filters-header">
+        <h3 class="filters-title">
+          <i class="bi bi-funnel me-2"></i>
+          Filtros e Busca
+        </h3>
       </div>
-    {% endif %}
-  </div>
-
-  <div class="row mb-3">
-    <div class="col-md-6">
-      <form method="get" action="{% url 'product_list' %}">
-        <div class="input-group">
-          <select class="form-select" name="category">
-            <option value="" {% if not request.GET.category %} selected {% endif %}>Todas as Categorias</option>
-            {% for category in categories %}
-              <option value="{{ category.id }}" {% if request.GET.category == category.id %} selected {% endif %}>{{ category.name }}</option>
-            {% endfor %}
-          </select>
-          <select class="form-select" name="brand">
-            <option value="" {% if not request.GET.brand %} selected {% endif %}>Todas as Marcas</option>
-            {% for brand in brands %}
-              <option value="{{ brand.id }}" {% if request.GET.brand == brand.id %} selected {% endif %}>{{ brand.name }}</option>
-            {% endfor %}
-          </select>
-          <button type="submit" class="btn btn-primary">
-            <i class="bi bi-filter"></i> Filtrar
-          </button>
-        </div>
-      </form>
+      <div class="filters-body">
+        <form method="get" action="{% url 'product_list' %}" class="filters-form">
+          <!-- Search Row -->
+          <div class="row g-3 mb-3">
+            <div class="col-md-4">
+              <div class="form-floating">
+                <input type="text" class="form-control" id="title" name="title" placeholder="Título do produto" value="{{ request.GET.title }}">
+                <label for="title"><i class="bi bi-search me-2"></i>Título do Produto</label>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-floating">
+                <input type="text" class="form-control" id="serie_number" name="serie_number" placeholder="Número de série" value="{{ request.GET.serie_number }}">
+                <label for="serie_number"><i class="bi bi-upc me-2"></i>Número de Série</label>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <button type="submit" class="btn btn-primary h-100 w-100">
+                <i class="bi bi-search me-2"></i>Buscar Produtos
+              </button>
+            </div>
+          </div>
+          
+          <!-- Filter Row -->
+          <div class="row g-3">
+            <div class="col-md-4">
+              <div class="form-floating">
+                <select class="form-select" id="category" name="category">
+                  <option value="" {% if not request.GET.category %} selected {% endif %}>Todas as Categorias</option>
+                  {% for category in categories %}
+                    <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"s" %} selected {% endif %}>{{ category.name }}</option>
+                  {% endfor %}
+                </select>
+                <label for="category"><i class="bi bi-tags me-2"></i>Categoria</label>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-floating">
+                <select class="form-select" id="brand" name="brand">
+                  <option value="" {% if not request.GET.brand %} selected {% endif %}>Todas as Marcas</option>
+                  {% for brand in brands %}
+                    <option value="{{ brand.id }}" {% if request.GET.brand == brand.id|stringformat:"s" %} selected {% endif %}>{{ brand.name }}</option>
+                  {% endfor %}
+                </select>
+                <label for="brand"><i class="bi bi-award me-2"></i>Marca</label>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <button type="submit" class="btn btn-outline-primary h-100 w-100">
+                <i class="bi bi-funnel me-2"></i>Aplicar Filtros
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 
-  <div class="table-responsive">
-    <table class="table table-striped table-bordered">
-      <thead class="thead-dark">
-        <tr>
-          <th>ID</th>
-          <th>Título</th>
-          <th>Categoria</th>
-          <th>Marca</th>
-          <th>Preço de Custo</th>
-          <th>Preço de Venda</th>
-          <th>Número de Série</th>
-          <th>Quantidade</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for product in products %}
-          <tr>
-            <td>
-                <a href="{% url 'product_detail' product.id %}" class="text-primary fw-semibold">
-                    {{ product.id }}
+  <!-- Products Table -->
+  <div class="products-table-section">
+    <div class="table-card">
+      <div class="table-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <h3 class="table-title">
+            <i class="bi bi-list-ul me-2"></i>
+            Lista de Produtos
+          </h3>
+          <div class="table-actions">
+            <div class="view-options">
+              <button class="btn btn-sm btn-outline-secondary active" data-view="table" data-tooltip="Visualização em tabela">
+                <i class="bi bi-table"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-secondary" data-view="grid" data-tooltip="Visualização em grid">
+                <i class="bi bi-grid-3x3"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-secondary" data-view="compact" data-tooltip="Visualização compacta">
+                <i class="bi bi-list"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Desktop Table View -->
+      <div class="table-responsive d-lg-block" id="tableView">
+        <table class="table modern-table" id="productsTable">
+          <thead>
+            <tr>
+              <th>
+                <span class="th-content">
+                  <i class="bi bi-hash me-1"></i>ID
+                </span>
+              </th>
+              <th>
+                <span class="th-content">
+                  <i class="bi bi-box me-1"></i>Produto
+                </span>
+              </th>
+              <th>
+                <span class="th-content">
+                  <i class="bi bi-tag me-1"></i>Categoria
+                </span>
+              </th>
+              <th>
+                <span class="th-content">
+                  <i class="bi bi-award me-1"></i>Marca
+                </span>
+              </th>
+              <th>
+                <span class="th-content">
+                  <i class="bi bi-currency-dollar me-1"></i>Custo
+                </span>
+              </th>
+              <th>
+                <span class="th-content">
+                  <i class="bi bi-currency-dollar me-1"></i>Venda
+                </span>
+              </th>
+              <th>
+                <span class="th-content">
+                  <i class="bi bi-upc me-1"></i>Série
+                </span>
+              </th>
+              <th>
+                <span class="th-content">
+                  <i class="bi bi-123 me-1"></i>Quantidade
+                </span>
+              </th>
+              <th class="text-center">
+                <span class="th-content">
+                  <i class="bi bi-gear me-1"></i>Ações
+                </span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for product in products %}
+            <tr class="product-row" data-product-id="{{ product.id }}">
+              <td class="fw-bold">
+                <a href="{% url 'product_detail' product.id %}" class="product-id-link">
+                  #{{ product.id }}
                 </a>
-            </td>
-            <td>{{ product.title }}</td>
-            <td>{{ product.category }}</td>
-            <td>{{ product.brand }}</td>
-            <td>R$ {{ product.cost_price }}</td>
-            <td>R$ {{ product.selling_price }}</td>
-            <td>{{ product.serie_number }}</td>
-            <td>{{ product.quantity }}</td>
-            <td>
-              <a href="{% url 'product_detail' product.id %}" class="btn btn-info btn-sm">
-                <i class="bi bi-eye"></i>
-              </a>
+              </td>
+              <td>
+                <div class="product-info">
+                  <div class="product-title">{{ product.title }}</div>
+                  <div class="product-subtitle">{{ product.serie_number }}</div>
+                </div>
+              </td>
+              <td>
+                <span class="badge category-badge">
+                  {{ product.category|default:"Sem categoria" }}
+                </span>
+              </td>
+              <td>
+                <span class="badge brand-badge">
+                  {{ product.brand|default:"Sem marca" }}
+                </span>
+              </td>
+              <td>
+                <div class="price-cell">
+                  <span class="price-value">{{ product.cost_price|currency }}</span>
+                </div>
+              </td>
+              <td>
+                <div class="price-cell">
+                  <span class="price-value">{{ product.selling_price|currency }}</span>
+                </div>
+              </td>
+              <td>
+                <code class="serie-code">{{ product.serie_number|default:"-" }}</code>
+              </td>
+              <td>
+                <div class="quantity-cell">
+                  <span class="quantity-value {% if product.quantity < 10 %}low-stock{% endif %}">
+                    {{ product.quantity }}
+                  </span>
+                  {% if product.quantity < 10 %}
+                    <i class="bi bi-exclamation-triangle text-warning ms-1" data-tooltip="Estoque baixo"></i>
+                  {% endif %}
+                </div>
+              </td>
+              <td>
+                <div class="action-buttons">
+                  <a href="{% url 'product_detail' product.id %}" class="btn btn-sm btn-info" data-tooltip="Ver detalhes">
+                    <i class="bi bi-eye"></i>
+                  </a>
+                  {% if perms.products.change_product %}
+                  <a href="{% url 'product_update' product.id %}" class="btn btn-sm btn-warning" data-tooltip="Editar produto">
+                    <i class="bi bi-pencil"></i>
+                  </a>
+                  {% endif %}
+                  {% if perms.products.delete_product %}
+                  <a href="{% url 'product_delete' product.id %}" class="btn btn-sm btn-danger" data-tooltip="Excluir produto" onclick="return confirm('Tem certeza que deseja excluir este produto?')">
+                    <i class="bi bi-trash"></i>
+                  </a>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="9" class="text-center py-5">
+                <div class="empty-state">
+                  <i class="bi bi-box-seam display-1 text-muted mb-3"></i>
+                  <h4 class="text-muted">Nenhum produto encontrado</h4>
+                  <p class="text-muted">Tente ajustar os filtros ou adicione novos produtos ao estoque.</p>
+                  {% if perms.products.add_product %}
+                  <a href="{% url 'product_create' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle me-2"></i>Adicionar Primeiro Produto
+                  </a>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
 
-              {% if perms.products.change_product %}
-                <a href="{% url 'product_update' product.id %}" class="btn btn-warning btn-sm">
+      <!-- Grid View -->
+      <div class="d-none" id="gridView">
+        <div class="products-grid">
+          {% for product in products %}
+          <div class="product-grid-card" data-product-id="{{ product.id }}">
+            <div class="product-grid-header">
+              <div class="product-grid-id">
+                <a href="{% url 'product_detail' product.id %}" class="product-id-link">
+                  #{{ product.id }}
+                </a>
+              </div>
+              <div class="quantity-badge {% if product.quantity < 10 %}low-stock{% endif %}">
+                {{ product.quantity }}
+                {% if product.quantity < 10 %}
+                  <i class="bi bi-exclamation-triangle ms-1"></i>
+                {% endif %}
+              </div>
+            </div>
+            
+            <div class="product-grid-body">
+              <h5 class="product-grid-title">
+                <a href="{% url 'product_detail' product.id %}">{{ product.title }}</a>
+              </h5>
+              
+              <div class="product-grid-info">
+                <div class="product-grid-badges">
+                  <span class="badge category-badge">
+                    {{ product.category|default:"Sem categoria" }}
+                  </span>
+                  <span class="badge brand-badge">
+                    {{ product.brand|default:"Sem marca" }}
+                  </span>
+                </div>
+                
+                <div class="product-grid-prices">
+                  <div class="price-row">
+                    <span class="price-label">Custo:</span>
+                    <span class="price-value">{{ product.cost_price|currency }}</span>
+                  </div>
+                  <div class="price-row">
+                    <span class="price-label">Venda:</span>
+                    <span class="price-value sale-price">{{ product.selling_price|currency }}</span>
+                  </div>
+                </div>
+                
+                {% if product.serie_number %}
+                <div class="product-grid-serie">
+                  <code class="serie-code">{{ product.serie_number }}</code>
+                </div>
+                {% endif %}
+              </div>
+            </div>
+            
+            <div class="product-grid-footer">
+              <div class="action-buttons">
+                <a href="{% url 'product_detail' product.id %}" class="btn btn-sm btn-info" data-tooltip="Ver detalhes">
+                  <i class="bi bi-eye"></i>
+                </a>
+                {% if perms.products.change_product %}
+                <a href="{% url 'product_update' product.id %}" class="btn btn-sm btn-warning" data-tooltip="Editar produto">
                   <i class="bi bi-pencil"></i>
                 </a>
-              {% endif %}
-
-              {% if perms.products.delete_product %}
-                <a href="{% url 'product_delete' product.id %}" class="btn btn-danger btn-sm btn-delete">
+                {% endif %}
+                {% if perms.products.delete_product %}
+                <a href="{% url 'product_delete' product.id %}" class="btn btn-sm btn-danger" data-tooltip="Excluir produto" onclick="return confirm('Tem certeza que deseja excluir este produto?')">
                   <i class="bi bi-trash"></i>
                 </a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <div class="empty-state text-center py-5">
+            <i class="bi bi-box-seam display-1 text-muted mb-3"></i>
+            <h4 class="text-muted">Nenhum produto encontrado</h4>
+            <p class="text-muted">Tente ajustar os filtros ou adicione novos produtos ao estoque.</p>
+            {% if perms.products.add_product %}
+            <a href="{% url 'product_create' %}" class="btn btn-primary">
+              <i class="bi bi-plus-circle me-2"></i>Adicionar Primeiro Produto
+            </a>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Compact View -->
+      <div class="d-none" id="compactView">
+        <div class="products-compact">
+          {% for product in products %}
+          <div class="product-compact-item" data-product-id="{{ product.id }}">
+            <div class="product-compact-main">
+              <div class="product-compact-info">
+                <div class="product-compact-id">
+                  <a href="{% url 'product_detail' product.id %}" class="product-id-link">
+                    #{{ product.id }}
+                  </a>
+                </div>
+                <div class="product-compact-title">
+                  <a href="{% url 'product_detail' product.id %}">{{ product.title }}</a>
+                </div>
+                <div class="product-compact-meta">
+                  <span class="badge category-badge">{{ product.category|default:"Sem categoria" }}</span>
+                  <span class="badge brand-badge">{{ product.brand|default:"Sem marca" }}</span>
+                  {% if product.serie_number %}
+                    <code class="serie-code">{{ product.serie_number }}</code>
+                  {% endif %}
+                </div>
+              </div>
+              
+              <div class="product-compact-values">
+                <div class="product-compact-prices">
+                  <span class="price-value">{{ product.cost_price|currency }}</span>
+                  <span class="price-separator">→</span>
+                  <span class="price-value sale-price">{{ product.selling_price|currency }}</span>
+                </div>
+                <div class="quantity-badge {% if product.quantity < 10 %}low-stock{% endif %}">
+                  {{ product.quantity }}
+                  {% if product.quantity < 10 %}
+                    <i class="bi bi-exclamation-triangle ms-1"></i>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            
+            <div class="product-compact-actions">
+              <a href="{% url 'product_detail' product.id %}" class="btn btn-sm btn-info" data-tooltip="Ver detalhes">
+                <i class="bi bi-eye"></i>
+              </a>
+              {% if perms.products.change_product %}
+              <a href="{% url 'product_update' product.id %}" class="btn btn-sm btn-warning" data-tooltip="Editar produto">
+                <i class="bi bi-pencil"></i>
+              </a>
               {% endif %}
-            </td>
-          </tr>
+              {% if perms.products.delete_product %}
+              <a href="{% url 'product_delete' product.id %}" class="btn btn-sm btn-danger" data-tooltip="Excluir produto" onclick="return confirm('Tem certeza que deseja excluir este produto?')">
+                <i class="bi bi-trash"></i>
+              </a>
+              {% endif %}
+            </div>
+          </div>
+          {% empty %}
+          <div class="empty-state text-center py-5">
+            <i class="bi bi-box-seam display-1 text-muted mb-3"></i>
+            <h4 class="text-muted">Nenhum produto encontrado</h4>
+            <p class="text-muted">Tente ajustar os filtros ou adicione novos produtos ao estoque.</p>
+            {% if perms.products.add_product %}
+            <a href="{% url 'product_create' %}" class="btn btn-primary">
+              <i class="bi bi-plus-circle me-2"></i>Adicionar Primeiro Produto
+            </a>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Mobile Card View -->
+      <div class="d-lg-none">
+        {% for product in products %}
+        <div class="product-card mb-3" data-product-id="{{ product.id }}">
+          <div class="product-card-header">
+            <div class="d-flex justify-content-between align-items-start">
+              <div class="product-main-info">
+                <h5 class="product-card-title mb-1">
+                  <a href="{% url 'product_detail' product.id %}" class="text-decoration-none">
+                    {{ product.title }}
+                  </a>
+                </h5>
+                <div class="product-card-id">
+                  <a href="{% url 'product_detail' product.id %}" class="product-id-link">
+                    #{{ product.id }}
+                  </a>
+                </div>
+              </div>
+              <div class="product-quantity">
+                <span class="quantity-badge {% if product.quantity < 10 %}low-stock{% endif %}">
+                  {{ product.quantity }}
+                  {% if product.quantity < 10 %}
+                    <i class="bi bi-exclamation-triangle ms-1"></i>
+                  {% endif %}
+                </span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="product-card-body">
+            <div class="row g-3">
+              <div class="col-6">
+                <div class="product-detail-item">
+                  <small class="text-muted">Categoria</small>
+                  <div class="mt-1">
+                    <span class="badge category-badge">
+                      {{ product.category|default:"Sem categoria" }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="product-detail-item">
+                  <small class="text-muted">Marca</small>
+                  <div class="mt-1">
+                    <span class="badge brand-badge">
+                      {{ product.brand|default:"Sem marca" }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="product-detail-item">
+                  <small class="text-muted">Preço de Custo</small>
+                  <div class="price-value mt-1">{{ product.cost_price|currency }}</div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="product-detail-item">
+                  <small class="text-muted">Preço de Venda</small>
+                  <div class="price-value sale-price mt-1">{{ product.selling_price|currency }}</div>
+                </div>
+              </div>
+              {% if product.serie_number %}
+              <div class="col-12">
+                <div class="product-detail-item">
+                  <small class="text-muted">Número de Série</small>
+                  <div class="mt-1">
+                    <code class="serie-code">{{ product.serie_number }}</code>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          
+          <div class="product-card-footer">
+            <div class="action-buttons-mobile">
+              <a href="{% url 'product_detail' product.id %}" class="btn btn-sm btn-outline-info flex-fill">
+                <i class="bi bi-eye me-1"></i>Ver
+              </a>
+              {% if perms.products.change_product %}
+              <a href="{% url 'product_update' product.id %}" class="btn btn-sm btn-outline-warning flex-fill">
+                <i class="bi bi-pencil me-1"></i>Editar
+              </a>
+              {% endif %}
+              {% if perms.products.delete_product %}
+              <a href="{% url 'product_delete' product.id %}" class="btn btn-sm btn-outline-danger flex-fill" onclick="return confirm('Tem certeza que deseja excluir este produto?')">
+                <i class="bi bi-trash me-1"></i>Excluir
+              </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% empty %}
+        <div class="empty-state text-center py-5">
+          <i class="bi bi-box-seam display-1 text-muted mb-3"></i>
+          <h4 class="text-muted">Nenhum produto encontrado</h4>
+          <p class="text-muted">Tente ajustar os filtros ou adicione novos produtos ao estoque.</p>
+          {% if perms.products.add_product %}
+          <a href="{% url 'product_create' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-2"></i>Adicionar Primeiro Produto
+          </a>
+          {% endif %}
+        </div>
         {% endfor %}
-      </tbody>
-    </table>
+      </div>
+    </div>
   </div>
 
+  <!-- Pagination -->
   {% include 'components/_pagination.html' %}
+</div>
 
+<style>
+.products-container {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.page-header {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 2rem;
+  backdrop-filter: blur(20px);
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.page-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--primary-gradient);
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.page-subtitle {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  margin-bottom: 0;
+}
+
+/* Filters Section */
+.filters-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  backdrop-filter: blur(20px);
+  overflow: hidden;
+}
+
+.filters-header {
+  background: linear-gradient(135deg, rgba(108, 92, 231, 0.05), rgba(255, 61, 144, 0.05));
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.filters-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0;
+  color: var(--text-primary);
+}
+
+.filters-body {
+  padding: 1.5rem;
+}
+
+.form-floating {
+  position: relative;
+}
+
+.form-floating > .form-control,
+.form-floating > .form-select {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.form-floating > label {
+  color: var(--text-secondary);
+}
+
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-select:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label,
+.form-floating > .form-select:not(:placeholder-shown) ~ label {
+  color: var(--accent-blue);
+}
+
+/* Table Section */
+.table-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  backdrop-filter: blur(20px);
+  overflow: hidden;
+}
+
+.table-header {
+  background: linear-gradient(135deg, rgba(108, 92, 231, 0.05), rgba(255, 61, 144, 0.05));
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.table-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0;
+  color: var(--text-primary);
+}
+
+.view-options {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.view-options .btn {
+  transition: var(--transition-smooth);
+  border-radius: 8px;
+  margin: 0 0.125rem;
+  min-width: 40px;
+  min-height: 36px;
+}
+
+.view-options .btn:hover {
+  background: rgba(108, 92, 231, 0.1);
+  color: var(--accent-blue);
+  border-color: var(--accent-blue);
+}
+
+.view-options .btn.active {
+  background: var(--primary-gradient);
+  color: white;
+  border-color: transparent;
+  box-shadow: var(--glow-effect);
+}
+
+/* Modern Table */
+.modern-table {
+  margin-bottom: 0;
+  color: var(--text-primary);
+}
+
+.modern-table thead {
+  background: linear-gradient(135deg, rgba(108, 92, 231, 0.1), rgba(255, 61, 144, 0.1));
+}
+
+.modern-table th {
+  border: none;
+  padding: 1.25rem 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  position: relative;
+}
+
+.th-content {
+  display: flex;
+  align-items: center;
+}
+
+.modern-table td {
+  border: none;
+  padding: 1rem;
+  vertical-align: middle;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.product-row {
+  transition: var(--transition-smooth);
+}
+
+.product-row:hover {
+  background: rgba(108, 92, 231, 0.05);
+  transform: scale(1.01);
+}
+
+.product-id-link {
+  color: var(--accent-blue);
+  text-decoration: none;
+  font-weight: 600;
+  transition: var(--transition-fast);
+}
+
+.product-id-link:hover {
+  color: var(--accent-pink);
+}
+
+.product-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.product-title {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.product-subtitle {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.category-badge,
+.brand-badge {
+  background: rgba(108, 92, 231, 0.1);
+  color: var(--accent-blue);
+  border: 1px solid rgba(108, 92, 231, 0.2);
+  font-weight: 500;
+  font-size: 0.8rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 8px;
+}
+
+.brand-badge {
+  background: rgba(79, 172, 254, 0.1);
+  color: #4facfe;
+  border-color: rgba(79, 172, 254, 0.2);
+}
+
+.price-cell .price-value {
+  font-weight: 600;
+  color: var(--accent-green);
+  font-size: 0.95rem;
+}
+
+.serie-code {
+  background: rgba(108, 92, 231, 0.1);
+  color: var(--accent-blue);
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  border: 1px solid rgba(108, 92, 231, 0.2);
+}
+
+.quantity-cell {
+  display: flex;
+  align-items: center;
+}
+
+.quantity-value {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+
+.quantity-value.low-stock {
+  color: #ff6b6b;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.action-buttons .btn {
+  padding: 0.5rem;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: var(--transition-smooth);
+}
+
+.action-buttons .btn:hover {
+  transform: translateY(-2px) scale(1.1);
+}
+
+.empty-state {
+  padding: 3rem 2rem;
+}
+
+/* Grid View Styles */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+.product-grid-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  backdrop-filter: blur(20px);
+  transition: var(--transition-smooth);
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  min-height: 280px;
+}
+
+.product-grid-card:hover {
+  background: var(--bg-card-hover);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.product-grid-header {
+  background: linear-gradient(135deg, rgba(108, 92, 231, 0.05), rgba(255, 61, 144, 0.05));
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.product-grid-id {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.product-grid-body {
+  padding: 1.25rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-grid-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+}
+
+.product-grid-title a {
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+
+.product-grid-title a:hover {
+  color: var(--accent-blue);
+}
+
+.product-grid-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.product-grid-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.product-grid-prices {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.price-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.product-grid-serie {
+  margin-top: auto;
+}
+
+.product-grid-footer {
+  background: rgba(108, 92, 231, 0.02);
+  padding: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.product-grid-footer .action-buttons {
+  justify-content: center;
+}
+
+/* Compact View Styles */
+.products-compact {
+  padding: 1rem;
+}
+
+.product-compact-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  backdrop-filter: blur(20px);
+  transition: var(--transition-smooth);
+  margin-bottom: 0.75rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  min-height: 80px;
+}
+
+.product-compact-item:hover {
+  background: var(--bg-card-hover);
+  transform: translateX(4px);
+  box-shadow: var(--shadow-md);
+}
+
+.product-compact-main {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.product-compact-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.product-compact-id {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.product-compact-title {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.product-compact-title a {
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+
+.product-compact-title a:hover {
+  color: var(--accent-blue);
+}
+
+.product-compact-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.product-compact-values {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.product-compact-prices {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.price-separator {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.product-compact-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: 1rem;
+}
+
+.product-compact-actions .action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Mobile Card Styles */
+.product-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  backdrop-filter: blur(20px);
+  transition: var(--transition-smooth);
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.product-card:hover {
+  background: var(--bg-card-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.product-card-header {
+  background: linear-gradient(135deg, rgba(108, 92, 231, 0.05), rgba(255, 61, 144, 0.05));
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.product-card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.product-card-title a {
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.product-card-title a:hover {
+  color: var(--accent-blue);
+}
+
+.product-card-id {
+  font-size: 0.875rem;
+}
+
+.product-card-body {
+  padding: 1.25rem;
+}
+
+.product-detail-item {
+  margin-bottom: 0.75rem;
+}
+
+.product-detail-item:last-child {
+  margin-bottom: 0;
+}
+
+.product-detail-item small {
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.75rem;
+}
+
+.quantity-badge {
+  background: rgba(67, 233, 123, 0.1);
+  color: var(--accent-green);
+  border: 1px solid rgba(67, 233, 123, 0.2);
+  padding: 0.5rem 0.75rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.quantity-badge.low-stock {
+  background: rgba(255, 107, 107, 0.1);
+  color: #ff6b6b;
+  border-color: rgba(255, 107, 107, 0.2);
+}
+
+.price-value.sale-price {
+  color: var(--accent-green);
+  font-weight: 600;
+}
+
+.product-card-footer {
+  background: rgba(108, 92, 231, 0.02);
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.action-buttons-mobile {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.action-buttons-mobile .btn {
+  min-height: 44px;
+  font-weight: 500;
+  border-radius: 10px;
+  transition: var(--transition-smooth);
+}
+
+.action-buttons-mobile .btn:hover {
+  transform: translateY(-1px);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .modern-table {
+    font-size: 0.9rem;
+  }
+  
+  .modern-table th,
+  .modern-table td {
+    padding: 0.875rem 0.75rem;
+  }
+  
+  /* Grid view responsive adjustments */
+  .products-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+  }
+  
+  .product-grid-card {
+    min-height: 260px;
+  }
+  
+  /* Compact view adjustments */
+  .product-compact-item {
+    padding: 0.875rem 1rem;
+    min-height: 70px;
+  }
+  
+  .product-compact-values {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .product-card-header,
+  .product-card-body,
+  .product-card-footer {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-title {
+    font-size: 1.75rem;
+  }
+  
+  .filters-body {
+    padding: 1rem;
+  }
+  
+  .table-header {
+    padding: 1rem 1.5rem;
+  }
+  
+  .modern-table {
+    font-size: 0.8rem;
+  }
+  
+  .modern-table th,
+  .modern-table td {
+    padding: 0.75rem 0.5rem;
+  }
+  
+  .action-buttons .btn {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
+  }
+  
+  /* Hide view options on mobile - always show mobile cards */
+  .view-options {
+    display: none;
+  }
+  
+  /* Grid view mobile adjustments */
+  .products-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    padding: 0.75rem;
+  }
+  
+  .product-grid-card {
+    min-height: 240px;
+    border-radius: 12px;
+  }
+  
+  .product-grid-header,
+  .product-grid-body,
+  .product-grid-footer {
+    padding: 0.875rem;
+  }
+  
+  /* Compact view mobile adjustments */
+  .products-compact {
+    padding: 0.75rem;
+  }
+  
+  .product-compact-item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    padding: 0.875rem;
+    min-height: auto;
+  }
+  
+  .product-compact-main {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+  
+  .product-compact-values {
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  
+  .product-compact-actions {
+    margin-left: 0;
+    justify-content: center;
+  }
+  
+  .product-compact-actions .action-buttons {
+    flex: 1;
+    justify-content: space-around;
+  }
+  
+  /* Mobile card adjustments */
+  .product-card {
+    border-radius: 12px;
+  }
+  
+  .product-card-header,
+  .product-card-body,
+  .product-card-footer {
+    padding-left: 0.875rem;
+    padding-right: 0.875rem;
+  }
+  
+  .product-card-title {
+    font-size: 1rem;
+  }
+  
+  .action-buttons-mobile {
+    gap: 0.5rem;
+  }
+  
+  .action-buttons-mobile .btn {
+    font-size: 0.8rem;
+    min-height: 40px;
+  }
+}
+
+@media (max-width: 576px) {
+  .product-card-body .row {
+    --bs-gutter-x: 1rem;
+  }
+  
+  .action-buttons-mobile {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .action-buttons-mobile .btn {
+    width: 100%;
+  }
+}
+
+/* Loading animation for table rows */
+.product-row {
+  animation: slideInLeft 0.4s ease-out;
+}
+
+.product-row:nth-child(odd) {
+  animation-delay: 0.05s;
+}
+
+.product-row:nth-child(even) {
+  animation-delay: 0.1s;
+}
+</style>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Enhanced table interactions
+  const productRows = document.querySelectorAll('.product-row');
+  
+  productRows.forEach(row => {
+    row.addEventListener('click', function(e) {
+      // Don't trigger on button clicks
+      if (e.target.closest('.action-buttons')) {
+        return;
+      }
+      
+      // Get product ID and navigate to detail
+      const productId = this.getAttribute('data-product-id');
+      if (productId) {
+        window.location.href = `/products/${productId}/`;
+      }
+    });
+  });
+  
+  // Enhanced mobile card interactions
+  const productCards = document.querySelectorAll('.product-card');
+  
+  productCards.forEach(card => {
+    card.addEventListener('click', function(e) {
+      // Don't trigger on button or link clicks
+      if (e.target.closest('.action-buttons-mobile') || e.target.closest('a')) {
+        return;
+      }
+      
+      // Get product ID and navigate to detail
+      const productId = this.getAttribute('data-product-id');
+      if (productId) {
+        window.location.href = `/products/${productId}/`;
+      }
+    });
+    
+    // Add touch feedback for mobile
+    card.addEventListener('touchstart', function(e) {
+      this.style.transform = 'translateY(-1px) scale(0.98)';
+    });
+    
+    card.addEventListener('touchend', function(e) {
+      this.style.transform = '';
+    });
+  });
+  
+  // Enhanced grid card interactions
+  const gridCards = document.querySelectorAll('.product-grid-card');
+  
+  gridCards.forEach(card => {
+    card.addEventListener('click', function(e) {
+      // Don't trigger on button or link clicks
+      if (e.target.closest('.action-buttons') || e.target.closest('a')) {
+        return;
+      }
+      
+      // Get product ID and navigate to detail
+      const productId = this.getAttribute('data-product-id');
+      if (productId) {
+        window.location.href = `/products/${productId}/`;
+      }
+    });
+  });
+  
+  // Enhanced compact item interactions
+  const compactItems = document.querySelectorAll('.product-compact-item');
+  
+  compactItems.forEach(item => {
+    item.addEventListener('click', function(e) {
+      // Don't trigger on button or link clicks
+      if (e.target.closest('.product-compact-actions') || e.target.closest('a')) {
+        return;
+      }
+      
+      // Get product ID and navigate to detail
+      const productId = this.getAttribute('data-product-id');
+      if (productId) {
+        window.location.href = `/products/${productId}/`;
+      }
+    });
+  });
+  
+  // View toggle functionality
+  const viewButtons = document.querySelectorAll('[data-view]');
+  const tableView = document.getElementById('tableView');
+  const gridView = document.getElementById('gridView');
+  const compactView = document.getElementById('compactView');
+  
+  // Debug logging
+  console.log('View elements found:', {
+    tableView: !!tableView,
+    gridView: !!gridView,
+    compactView: !!compactView,
+    viewButtons: viewButtons.length
+  });
+  
+  // Load saved view preference
+  const savedView = localStorage.getItem('sge-product-view') || 'table';
+  console.log('Loading saved view:', savedView);
+  switchToView(savedView);
+  
+  viewButtons.forEach(button => {
+    // Remove any existing active classes first
+    button.classList.remove('active');
+    
+    // Set active button based on saved preference
+    if (button.getAttribute('data-view') === savedView) {
+      button.classList.add('active');
+    }
+    
+    button.addEventListener('click', function(e) {
+      e.preventDefault();
+      const view = this.getAttribute('data-view');
+      console.log('View button clicked:', view); // Debug log
+      
+      switchToView(view);
+      
+      // Update active button
+      viewButtons.forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      console.log('Active button updated to:', view);
+      
+      // Save preference
+      localStorage.setItem('sge-product-view', view);
+      
+      // Show notification
+      if (window.SGE && window.SGE.showNotification) {
+        const viewNames = {
+          'table': 'Tabela',
+          'grid': 'Grid',
+          'compact': 'Compacta'
+        };
+        window.SGE.showNotification(`Visualização alterada para ${viewNames[view]}`, 'success');
+      }
+    });
+  });
+  
+  function switchToView(view) {
+    console.log('Switching to view:', view); // Debug log
+    
+    // Hide all views using inline styles to override existing classes
+    if (tableView) {
+      tableView.style.display = 'none';
+      tableView.classList.add('d-none');
+      console.log('Hiding table view');
+    }
+    if (gridView) {
+      gridView.style.display = 'none';
+      gridView.classList.add('d-none');
+      console.log('Hiding grid view');
+    }
+    if (compactView) {
+      compactView.style.display = 'none';
+      compactView.classList.add('d-none');
+      console.log('Hiding compact view');
+    }
+    
+    // Show selected view
+    switch(view) {
+      case 'table':
+        if (tableView) {
+          tableView.style.display = 'block';
+          tableView.classList.remove('d-none');
+          console.log('Showing table view');
+        }
+        break;
+      case 'grid':
+        if (gridView) {
+          gridView.style.display = 'block';
+          gridView.classList.remove('d-none');
+          console.log('Showing grid view');
+        }
+        break;
+      case 'compact':
+        if (compactView) {
+          compactView.style.display = 'block';
+          compactView.classList.remove('d-none');
+          console.log('Showing compact view');
+        }
+        break;
+    }
+    
+    // Update title based on view
+    const tableTitle = document.querySelector('.table-title');
+    if (tableTitle) {
+      const titleTexts = {
+        'table': 'Lista de Produtos',
+        'grid': 'Grid de Produtos', 
+        'compact': 'Visualização Compacta'
+      };
+      const titleIcons = {
+        'table': 'bi-list-ul',
+        'grid': 'bi-grid-3x3',
+        'compact': 'bi-list'
+      };
+      
+      const icon = tableTitle.querySelector('i');
+      if (icon) {
+        icon.className = `bi ${titleIcons[view]} me-2`;
+      }
+      
+      const textNode = tableTitle.childNodes[tableTitle.childNodes.length - 1];
+      if (textNode && textNode.nodeType === Node.TEXT_NODE) {
+        textNode.textContent = titleTexts[view];
+      }
+    }
+  }
+  
+  // Auto-submit form on filter change
+  const filterSelects = document.querySelectorAll('#category, #brand');
+  filterSelects.forEach(select => {
+    select.addEventListener('change', function() {
+      this.closest('form').submit();
+    });
+  });
+  
+  // Improve mobile form experience
+  const formInputs = document.querySelectorAll('.form-control, .form-select');
+  formInputs.forEach(input => {
+    // Prevent zoom on iOS
+    if (input.type === 'text' || input.type === 'search' || input.tagName === 'SELECT') {
+      if (parseFloat(getComputedStyle(input).fontSize) < 16) {
+        input.style.fontSize = '16px';
+      }
+    }
+  });
+});
+</script>
 {% endblock %}

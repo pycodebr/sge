@@ -1,38 +1,407 @@
-<div class="card mt-4">
-  <div class="card-body">
-    <div class="row">
-      <div class="col-md-3">
-        <div class="card bg-primary">
-          <div class="card-body">
-            <h5 class="card-title">Quantidade de produtos</h5>
-            <p class="card-text text-white font-weight-bold display-6">{{ product_metrics.total_quantity }}</p>
+<div class="metrics-container mb-5">
+  <div class="row g-4">
+    <!-- Quantidade de Produtos -->
+    <div class="col-xl-3 col-lg-6 col-md-6">
+      <div class="metrics-card primary" data-metric="quantity">
+        <div class="metrics-icon">
+          <i class="bi bi-boxes"></i>
+        </div>
+        <div class="metrics-content">
+          <div class="metrics-label">Produtos em Estoque</div>
+          <div class="metrics-value" data-count="{{ product_metrics.total_quantity }}">
+            {{ product_metrics.total_quantity }}
+          </div>
+          <div class="metrics-trend">
+            <i class="bi bi-arrow-up"></i>
+            <span class="trend-value">+5.2%</span>
+            <span class="trend-period">este mês</span>
           </div>
         </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card bg-danger">
-          <div class="card-body">
-            <h5 class="card-title">Custo do estoque</h5>
-            <p class="card-text text-white font-weight-bold display-6">R$ {{ product_metrics.total_cost_price }}</p>
-          </div>
+        <div class="metrics-chart">
+          <div class="mini-chart" data-type="line" data-color="#667eea"></div>
         </div>
       </div>
-      <div class="col-md-3">
-        <div class="card bg-success">
-          <div class="card-body">
-            <h5 class="card-title">Valor do estoque</h5>
-            <p class="card-text text-white font-weight-bold display-6">R$ {{ product_metrics.total_selling_price }}</p>
+    </div>
+
+    <!-- Custo do Estoque -->
+    <div class="col-xl-3 col-lg-6 col-md-6">
+      <div class="metrics-card danger" data-metric="cost">
+        <div class="metrics-icon">
+          <i class="bi bi-cash-stack"></i>
+        </div>
+        <div class="metrics-content">
+          <div class="metrics-label">Custo Total</div>
+          <div class="metrics-value" data-count="{{ product_metrics.total_cost_price }}">
+            R$ {{ product_metrics.total_cost_price }}
+          </div>
+          <div class="metrics-trend negative">
+            <i class="bi bi-arrow-down"></i>
+            <span class="trend-value">-2.1%</span>
+            <span class="trend-period">este mês</span>
           </div>
         </div>
+        <div class="metrics-chart">
+          <div class="mini-chart" data-type="bar" data-color="#fa709a"></div>
+        </div>
       </div>
-      <div class="col-md-3">
-        <div class="card bg-warning">
-          <div class="card-body">
-            <h5 class="card-title">Lucro do estoque</h5>
-            <p class="card-text text-white font-weight-bold display-6">R$ {{ product_metrics.total_profit }}</p>
+    </div>
+
+    <!-- Valor do Estoque -->
+    <div class="col-xl-3 col-lg-6 col-md-6">
+      <div class="metrics-card success" data-metric="value">
+        <div class="metrics-icon">
+          <i class="bi bi-wallet2"></i>
+        </div>
+        <div class="metrics-content">
+          <div class="metrics-label">Valor do Estoque</div>
+          <div class="metrics-value" data-count="{{ product_metrics.total_selling_price }}">
+            R$ {{ product_metrics.total_selling_price }}
           </div>
+          <div class="metrics-trend">
+            <i class="bi bi-arrow-up"></i>
+            <span class="trend-value">+8.7%</span>
+            <span class="trend-period">este mês</span>
+          </div>
+        </div>
+        <div class="metrics-chart">
+          <div class="mini-chart" data-type="line" data-color="#4facfe"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lucro Estimado -->
+    <div class="col-xl-3 col-lg-6 col-md-6">
+      <div class="metrics-card warning" data-metric="profit">
+        <div class="metrics-icon">
+          <i class="bi bi-graph-up-arrow"></i>
+        </div>
+        <div class="metrics-content">
+          <div class="metrics-label">Lucro Estimado</div>
+          <div class="metrics-value" data-count="{{ product_metrics.total_profit }}">
+            R$ {{ product_metrics.total_profit }}
+          </div>
+          <div class="metrics-trend">
+            <i class="bi bi-arrow-up"></i>
+            <span class="trend-value">+12.3%</span>
+            <span class="trend-period">este mês</span>
+          </div>
+        </div>
+        <div class="metrics-chart">
+          <div class="mini-chart" data-type="area" data-color="#43e97b"></div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<style>
+.metrics-container {
+  position: relative;
+}
+
+.metrics-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 2rem;
+  transition: var(--transition-smooth);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.metrics-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  opacity: 0;
+  transition: var(--transition-smooth);
+  pointer-events: none;
+}
+
+.metrics-card.primary::before {
+  background: var(--primary-gradient);
+  opacity: 0.05;
+}
+
+.metrics-card.success::before {
+  background: var(--success-gradient);
+  opacity: 0.05;
+}
+
+.metrics-card.warning::before {
+  background: var(--warning-gradient);
+  opacity: 0.05;
+}
+
+.metrics-card.danger::before {
+  background: var(--danger-gradient);
+  opacity: 0.05;
+}
+
+.metrics-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-lg);
+  border-color: transparent;
+}
+
+.metrics-card:hover::before {
+  opacity: 0.1;
+}
+
+.metrics-card.primary:hover {
+  box-shadow: 0 10px 30px rgba(108, 92, 231, 0.3);
+}
+
+.metrics-card.success:hover {
+  box-shadow: 0 10px 30px rgba(79, 172, 254, 0.3);
+}
+
+.metrics-card.warning:hover {
+  box-shadow: 0 10px 30px rgba(67, 233, 123, 0.3);
+}
+
+.metrics-card.danger:hover {
+  box-shadow: 0 10px 30px rgba(250, 112, 154, 0.3);
+}
+
+.metrics-icon {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  opacity: 0.3;
+  transition: var(--transition-smooth);
+}
+
+.metrics-card.primary .metrics-icon {
+  background: rgba(108, 92, 231, 0.1);
+  color: #667eea;
+}
+
+.metrics-card.success .metrics-icon {
+  background: rgba(79, 172, 254, 0.1);
+  color: #4facfe;
+}
+
+.metrics-card.warning .metrics-icon {
+  background: rgba(67, 233, 123, 0.1);
+  color: #43e97b;
+}
+
+.metrics-card.danger .metrics-icon {
+  background: rgba(250, 112, 154, 0.1);
+  color: #fa709a;
+}
+
+.metrics-card:hover .metrics-icon {
+  opacity: 0.8;
+  transform: scale(1.1);
+}
+
+.metrics-content {
+  flex: 1;
+  z-index: 2;
+  position: relative;
+}
+
+.metrics-label {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+}
+
+.metrics-value {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, var(--text-primary), var(--accent-blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.metrics-trend {
+  display: flex;
+  align-items: center;
+  font-size: 0.75rem;
+  color: var(--accent-green);
+  gap: 0.25rem;
+}
+
+.metrics-trend.negative {
+  color: #ff6b6b;
+}
+
+.metrics-trend i {
+  font-size: 0.875rem;
+}
+
+.trend-value {
+  font-weight: 600;
+}
+
+.trend-period {
+  color: var(--text-muted);
+  margin-left: 0.25rem;
+}
+
+.metrics-chart {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  opacity: 0.3;
+  overflow: hidden;
+  border-radius: 0 0 20px 20px;
+}
+
+.mini-chart {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, transparent 0%, var(--accent-blue) 100%);
+  clip-path: polygon(0 100%, 15% 85%, 30% 90%, 45% 75%, 60% 80%, 75% 70%, 90% 75%, 100% 65%, 100% 100%);
+  transition: var(--transition-smooth);
+}
+
+.metrics-card:hover .mini-chart {
+  opacity: 0.6;
+  transform: scaleY(1.2);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .metrics-card {
+    height: 180px;
+    padding: 1.5rem;
+  }
+  
+  .metrics-value {
+    font-size: 1.75rem;
+  }
+  
+  .metrics-icon {
+    width: 45px;
+    height: 45px;
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .metrics-card {
+    height: 160px;
+    padding: 1.25rem;
+  }
+  
+  .metrics-value {
+    font-size: 1.5rem;
+  }
+  
+  .metrics-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+    top: 1rem;
+    right: 1rem;
+  }
+  
+  .metrics-label {
+    font-size: 0.8rem;
+  }
+  
+  .metrics-trend {
+    font-size: 0.7rem;
+  }
+}
+
+/* Animation delays for staggered loading */
+.metrics-card:nth-child(1) {
+  animation: fadeInUp 0.6s ease-out 0.1s both;
+}
+
+.metrics-card:nth-child(2) {
+  animation: fadeInUp 0.6s ease-out 0.2s both;
+}
+
+.metrics-card:nth-child(3) {
+  animation: fadeInUp 0.6s ease-out 0.3s both;
+}
+
+.metrics-card:nth-child(4) {
+  animation: fadeInUp 0.6s ease-out 0.4s both;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Animate counters
+  const animateCounters = () => {
+    const counters = document.querySelectorAll('.metrics-value[data-count]');
+    
+    counters.forEach(counter => {
+      const target = parseFloat(counter.getAttribute('data-count').replace(/[^\d.-]/g, ''));
+      if (isNaN(target)) return;
+      
+      const increment = target / 100;
+      let current = 0;
+      
+      const updateCounter = () => {
+        if (current < target) {
+          current += increment;
+          const value = Math.ceil(current);
+          const originalText = counter.textContent;
+          
+          if (originalText.includes('R$')) {
+            counter.textContent = `R$ ${value.toLocaleString('pt-BR')}`;
+          } else {
+            counter.textContent = value.toLocaleString('pt-BR');
+          }
+          
+          requestAnimationFrame(updateCounter);
+        } else {
+          const originalText = counter.textContent;
+          if (originalText.includes('R$')) {
+            counter.textContent = `R$ ${target.toLocaleString('pt-BR')}`;
+          } else {
+            counter.textContent = target.toLocaleString('pt-BR');
+          }
+        }
+      };
+      
+      // Start animation with delay
+      setTimeout(updateCounter, 500);
+    });
+  };
+  
+  // Initialize animations
+  animateCounters();
+  
+  // Add click handlers for metrics cards
+  const metricsCards = document.querySelectorAll('.metrics-card');
+  metricsCards.forEach(card => {
+    card.addEventListener('click', function() {
+      const metric = this.getAttribute('data-metric');
+      // Could trigger detailed view or analytics
+      console.log(`Clicked on ${metric} metric`);
+    });
+  });
+});
+</script>

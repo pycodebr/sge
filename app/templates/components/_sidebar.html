@@ -1,79 +1,375 @@
-<div class="row flex-nowrap">
-  <div class="col-auto col-md-0 col-xl-0 px-0 bg-dark">
-    <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white">
-      <button class="btn btn-dark d-block d-sm-none mb-3" type="button" data-bs-toggle="collapse"
-        data-bs-target="#menuCollapse" aria-expanded="false" aria-controls="menuCollapse">
-        <i class="bi bi-list fs-4"></i>
-      </button>
-      <div class="collapse d-sm-block" id="menuCollapse">
-        <ul class="nav flex-column align-items-start" id="menu">
-          <li>
-            <a href="{% url 'home' %}" class="nav-link px-0 align-middle">
-              <i class="bi bi-speedometer2 fs-4"></i>
-              <span class="ms-1">Dashboard</span>
-            </a>
-          </li>
-          {% if perms.suppliers.view_supplier %}
-            <li>
-              <a href="{% url 'supplier_list' %}" class="nav-link px-0 align-middle">
-                <i class="bi bi-truck fs-4"></i>
-                <span class="ms-1">Fornecedores</span>
-              </a>
-            </li>
-          {% endif %}
-          {% if perms.brands.view_brand %}
-            <li>
-              <a href="{% url 'brand_list' %}" class="nav-link px-0 align-middle">
-                <i class="bi bi-shop fs-4"></i>
-                <span class="ms-1">Marcas</span>
-              </a>
-            </li>
-          {% endif %}
-          {% if perms.categories.view_category %}
-            <li>
-              <a href="{% url 'category_list' %}" class="nav-link px-0 align-middle">
-                <i class="bi bi-tags fs-4"></i>
-                <span class="ms-1">Categorias</span>
-              </a>
-            </li>
-          {% endif %}
-          {% if perms.products.view_product %}
-            <li>
-              <a href="{% url 'product_list' %}" class="nav-link px-0 align-middle">
-                <i class="bi bi-box-seam fs-4"></i>
-                <span class="ms-1">Produtos</span>
-              </a>
-            </li>
-          {% endif %}
-          {% if perms.inflows.view_inflow %}
-            <li>
-              <a href="{% url 'inflow_list' %}" class="nav-link px-0 align-middle">
-                <i class="bi bi-arrow-down-left-square fs-4"></i>
-                <span class="ms-1">Entradas</span>
-              </a>
-            </li>
-          {% endif %}
-          {% if perms.outflows.view_outflow %}
-            <li>
-              <a href="{% url 'outflow_list' %}" class="nav-link px-0 align-middle">
-                <i class="bi bi-arrow-up-right-square fs-4"></i>
-                <span class="ms-1">Saídas</span>
-              </a>
-            </li>
-          {% endif %}
-          <li class="nav-item">
-            {% if user.is_authenticated %}
-            <form action="{% url 'logout' %}" method="post" id="logout-form" class="nav-link px-0 align-middle">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-link text-decoration-none text-reset nav-link px-0 align-middle">
-                <i class="bi bi-box-arrow-right fs-4 align-middle"></i>
-                <span class="ms-1 align-middle">Sair</span>
-              </button>
-            </form>
-            {% endif %}
-          </li>
-        </ul>
+<div class="col-md-3 col-lg-2 d-md-block sidebar collapse" id="sidebarMenu">
+  <div class="position-sticky pt-3">
+    <!-- Main Navigation -->
+    <nav class="nav flex-column">
+      <!-- Dashboard Section -->
+      <div class="nav-section">
+        <div class="nav-section-title">
+          <i class="bi bi-speedometer2 me-2"></i>
+          <span>Dashboard</span>
+        </div>
+        <a href="{% url 'home' %}" class="nav-link" data-tooltip="Painel Principal">
+          <i class="bi bi-house-door"></i>
+          <span>Início</span>
+        </a>
       </div>
-      <hr>
+
+      <!-- Inventory Management Section -->
+      <div class="nav-section">
+        <div class="nav-section-title">
+          <i class="bi bi-boxes me-2"></i>
+          <span>Estoque</span>
+        </div>
+        
+        {% if perms.products.view_product %}
+        <a href="{% url 'product_list' %}" class="nav-link" data-tooltip="Gerenciar Produtos">
+          <i class="bi bi-box-seam"></i>
+          <span>Produtos</span>
+          <div class="nav-indicator"></div>
+        </a>
+        {% endif %}
+        
+        {% if perms.categories.view_category %}
+        <a href="{% url 'category_list' %}" class="nav-link" data-tooltip="Categorias de Produtos">
+          <i class="bi bi-tags"></i>
+          <span>Categorias</span>
+          <div class="nav-indicator"></div>
+        </a>
+        {% endif %}
+        
+        {% if perms.brands.view_brand %}
+        <a href="{% url 'brand_list' %}" class="nav-link" data-tooltip="Marcas dos Produtos">
+          <i class="bi bi-award"></i>
+          <span>Marcas</span>
+          <div class="nav-indicator"></div>
+        </a>
+        {% endif %}
+      </div>
+
+      <!-- Operations Section -->
+      <div class="nav-section">
+        <div class="nav-section-title">
+          <i class="bi bi-arrow-left-right me-2"></i>
+          <span>Movimentações</span>
+        </div>
+        
+        {% if perms.inflows.view_inflow %}
+        <a href="{% url 'inflow_list' %}" class="nav-link" data-tooltip="Entradas de Estoque">
+          <i class="bi bi-arrow-down-circle"></i>
+          <span>Entradas</span>
+          <div class="nav-indicator"></div>
+        </a>
+        {% endif %}
+        
+        {% if perms.outflows.view_outflow %}
+        <a href="{% url 'outflow_list' %}" class="nav-link" data-tooltip="Saídas de Estoque">
+          <i class="bi bi-arrow-up-circle"></i>
+          <span>Saídas</span>
+          <div class="nav-indicator"></div>
+        </a>
+        {% endif %}
+      </div>
+
+      <!-- Partners Section -->
+      {% if perms.suppliers.view_supplier %}
+      <div class="nav-section">
+        <div class="nav-section-title">
+          <i class="bi bi-people me-2"></i>
+          <span>Parceiros</span>
+        </div>
+        
+        <a href="{% url 'supplier_list' %}" class="nav-link" data-tooltip="Fornecedores">
+          <i class="bi bi-truck"></i>
+          <span>Fornecedores</span>
+          <div class="nav-indicator"></div>
+        </a>
+      </div>
+      {% endif %}
+    </nav>
+
+    <!-- Quick Actions -->
+    <div class="sidebar-actions mt-4">
+      <div class="quick-action-title">Ações Rápidas</div>
+      {% if perms.products.add_product %}
+      <a href="{% url 'product_create' %}" class="btn btn-primary btn-sm w-100 mb-2">
+        <i class="bi bi-plus-circle me-2"></i>Novo Produto
+      </a>
+      {% endif %}
+      {% if perms.inflows.add_inflow %}
+      <a href="{% url 'inflow_create' %}" class="btn btn-success btn-sm w-100 mb-2">
+        <i class="bi bi-arrow-down-circle me-2"></i>Nova Entrada
+      </a>
+      {% endif %}
+      {% if perms.outflows.add_outflow %}
+      <a href="{% url 'outflow_create' %}" class="btn btn-warning btn-sm w-100 mb-2">
+        <i class="bi bi-arrow-up-circle me-2"></i>Nova Saída
+      </a>
+      {% endif %}
+    </div>
+
+    <!-- User Stats -->
+    <div class="sidebar-stats mt-4">
+      <div class="stat-item">
+        <div class="stat-icon">
+          <i class="bi bi-eye"></i>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Última Visita</div>
+          <div class="stat-value">Hoje</div>
+        </div>
+      </div>
     </div>
   </div>
+</div>
+
+<style>
+.sidebar {
+  background: var(--bg-secondary);
+  min-height: calc(100vh - 76px);
+  border-right: 1px solid var(--border-color);
+  backdrop-filter: blur(20px);
+  padding: 0;
+  transition: var(--transition-smooth);
+}
+
+.nav-section {
+  margin-bottom: 2rem;
+}
+
+.nav-section-title {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 0.5rem 1.5rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.nav-section-title i {
+  font-size: 0.875rem;
+  opacity: 0.7;
+}
+
+.sidebar .nav-link {
+  color: var(--text-secondary);
+  padding: 1rem 1.5rem;
+  margin: 0.125rem 0.75rem;
+  border-radius: 12px;
+  transition: var(--transition-smooth);
+  position: relative;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  overflow: hidden;
+}
+
+.sidebar .nav-link i {
+  font-size: 1.1rem;
+  margin-right: 0.75rem;
+  width: 20px;
+  text-align: center;
+  transition: var(--transition-smooth);
+}
+
+.sidebar .nav-link span {
+  font-weight: 500;
+  transition: var(--transition-smooth);
+}
+
+.sidebar .nav-link:hover {
+  color: var(--text-primary);
+  background: rgba(108, 92, 231, 0.1);
+  transform: translateX(4px);
+}
+
+.sidebar .nav-link:hover i {
+  color: var(--accent-blue);
+  transform: scale(1.1);
+}
+
+.sidebar .nav-link.active {
+  background: var(--primary-gradient);
+  color: white;
+  box-shadow: var(--glow-effect);
+  font-weight: 600;
+}
+
+.sidebar .nav-link.active i {
+  color: white;
+}
+
+.nav-indicator {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 0;
+  background: var(--accent-blue);
+  border-radius: 0 3px 3px 0;
+  transition: var(--transition-smooth);
+}
+
+.sidebar .nav-link:hover .nav-indicator,
+.sidebar .nav-link.active .nav-indicator {
+  height: 20px;
+}
+
+.sidebar-actions {
+  padding: 0 0.75rem;
+  border-top: 1px solid var(--border-color);
+  padding-top: 1.5rem;
+}
+
+.quick-action-title {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 1rem;
+  padding: 0 0.75rem;
+}
+
+.sidebar-stats {
+  padding: 0 1.5rem;
+  border-top: 1px solid var(--border-color);
+  padding-top: 1.5rem;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 0;
+}
+
+.stat-icon {
+  width: 40px;
+  height: 40px;
+  background: rgba(108, 92, 231, 0.1);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+}
+
+.stat-icon i {
+  color: var(--accent-blue);
+  font-size: 1.2rem;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1;
+}
+
+.stat-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 76px;
+    left: 0;
+    width: 280px;
+    z-index: 1050;
+    height: calc(100vh - 76px);
+    overflow-y: auto;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: var(--shadow-lg);
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  
+  .sidebar.show {
+    transform: translateX(0);
+  }
+  
+  .nav-section-title {
+    padding: 0.75rem 1.25rem 0.5rem;
+    font-size: 0.8rem;
+  }
+  
+  .sidebar .nav-link {
+    padding: 1rem 1.25rem;
+    margin: 0.125rem 0.75rem;
+    font-size: 0.95rem;
+    min-height: 48px;
+    border-radius: 10px;
+  }
+  
+  .sidebar .nav-link i {
+    font-size: 1.2rem;
+    margin-right: 1rem;
+  }
+  
+  .sidebar-actions {
+    padding: 1.5rem 0.75rem 1rem;
+    border-top: 1px solid var(--border-color);
+  }
+  
+  .sidebar-actions .btn {
+    min-height: 44px;
+    font-weight: 500;
+    border-radius: 10px;
+    margin-bottom: 0.5rem;
+  }
+  
+  .sidebar-stats {
+    padding: 1rem 1.25rem;
+    border-top: 1px solid var(--border-color);
+  }
+  
+  .quick-action-title {
+    padding: 0 0.75rem;
+    margin-bottom: 1rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .sidebar {
+    width: min(280px, calc(100vw - 2rem));
+  }
+  
+  .sidebar .nav-link {
+    padding: 0.875rem 1rem;
+    margin: 0.125rem 0.5rem;
+    font-size: 0.9rem;
+  }
+  
+  .sidebar .nav-link i {
+    font-size: 1.1rem;
+    margin-right: 0.875rem;
+  }
+}
+
+/* Animation for sidebar items */
+.nav-section {
+  animation: slideInLeft 0.6s ease-out;
+}
+
+.nav-section:nth-child(1) { animation-delay: 0.1s; }
+.nav-section:nth-child(2) { animation-delay: 0.2s; }
+.nav-section:nth-child(3) { animation-delay: 0.3s; }
+.nav-section:nth-child(4) { animation-delay: 0.4s; }
+
+.sidebar-actions {
+  animation: fadeInUp 0.6s ease-out 0.5s both;
+}
+
+.sidebar-stats {
+  animation: fadeInUp 0.6s ease-out 0.6s both;
+}
+</style>

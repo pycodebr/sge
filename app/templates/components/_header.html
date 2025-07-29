@@ -1,5 +1,492 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-dark">
-  <div class="container-fluid">
-    <a class="navbar-brand text-white" href="{% url 'home' %}">Sistema de Gestão de Estoque (SGE)</a>
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+  <div class="container-fluid px-4">
+    <!-- Brand and Logo -->
+    <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
+      <div class="brand-icon me-3">
+        <i class="bi bi-boxes" style="font-size: 1.8rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+      </div>
+      <div class="brand-text">
+        <div class="brand-name">SGE</div>
+        <div class="brand-subtitle">Gestão de Estoque</div>
+      </div>
+    </a>
+
+    <!-- Mobile menu toggle -->
+    {% if user.is_authenticated %}
+    <button class="navbar-toggler sidebar-toggle d-lg-none" type="button" aria-label="Toggle navigation">
+      <i class="bi bi-list fs-4"></i>
+    </button>
+    {% endif %}
+
+    <!-- Right side content -->
+    <div class="navbar-nav ms-auto d-flex flex-row align-items-center">
+      {% if user.is_authenticated %}
+        <!-- User info and actions -->
+        <div class="nav-item dropdown me-3">
+          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <div class="user-avatar me-2">
+              <i class="bi bi-person-circle fs-5"></i>
+            </div>
+            <span class="d-none d-md-inline">{{ user.username }}</span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+              <a class="dropdown-item" href="#">
+                <i class="bi bi-person me-2"></i>Perfil
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="#">
+                <i class="bi bi-gear me-2"></i>Configurações
+              </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <form action="{% url 'logout' %}" method="post" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="dropdown-item">
+                  <i class="bi bi-box-arrow-right me-2"></i>Sair
+                </button>
+              </form>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Notifications -->
+        <div class="nav-item dropdown me-3">
+          <a class="nav-link position-relative" href="#" id="notificationsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-tooltip="Notificações" data-bs-auto-close="outside">
+            <i class="bi bi-bell fs-5"></i>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+              3
+              <span class="visually-hidden">notificações não lidas</span>
+            </span>
+          </a>
+          <div class="dropdown-menu dropdown-menu-end notifications-dropdown" data-bs-popper="static">
+            <div class="dropdown-header d-flex justify-content-between align-items-center">
+              <h6 class="mb-0">Notificações</h6>
+              <span class="badge bg-primary rounded-pill">3</span>
+            </div>
+            <div class="dropdown-body">
+              <a class="dropdown-item notification-item" href="#">
+                <div class="notification-icon bg-warning">
+                  <i class="bi bi-exclamation-triangle"></i>
+                </div>
+                <div class="notification-content">
+                  <div class="notification-title">Estoque baixo</div>
+                  <div class="notification-text">5 produtos com estoque abaixo do mínimo</div>
+                  <div class="notification-time">2 min atrás</div>
+                </div>
+              </a>
+              <a class="dropdown-item notification-item" href="#">
+                <div class="notification-icon bg-success">
+                  <i class="bi bi-check-circle"></i>
+                </div>
+                <div class="notification-content">
+                  <div class="notification-title">Entrada registrada</div>
+                  <div class="notification-text">Nova entrada de produtos foi processada</div>
+                  <div class="notification-time">1 hora atrás</div>
+                </div>
+              </a>
+              <a class="dropdown-item notification-item" href="#">
+                <div class="notification-icon bg-info">
+                  <i class="bi bi-info-circle"></i>
+                </div>
+                <div class="notification-content">
+                  <div class="notification-title">Relatório disponível</div>
+                  <div class="notification-text">Relatório mensal de vendas foi gerado</div>
+                  <div class="notification-time">3 horas atrás</div>
+                </div>
+              </a>
+            </div>
+            <div class="dropdown-footer">
+              <a href="#" class="btn btn-sm btn-outline-primary w-100">Ver todas</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Theme toggle -->
+        <div class="nav-item">
+          <button class="nav-link btn btn-link theme-toggle" id="themeToggle" type="button" data-tooltip="Alternar tema">
+            <i class="bi bi-moon fs-5" id="themeIcon"></i>
+          </button>
+        </div>
+      {% endif %}
+    </div>
   </div>
 </nav>
+
+<!-- Add spacing for fixed navbar -->
+<div style="height: 76px;"></div>
+
+<style>
+.navbar {
+  backdrop-filter: blur(20px);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid var(--border-color);
+  height: 76px;
+}
+
+.brand-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.brand-subtitle {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  line-height: 1;
+  font-weight: 400;
+}
+
+.sidebar-toggle {
+  background: none !important;
+  border: none !important;
+  color: var(--text-primary) !important;
+  padding: 0.75rem !important;
+  border-radius: 8px !important;
+  transition: var(--transition-smooth) !important;
+  cursor: pointer !important;
+  z-index: 1060 !important;
+  position: relative !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.sidebar-toggle:hover,
+.sidebar-toggle:focus {
+  background: rgba(108, 92, 231, 0.1) !important;
+  color: var(--accent-blue) !important;
+  outline: none !important;
+}
+
+.sidebar-toggle:active {
+  transform: scale(0.95) !important;
+}
+
+.user-avatar {
+  color: var(--accent-blue);
+}
+
+.nav-link {
+  padding: 0.5rem 1rem !important;
+  border-radius: 8px;
+  transition: var(--transition-smooth);
+  color: var(--text-secondary);
+}
+
+.nav-link:hover {
+  background: rgba(108, 92, 231, 0.1);
+  color: var(--text-primary);
+}
+
+.dropdown-menu {
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-lg);
+  border-radius: 12px;
+  backdrop-filter: blur(20px);
+  z-index: 1070;
+  background: var(--bg-secondary);
+}
+
+.dropdown-item {
+  transition: var(--transition-fast);
+  border-radius: 8px;
+  margin: 0.125rem 0.25rem;
+}
+
+.dropdown-item:hover {
+  background: rgba(108, 92, 231, 0.1);
+}
+
+.notifications-dropdown {
+  width: 350px;
+  max-height: 400px;
+  overflow-y: auto;
+  position: absolute !important;
+  right: 0 !important;
+  top: 100% !important;
+  left: auto !important;
+  margin-top: 0.5rem !important;
+  transform: none !important;
+  will-change: auto !important;
+}
+
+.dropdown-header {
+  padding: 1rem 1.25rem 0.5rem;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+  border-bottom: 1px solid var(--border-color);
+  margin: -0.5rem -0.25rem 0;
+}
+
+.dropdown-body {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.notification-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 0.75rem 1.25rem;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: var(--transition-fast);
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.notification-item:hover {
+  background: rgba(102, 126, 234, 0.08);
+  transform: translateX(2px);
+}
+
+.notification-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.75rem;
+  flex-shrink: 0;
+  font-size: 0.875rem;
+  color: white;
+}
+
+.notification-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.notification-title {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+}
+
+.notification-text {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  line-height: 1.3;
+  margin-bottom: 0.25rem;
+}
+
+.notification-time {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.dropdown-footer {
+  padding: 0.75rem 1.25rem;
+  border-top: 1px solid var(--border-color);
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.02), rgba(118, 75, 162, 0.02));
+}
+
+.theme-toggle {
+  position: relative;
+  overflow: hidden;
+  background: none !important;
+  border: none !important;
+  color: var(--text-secondary) !important;
+  padding: 0.5rem !important;
+  border-radius: 8px !important;
+  transition: var(--transition-smooth) !important;
+  cursor: pointer !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.theme-toggle:hover,
+.theme-toggle:focus,
+.theme-toggle:active {
+  background: rgba(102, 126, 234, 0.1) !important;
+  color: var(--accent-blue) !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.theme-toggle.transitioning {
+  pointer-events: none;
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--accent-blue) !important;
+  outline-offset: 2px !important;
+}
+
+@media (max-width: 768px) {
+  .navbar-nav {
+    flex-direction: row !important;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .nav-item {
+    margin-right: 0 !important;
+  }
+  
+  .nav-item.dropdown {
+    margin-right: 0.75rem !important;
+  }
+  
+  .brand-name {
+    font-size: 1.25rem;
+  }
+  
+  .brand-subtitle {
+    font-size: 0.7rem;
+  }
+  
+  .notifications-dropdown {
+    width: 300px;
+    max-width: calc(100vw - 2rem);
+    right: 0.5rem !important;
+    left: auto !important;
+    transform: none !important;
+    position: absolute !important;
+    top: 100% !important;
+    margin-top: 0.5rem !important;
+  }
+  
+  .dropdown-menu {
+    transform: translateY(0);
+  }
+  
+  /* Fix dropdown positioning */
+  .nav-item.dropdown {
+    position: relative;
+  }
+  
+  .notification-content {
+    font-size: 0.85rem;
+  }
+  
+  /* Fix mobile header spacing and alignment */
+  .navbar .container-fluid {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .navbar-brand {
+    margin-right: auto;
+  }
+  
+  .navbar-nav.ms-auto {
+    margin-left: 0 !important;
+    flex-shrink: 0;
+  }
+  
+  /* Ensure proper alignment of nav items */
+  .nav-link {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0.5rem !important;
+    position: relative;
+  }
+  
+  /* Fix notification badge position */
+  .nav-link .position-absolute {
+    top: 8px !important;
+    right: 8px !important;
+  }
+  
+  /* Fix sidebar toggle button */
+  .sidebar-toggle {
+    z-index: 1060;
+    background: none !important;
+    border: none !important;
+    color: var(--text-primary) !important;
+    padding: 0.5rem !important;
+    border-radius: 8px !important;
+    transition: var(--transition-smooth) !important;
+  }
+  
+  .sidebar-toggle:hover,
+  .sidebar-toggle:focus {
+    background: rgba(108, 92, 231, 0.1) !important;
+    color: var(--accent-blue) !important;
+  }
+  
+  /* Theme toggle button improvements */
+  .theme-toggle {
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* User dropdown improvements */
+  .dropdown-toggle::after {
+    margin-left: 0.5rem;
+  }
+  
+  /* Prevent header content overflow */
+  .navbar {
+    overflow: visible;
+  }
+}
+
+@media (max-width: 576px) {
+  .navbar .container-fluid {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  
+  .brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+  }
+  
+  .brand-name {
+    font-size: 1.1rem;
+  }
+  
+  .brand-subtitle {
+    font-size: 0.65rem;
+  }
+  
+  .notifications-dropdown {
+    width: 280px;
+    max-width: calc(100vw - 1rem);
+    right: 0.5rem !important;
+    left: auto !important;
+    transform: none !important;
+    position: absolute !important;
+    top: 100% !important;
+    margin-top: 0.5rem !important;
+  }
+  
+  /* Compact navigation items */
+  .nav-item.dropdown .nav-link {
+    padding: 0.25rem !important;
+    min-width: 40px;
+    min-height: 40px;
+  }
+  
+  .theme-toggle {
+    min-width: 40px;
+    min-height: 40px;
+  }
+  
+  /* Hide username text on very small screens */
+  .d-none.d-md-inline {
+    display: none !important;
+  }
+}
+</style>

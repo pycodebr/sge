@@ -1,5 +1,133 @@
-<footer class="footer mt-auto py-3 text-center">
+<footer class="modern-footer mt-auto">
   <div class="container">
-    <span class="text-muted">© 2024 SGE</span>
+    <div class="footer-content">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <div class="footer-brand">
+            <div class="brand-logo">
+              <i class="bi bi-boxes"></i>
+            </div>
+            <div class="brand-info">
+              <h6 class="brand-name">SGE</h6>
+              <p class="brand-tagline">Sistema de Gestão de Estoque</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 text-md-end">
+          <div class="footer-meta">
+            <p class="copyright">© 2024 SGE. Todos os direitos reservados.</p>
+            <p class="version">
+              <i class="bi bi-code-square me-1"></i>
+              Versão 1.0.0
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </footer>
+
+<style>
+.modern-footer {
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  padding: 2rem 0;
+  margin-top: 4rem;
+  backdrop-filter: blur(20px);
+  position: relative;
+}
+
+.modern-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--primary-gradient);
+}
+
+.footer-content {
+  color: var(--text-secondary);
+}
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.brand-logo {
+  width: 50px;
+  height: 50px;
+  background: var(--primary-gradient);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: white;
+}
+
+.brand-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  color: var(--text-primary);
+}
+
+.brand-tagline {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-bottom: 0;
+}
+
+.footer-meta {
+  text-align: right;
+}
+
+.copyright {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.version {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+@media (max-width: 768px) {
+  .modern-footer {
+    padding: 1.5rem 0;
+    text-align: center;
+  }
+  
+  .footer-brand {
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+  
+  .footer-meta {
+    text-align: center;
+  }
+  
+  .version {
+    justify-content: center;
+  }
+  
+  .brand-logo {
+    width: 40px;
+    height: 40px;
+    font-size: 1.25rem;
+  }
+  
+  .brand-name {
+    font-size: 1.1rem;
+  }
+}
+</style>

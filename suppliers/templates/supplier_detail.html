@@ -1,16 +1,489 @@
 {% extends 'base.html' %}
 
-{% block content %}
-  <div class="container mt-4">
-    <h3 class="display-4">Detalhes do Fornecedor</h3>
+{% block title %}
+{{ object.name }} - Detalhes do Fornecedor - SGE
+{% endblock %}
 
-    <div class="card">
-      <div class="card-body">
-        <h3 class="card-title">{{ object.name }}</h3>
-        <p class="card-text">{{ object.description }}</p>
+{% block content %}
+<div class="detail-container">
+  <!-- Detail Header -->
+  <div class="detail-header mb-5">
+    <div class="row align-items-center">
+      <div class="col">
+        <h1 class="detail-title">
+          <i class="bi bi-truck me-3"></i>
+          Detalhes do Fornecedor
+        </h1>
+        <p class="detail-subtitle">
+          Visualize as informações completas do fornecedor
+        </p>
+      </div>
+      <div class="col-auto">
+        <div class="detail-actions">
+          <a href="{% url 'supplier_list' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>
+            Voltar
+          </a>
+          {% if perms.suppliers.change_supplier %}
+          <a href="#" class="btn btn-primary">
+            <i class="bi bi-pencil me-2"></i>
+            Editar
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supplier Overview Card -->
+  <div class="detail-card overview-card mb-4">
+    <div class="detail-card-header">
+      <div class="card-header-content">
+        <div class="supplier-avatar">
+          <i class="bi bi-truck"></i>
+        </div>
+        <div class="supplier-info">
+          <h2 class="supplier-name">{{ object.name }}</h2>
+          <div class="supplier-meta">
+            <span class="supplier-badge">
+              <i class="bi bi-truck me-1"></i>
+              Fornecedor Ativo
+            </span>
+            {% if object.cnpj %}
+            <span class="cnpj-badge">
+              <i class="bi bi-card-text me-1"></i>
+              {{ object.cnpj }}
+            </span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Details Grid -->
+  <div class="details-grid">
+    <!-- Basic Information -->
+    <div class="detail-card">
+      <div class="detail-card-header">
+        <h3 class="detail-card-title">
+          <i class="bi bi-info-circle me-2"></i>
+          Informações Básicas
+        </h3>
+      </div>
+      <div class="detail-card-body">
+        <div class="detail-field">
+          <label class="field-label">Nome do Fornecedor</label>
+          <div class="field-value">{{ object.name }}</div>
+        </div>
+        
+        <div class="detail-field">
+          <label class="field-label">Descrição</label>
+          <div class="field-value">
+            {% if object.description %}
+              {{ object.description }}
+            {% else %}
+              <span class="empty-value">Não informado</span>
+            {% endif %}
+          </div>
+        </div>
+        
+        <div class="detail-field">
+          <label class="field-label">CNPJ</label>
+          <div class="field-value code-value">
+            {% if object.cnpj %}
+              {{ object.cnpj }}
+            {% else %}
+              <span class="empty-value">Não informado</span>
+            {% endif %}
+          </div>
+        </div>
       </div>
     </div>
 
-    <a href="{% url 'supplier_list' %}" class="btn btn-secondary mt-3">Voltar para a Lista de Fornecedores</a>
+    <!-- Contact Information -->
+    <div class="detail-card">
+      <div class="detail-card-header">
+        <h3 class="detail-card-title">
+          <i class="bi bi-telephone me-2"></i>
+          Informações de Contato
+        </h3>
+      </div>
+      <div class="detail-card-body">
+        <div class="detail-field">
+          <label class="field-label">Telefone</label>
+          <div class="field-value">
+            {% if object.phone %}
+              {{ object.phone }}
+            {% else %}
+              <span class="empty-value">Não informado</span>
+            {% endif %}
+          </div>
+        </div>
+        
+        <div class="detail-field">
+          <label class="field-label">Email</label>
+          <div class="field-value">
+            {% if object.email %}
+              {{ object.email }}
+            {% else %}
+              <span class="empty-value">Não informado</span>
+            {% endif %}
+          </div>
+        </div>
+        
+        <div class="detail-field">
+          <label class="field-label">Pessoa de Contato</label>
+          <div class="field-value">
+            {% if object.contact_person %}
+              {{ object.contact_person }}
+            {% else %}
+              <span class="empty-value">Não informado</span>
+            {% endif %}
+          </div>
+        </div>
+        
+        <div class="detail-field">
+          <label class="field-label">Endereço</label>
+          <div class="field-value">
+            {% if object.address %}
+              {{ object.address }}
+            {% else %}
+              <span class="empty-value">Não informado</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <!-- Action Buttons -->
+  <div class="detail-actions-footer">
+    <div class="row">
+      <div class="col-md-6">
+        <a href="{% url 'supplier_list' %}" class="btn btn-outline-secondary btn-lg w-100">
+          <i class="bi bi-arrow-left me-2"></i>
+          Voltar à Lista
+        </a>
+      </div>
+      {% if perms.suppliers.change_supplier %}
+      <div class="col-md-6">
+        <a href="#" class="btn btn-primary btn-lg w-100">
+          <i class="bi bi-pencil me-2"></i>
+          Editar Fornecedor
+        </a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<style>
+.detail-container {
+  animation: fadeInUp 0.6s ease-out;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.detail-header {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 2rem;
+  backdrop-filter: blur(20px);
+  position: relative;
+  overflow: hidden;
+}
+
+.detail-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(135deg, #fa709a, #fee140);
+}
+
+.detail-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.detail-subtitle {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.detail-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.overview-card {
+  background: linear-gradient(135deg, rgba(250, 112, 154, 0.05), rgba(254, 225, 64, 0.05));
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 0;
+  backdrop-filter: blur(20px);
+  position: relative;
+  overflow: hidden;
+}
+
+.overview-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(135deg, #fa709a, #fee140);
+}
+
+.card-header-content {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem;
+}
+
+.supplier-avatar {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #fa709a, #fee140);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: white;
+  box-shadow: 0 8px 32px rgba(250, 112, 154, 0.3);
+}
+
+.supplier-info {
+  flex: 1;
+}
+
+.supplier-name {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.supplier-meta {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.supplier-badge,
+.cnpj-badge {
+  background: rgba(250, 112, 154, 0.1);
+  color: #fa709a;
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 1px solid rgba(250, 112, 154, 0.2);
+  display: flex;
+  align-items: center;
+}
+
+.cnpj-badge {
+  background: rgba(79, 172, 254, 0.1);
+  color: #4facfe;
+  border-color: rgba(79, 172, 254, 0.2);
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.detail-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  transition: var(--transition-smooth);
+}
+
+.detail-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.detail-card-header {
+  padding: 1.5rem 2rem 1rem;
+  background: linear-gradient(135deg, rgba(250, 112, 154, 0.03), rgba(254, 225, 64, 0.03));
+  border-bottom: 1px solid var(--border-color);
+}
+
+.detail-card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+}
+
+.detail-card-title i {
+  color: #fa709a;
+}
+
+.detail-card-body {
+  padding: 2rem;
+  display: grid;
+  gap: 1.5rem;
+}
+
+.detail-field {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.field-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.field-value {
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.code-value {
+  font-family: 'Courier New', monospace;
+  background: rgba(250, 112, 154, 0.1);
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid rgba(250, 112, 154, 0.2);
+  display: inline-block;
+}
+
+.empty-value {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.detail-actions-footer {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 2rem;
+  backdrop-filter: blur(20px);
+}
+
+.btn-lg {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: var(--transition-smooth);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-primary {
+  background: var(--primary-gradient);
+  border: none;
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  color: white;
+}
+
+.btn-outline-secondary {
+  background: transparent;
+  border: 2px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.btn-outline-secondary:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--accent-blue);
+  color: var(--text-primary);
+  transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .detail-container {
+    padding: 1rem 0.5rem;
+  }
+  
+  .detail-title {
+    font-size: 1.75rem;
+  }
+  
+  .detail-header {
+    padding: 1.5rem;
+  }
+  
+  .detail-actions {
+    flex-direction: column;
+  }
+  
+  .card-header-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .supplier-avatar {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+  
+  .supplier-name {
+    font-size: 1.5rem;
+  }
+  
+  .details-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .detail-card-header,
+  .detail-card-body {
+    padding: 1.5rem;
+  }
+  
+  .detail-actions-footer .row > div {
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .supplier-meta {
+    justify-content: center;
+  }
+  
+  .overview-card .detail-card-header {
+    padding: 0;
+  }
+}
+</style>
+
 {% endblock %}

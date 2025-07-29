@@ -1,38 +1,410 @@
-<div class="card mt-4">
-  <div class="card-body">
-    <div class="row">
-      <div class="col-md-3">
-        <div class="card bg-primary">
-          <div class="card-body">
-            <h5 class="card-title">Quantidade de vendas</h5>
-            <p class="card-text text-white font-weight-bold display-6">{{ sales_metrics.total_sales }}</p>
+{% load currency_filters %}
+<!-- Sales Metrics Section -->
+<div class="sales-metrics-section mb-5">
+  <h3 class="section-title mb-4">
+    <i class="bi bi-graph-up-arrow me-2"></i>
+    Métricas de Vendas
+  </h3>
+  
+  <div class="row g-4">
+    <!-- Quantidade de Vendas -->
+    <div class="col-xl-3 col-lg-6">
+      <div class="metric-card sales-count">
+        <div class="metric-header">
+          <div class="metric-icon">
+            <i class="bi bi-cart-check"></i>
+          </div>
+          <div class="metric-trend">
+            <i class="bi bi-arrow-up"></i>
           </div>
         </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card bg-danger">
-          <div class="card-body">
-            <h5 class="card-title">Produtos vendidos</h5>
-            <p class="card-text text-white font-weight-bold display-6">{{ sales_metrics.total_products_sold }}</p>
-          </div>
+        <div class="metric-body">
+          <div class="metric-value" data-target="{{ sales_metrics.total_sales }}">0</div>
+          <div class="metric-label">Quantidade de Vendas</div>
+          <div class="metric-subtitle">Total de transações</div>
+        </div>
+        <div class="metric-chart">
+          <canvas id="salesCountChart" width="100" height="40"></canvas>
         </div>
       </div>
-      <div class="col-md-3">
-        <div class="card bg-success">
-          <div class="card-body">
-            <h5 class="card-title">Valor das vendas</h5>
-            <p class="card-text text-white font-weight-bold display-6">R$ {{ sales_metrics.total_sales_value }}</p>
+    </div>
+
+    <!-- Produtos Vendidos -->
+    <div class="col-xl-3 col-lg-6">
+      <div class="metric-card products-sold">
+        <div class="metric-header">
+          <div class="metric-icon">
+            <i class="bi bi-box-seam"></i>
+          </div>
+          <div class="metric-trend">
+            <i class="bi bi-arrow-up"></i>
           </div>
         </div>
+        <div class="metric-body">
+          <div class="metric-value" data-target="{{ sales_metrics.total_products_sold }}">0</div>
+          <div class="metric-label">Produtos Vendidos</div>
+          <div class="metric-subtitle">Unidades totais</div>
+        </div>
+        <div class="metric-chart">
+          <canvas id="productsSoldChart" width="100" height="40"></canvas>
+        </div>
       </div>
-      <div class="col-md-3">
-        <div class="card bg-warning">
-          <div class="card-body">
-            <h5 class="card-title">Lucro das vendas</h5>
-            <p class="card-text text-white font-weight-bold display-6">R$ {{ sales_metrics.total_sales_profit }}</p>
+    </div>
+
+    <!-- Valor das Vendas -->
+    <div class="col-xl-3 col-lg-6">
+      <div class="metric-card sales-value">
+        <div class="metric-header">
+          <div class="metric-icon">
+            <i class="bi bi-cash-coin"></i>
           </div>
+          <div class="metric-trend">
+            <i class="bi bi-arrow-up"></i>
+          </div>
+        </div>
+        <div class="metric-body">
+          <div class="metric-value">R$ <span data-target="{{ sales_metrics.total_sales_value|floatformat:2 }}">0,00</span></div>
+          <div class="metric-label">Valor das Vendas</div>
+          <div class="metric-subtitle">Receita bruta</div>
+        </div>
+        <div class="metric-chart">
+          <canvas id="salesValueChart" width="100" height="40"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lucro das Vendas -->
+    <div class="col-xl-3 col-lg-6">
+      <div class="metric-card sales-profit">
+        <div class="metric-header">
+          <div class="metric-icon">
+            <i class="bi bi-piggy-bank"></i>
+          </div>
+          <div class="metric-trend">
+            <i class="bi bi-arrow-up"></i>
+          </div>
+        </div>
+        <div class="metric-body">
+          <div class="metric-value">R$ <span data-target="{{ sales_metrics.total_sales_profit|floatformat:2 }}">0,00</span></div>
+          <div class="metric-label">Lucro das Vendas</div>
+          <div class="metric-subtitle">Margem de lucro</div>
+        </div>
+        <div class="metric-chart">
+          <canvas id="salesProfitChart" width="100" height="40"></canvas>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<style>
+.sales-metrics-section .section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+}
+
+.sales-metrics-section .section-title i {
+  color: var(--accent-pink);
+}
+
+.metric-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 1.5rem;
+  backdrop-filter: blur(20px);
+  position: relative;
+  overflow: hidden;
+  transition: var(--transition-smooth);
+  height: 100%;
+  min-height: 200px;
+}
+
+.metric-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  border-radius: 20px 20px 0 0;
+}
+
+.metric-card.sales-count::before {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.metric-card.products-sold::before {
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+}
+
+.metric-card.sales-value::before {
+  background: linear-gradient(135deg, #43e97b, #38f9d7);
+}
+
+.metric-card.sales-profit::before {
+  background: linear-gradient(135deg, #fa709a, #fee140);
+}
+
+.metric-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.metric-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.metric-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.sales-count .metric-icon {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+  color: #667eea;
+}
+
+.products-sold .metric-icon {
+  background: linear-gradient(135deg, rgba(79, 172, 254, 0.1), rgba(0, 242, 254, 0.1));
+  color: #4facfe;
+}
+
+.sales-value .metric-icon {
+  background: linear-gradient(135deg, rgba(67, 233, 123, 0.1), rgba(56, 249, 215, 0.1));
+  color: #43e97b;
+}
+
+.sales-profit .metric-icon {
+  background: linear-gradient(135deg, rgba(250, 112, 154, 0.1), rgba(254, 225, 64, 0.1));
+  color: #fa709a;
+}
+
+.metric-trend {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  background: rgba(67, 233, 123, 0.1);
+  color: #43e97b;
+}
+
+.metric-body {
+  text-align: left;
+  margin-bottom: 1rem;
+}
+
+.metric-value {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+}
+
+.metric-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.metric-subtitle {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 0;
+}
+
+.metric-chart {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.metric-chart canvas {
+  width: 100% !important;
+  height: 40px !important;
+}
+
+/* Animation for counters */
+@keyframes countUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.metric-card.animate .metric-value {
+  animation: countUp 0.6s ease-out forwards;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .metric-card {
+    min-height: 180px;
+  }
+  
+  .metric-value {
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .metric-card {
+    min-height: 160px;
+    padding: 1.25rem;
+  }
+  
+  .metric-value {
+    font-size: 1.5rem;
+  }
+  
+  .metric-icon {
+    width: 45px;
+    height: 45px;
+    font-size: 1.25rem;
+  }
+  
+  .metric-trend {
+    width: 28px;
+    height: 28px;
+    font-size: 0.75rem;
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Animate counters
+  function animateCounter(element, target, isMonetary = false) {
+    let current = 0;
+    const increment = target / 50;
+    const timer = setInterval(() => {
+      current += increment;
+      if (current >= target) {
+        current = target;
+        clearInterval(timer);
+      }
+      
+      if (isMonetary) {
+        // Format as Brazilian currency without R$ symbol (since it's already in HTML)
+        element.textContent = current.toLocaleString('pt-BR', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+      } else {
+        element.textContent = Math.floor(current).toLocaleString('pt-BR');
+      }
+    }, 30);
+  }
+
+  // Start counter animations
+  const metricValues = document.querySelectorAll('.metric-value [data-target], .metric-value[data-target]');
+  
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const element = entry.target;
+        const target = parseFloat(element.dataset.target) || 0;
+        const isMonetary = element.closest('.sales-value, .sales-profit');
+        
+        console.log('Animating metric:', {
+          element: element,
+          target: target,
+          isMonetary: !!isMonetary
+        });
+        
+        if (isMonetary && element.tagName === 'SPAN') {
+          animateCounter(element, target, true);
+        } else if (!isMonetary) {
+          animateCounter(element, target, false);
+        }
+        
+        element.closest('.metric-card').classList.add('animate');
+        observer.unobserve(element);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  metricValues.forEach(el => observer.observe(el));
+
+  // Mini charts using Chart.js (if available)
+  if (typeof Chart !== 'undefined') {
+    const chartOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        x: { display: false },
+        y: { display: false }
+      },
+      elements: {
+        point: { radius: 0 },
+        line: { borderWidth: 2, tension: 0.4 }
+      }
+    };
+
+    // Generate sample data for mini charts
+    const generateChartData = (color) => {
+      const data = Array.from({length: 7}, () => Math.floor(Math.random() * 100));
+      return {
+        labels: ['', '', '', '', '', '', ''],
+        datasets: [{
+          data: data,
+          borderColor: color,
+          backgroundColor: color + '20',
+          fill: true
+        }]
+      };
+    };
+
+    // Create mini charts
+    const charts = [
+      { id: 'salesCountChart', color: '#667eea' },
+      { id: 'productsSoldChart', color: '#4facfe' },
+      { id: 'salesValueChart', color: '#43e97b' },
+      { id: 'salesProfitChart', color: '#fa709a' }
+    ];
+
+    charts.forEach(chart => {
+      const canvas = document.getElementById(chart.id);
+      if (canvas) {
+        new Chart(canvas.getContext('2d'), {
+          type: 'line',
+          data: generateChartData(chart.color),
+          options: chartOptions
+        });
+      }
+    });
+  }
+});
+</script>

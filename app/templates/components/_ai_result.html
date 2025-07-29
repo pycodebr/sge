@@ -1,15 +1,638 @@
-<div class="accordion" id="accordionExample">
-  <div class="accordion-item">
-    <h2 class="accordion-header">
-      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo"
-        aria-expanded="false" aria-controls="collapseTwo">
-        SGE Agent
-      </button>
-    </h2>
-    <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-      <div class="accordion-body">
-        {{ ai_result|linebreaks }}
+<!-- SGE AI Agent Section -->
+<div class="sge-agent-section mb-5">
+  <div class="agent-container">
+    <!-- Agent Header -->
+    <div class="agent-header" id="sgeAgentHeader">
+      <div class="agent-branding">
+        <div class="agent-avatar">
+          <div class="avatar-icon">
+            <i class="bi bi-robot"></i>
+          </div>
+          <div class="avatar-pulse"></div>
+        </div>
+        <div class="agent-info">
+          <h3 class="agent-title">
+            SGE Agente
+            <span class="agent-badge">IA</span>
+          </h3>
+          <p class="agent-subtitle">Assistente inteligente para análise de estoque</p>
+        </div>
+      </div>
+      
+      <div class="agent-controls">
+        <div class="agent-status">
+          <div class="status-indicator active"></div>
+          <span class="status-text">Online</span>
+        </div>
+        <button class="agent-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#agentContent" 
+                aria-expanded="false" aria-controls="agentContent">
+          <i class="bi bi-chevron-down"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Agent Content -->
+    <div id="agentContent" class="agent-content collapse">
+      <div class="content-wrapper">
+        {% if ai_result %}
+        <div class="ai-response">
+          <div class="response-header">
+            <div class="response-icon">
+              <i class="bi bi-lightbulb"></i>
+            </div>
+            <div class="response-meta">
+              <span class="response-title">Análise Inteligente</span>
+              <span class="response-time">Atualizado agora</span>
+            </div>
+          </div>
+          
+          <div class="response-content">
+            <div class="response-text">
+              {{ ai_result|linebreaks }}
+            </div>
+          </div>
+          
+          <div class="response-actions">
+            <button class="action-btn refresh-btn" onclick="refreshAIAnalysis()">
+              <i class="bi bi-arrow-clockwise me-2"></i>
+              Nova Análise
+            </button>
+            <button class="action-btn share-btn" onclick="shareAnalysis()">
+              <i class="bi bi-share me-2"></i>
+              Compartilhar
+            </button>
+          </div>
+        </div>
+        {% else %}
+        <div class="ai-placeholder">
+          <div class="placeholder-icon">
+            <i class="bi bi-cpu"></i>
+          </div>
+          <div class="placeholder-content">
+            <h4 class="placeholder-title">Análise em Preparação</h4>
+            <p class="placeholder-text">
+              O SGE Agente está processando seus dados para fornecer insights valiosos sobre seu estoque.
+            </p>
+            <button class="action-btn primary-btn" onclick="requestAnalysis()">
+              <i class="bi bi-play-circle me-2"></i>
+              Solicitar Análise
+            </button>
+          </div>
+        </div>
+        {% endif %}
       </div>
     </div>
   </div>
 </div>
+
+<style>
+.sge-agent-section {
+  position: relative;
+}
+
+.agent-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  position: relative;
+  box-shadow: var(--shadow-md);
+  transition: var(--transition-smooth);
+}
+
+.agent-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 24px 24px 0 0;
+}
+
+.agent-container:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.agent-header {
+  padding: 2rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.03), rgba(118, 75, 162, 0.03));
+  transition: var(--transition-smooth);
+}
+
+.agent-header:hover {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.08));
+}
+
+.agent-branding {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.agent-avatar {
+  position: relative;
+  width: 60px;
+  height: 60px;
+}
+
+.avatar-icon {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  color: white;
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+}
+
+.avatar-pulse {
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 20px;
+  opacity: 0.3;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.1;
+  }
+}
+
+.agent-info {
+  flex: 1;
+}
+
+.agent-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.agent-badge {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.agent-subtitle {
+  color: var(--text-secondary);
+  margin: 0;
+  font-size: 1rem;
+}
+
+.agent-controls {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.agent-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(67, 233, 123, 0.1);
+  border: 1px solid rgba(67, 233, 123, 0.2);
+  border-radius: 20px;
+}
+
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #43e97b;
+  animation: statusBlink 2s infinite;
+}
+
+@keyframes statusBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.status-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #43e97b;
+}
+
+.agent-toggle {
+  width: 48px;
+  height: 48px;
+  background: rgba(102, 126, 234, 0.1);
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  color: #667eea;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.agent-toggle:hover {
+  background: rgba(102, 126, 234, 0.2);
+  transform: scale(1.05);
+}
+
+.agent-toggle[aria-expanded="true"] {
+  transform: rotate(180deg);
+}
+
+.agent-content {
+  position: relative;
+}
+
+.content-wrapper {
+  padding: 0 2rem 2rem;
+}
+
+.ai-response {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.02), rgba(118, 75, 162, 0.02));
+  border: 1px solid rgba(102, 126, 234, 0.1);
+  border-radius: 16px;
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.ai-response::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.response-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.response-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, rgba(255, 183, 77, 0.1), rgba(255, 183, 77, 0.2));
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  color: #ffb74d;
+}
+
+.response-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.response-title {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 1.1rem;
+}
+
+.response-time {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.response-content {
+  margin-bottom: 1.5rem;
+}
+
+.response-text {
+  color: var(--text-primary);
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+.response-text p {
+  margin-bottom: 1rem;
+}
+
+.response-text p:last-child {
+  margin-bottom: 0;
+}
+
+.response-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.action-btn:hover {
+  background: rgba(102, 126, 234, 0.1);
+  border-color: rgba(102, 126, 234, 0.3);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+.action-btn.primary-btn {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border-color: transparent;
+}
+
+.action-btn.primary-btn:hover {
+  background: linear-gradient(135deg, #5a6fd8, #6a4190);
+  color: white;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+}
+
+.ai-placeholder {
+  text-align: center;
+  padding: 3rem 2rem;
+}
+
+.placeholder-icon {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  color: #667eea;
+  margin: 0 auto 2rem;
+  position: relative;
+}
+
+.placeholder-icon::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 22px;
+  z-index: -1;
+  opacity: 0.1;
+}
+
+.placeholder-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.placeholder-text {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .agent-header {
+    padding: 1.5rem;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: flex-start;
+  }
+  
+  .agent-branding {
+    width: 100%;
+  }
+  
+  .agent-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .content-wrapper {
+    padding: 0 1.5rem 1.5rem;
+  }
+  
+  .ai-response {
+    padding: 1.25rem;
+  }
+  
+  .response-actions {
+    flex-direction: column;
+  }
+  
+  .action-btn {
+    justify-content: center;
+  }
+  
+  .ai-placeholder {
+    padding: 2rem 1rem;
+  }
+  
+  .placeholder-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .agent-title {
+    font-size: 1.25rem;
+  }
+  
+  .agent-avatar,
+  .avatar-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+  }
+  
+  .avatar-pulse {
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Initialize tooltips
+  const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl);
+  });
+
+  // Agent toggle animation
+  const agentToggle = document.querySelector('.agent-toggle');
+  const agentContent = document.getElementById('agentContent');
+  
+  if (agentContent) {
+    agentContent.addEventListener('shown.bs.collapse', function () {
+      agentToggle.style.transform = 'rotate(180deg)';
+    });
+    
+    agentContent.addEventListener('hidden.bs.collapse', function () {
+      agentToggle.style.transform = 'rotate(0deg)';
+    });
+  }
+});
+
+// AI Analysis Functions
+function refreshAIAnalysis() {
+  const refreshBtn = document.querySelector('.refresh-btn');
+  if (refreshBtn) {
+    const originalContent = refreshBtn.innerHTML;
+    refreshBtn.innerHTML = '<i class="bi bi-arrow-clockwise me-2 spin"></i>Analisando...';
+    refreshBtn.disabled = true;
+    
+    // Simulate API call
+    setTimeout(() => {
+      refreshBtn.innerHTML = originalContent;
+      refreshBtn.disabled = false;
+      
+      // Show success message
+      showToast('Nova análise solicitada com sucesso!', 'success');
+    }, 2000);
+  }
+}
+
+function shareAnalysis() {
+  if (navigator.share) {
+    navigator.share({
+      title: 'SGE Agente - Análise de Estoque',
+      text: 'Confira esta análise inteligente do seu estoque',
+      url: window.location.href
+    });
+  } else {
+    // Fallback for browsers that don't support Web Share API
+    const textarea = document.createElement('textarea');
+    textarea.value = window.location.href;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    
+    showToast('Link copiado para a área de transferência!', 'success');
+  }
+}
+
+function requestAnalysis() {
+  const requestBtn = document.querySelector('.primary-btn');
+  if (requestBtn) {
+    const originalContent = requestBtn.innerHTML;
+    requestBtn.innerHTML = '<i class="bi bi-cpu me-2 spin"></i>Processando...';
+    requestBtn.disabled = true;
+    
+    // Simulate API call
+    setTimeout(() => {
+      requestBtn.innerHTML = originalContent;
+      requestBtn.disabled = false;
+      
+      showToast('Análise iniciada com sucesso!', 'success');
+    }, 3000);
+  }
+}
+
+function showToast(message, type = 'info') {
+  // Create toast element
+  const toast = document.createElement('div');
+  toast.className = `toast align-items-center text-white bg-${type} border-0`;
+  toast.setAttribute('role', 'alert');
+  toast.setAttribute('aria-live', 'assertive');
+  toast.setAttribute('aria-atomic', 'true');
+  
+  toast.innerHTML = `
+    <div class="d-flex">
+      <div class="toast-body">
+        ${message}
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  `;
+  
+  // Add to toast container or create one
+  let toastContainer = document.querySelector('.toast-container');
+  if (!toastContainer) {
+    toastContainer = document.createElement('div');
+    toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+    document.body.appendChild(toastContainer);
+  }
+  
+  toastContainer.appendChild(toast);
+  
+  // Initialize and show toast
+  const bootstrapToast = new bootstrap.Toast(toast);
+  bootstrapToast.show();
+  
+  // Remove toast after it's hidden
+  toast.addEventListener('hidden.bs.toast', function () {
+    toast.remove();
+  });
+}
+
+// Add spin animation for loading states
+const style = document.createElement('style');
+style.textContent = `
+  .spin {
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+`;
+document.head.appendChild(style);
+</script>

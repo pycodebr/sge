@@ -1,19 +1,468 @@
 {% extends 'base.html' %}
 
-{% block content %}
-  <div class="container mt-4">
-    <h3 class="display-4">Editar Categoria</h3>
+{% block title %}
+Editar Categoria - SGE
+{% endblock %}
 
-    <div class="card">
-      <div class="card-body">
-        <form method="post" class="form">
-          {% csrf_token %}
-          {{ form.as_p }}
-          <button type="submit" class="btn btn-primary">Salvar Categoria</button>
-        </form>
+{% block content %}
+<div class="form-container">
+  <!-- Form Header -->
+  <div class="form-header mb-5">
+    <div class="row align-items-center">
+      <div class="col">
+        <h1 class="form-title">
+          <i class="bi bi-pencil-square me-3"></i>
+          Editar Categoria
+        </h1>
+        <p class="form-subtitle">
+          Atualize as informações da categoria
+        </p>
+      </div>
+      <div class="col-auto">
+        <a href="{% url 'category_list' %}" class="btn btn-outline-secondary">
+          <i class="bi bi-arrow-left me-2"></i>
+          Voltar
+        </a>
       </div>
     </div>
-
-    <a href="{% url 'category_list' %}" class="btn btn-secondary mt-3">Cancelar e Voltar para a Lista de Categorias</a>
   </div>
+
+  <!-- Form Content -->
+  <div class="form-card">
+    <div class="form-card-header">
+      <h3 class="form-card-title">
+        <i class="bi bi-folder me-2"></i>
+        Informações da Categoria
+      </h3>
+      <p class="form-card-subtitle">Edite os dados da categoria</p>
+    </div>
+    
+    <div class="form-card-body">
+      <form method="post" class="modern-form" novalidate>
+        {% csrf_token %}
+        
+        {% for field in form %}
+        <div class="form-group">
+          <label for="{{ field.id_for_label }}" class="form-label">
+            {{ field.label }}
+            {% if field.field.required %}
+            <span class="required-indicator">*</span>
+            {% endif %}
+          </label>
+          
+          <div class="input-container">
+            {% if field.name == 'name' %}
+              <div class="input-icon">
+                <i class="bi bi-folder"></i>
+              </div>
+            {% elif field.name == 'description' %}
+              <div class="input-icon">
+                <i class="bi bi-text-paragraph"></i>
+              </div>
+            {% endif %}
+            
+            {{ field }}
+            
+            {% if field.errors %}
+            <div class="field-errors">
+              {% for error in field.errors %}
+              <div class="error-message">
+                <i class="bi bi-exclamation-circle me-1"></i>
+                {{ error }}
+              </div>
+              {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+          
+          {% if field.help_text %}
+          <div class="form-help">
+            {{ field.help_text }}
+          </div>
+          {% endif %}
+        </div>
+        {% endfor %}
+        
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary btn-lg">
+            <i class="bi bi-check-circle me-2"></i>
+            Atualizar Categoria
+          </button>
+          <a href="{% url 'category_list' %}" class="btn btn-outline-secondary btn-lg">
+            <i class="bi bi-x-circle me-2"></i>
+            Cancelar
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<style>
+.form-container {
+  animation: fadeInUp 0.6s ease-out;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.form-header {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 2rem;
+  backdrop-filter: blur(20px);
+  position: relative;
+  overflow: hidden;
+}
+
+.form-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+}
+
+.form-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.form-subtitle {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.form-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-lg);
+}
+
+.form-card-header {
+  padding: 2rem 2rem 1rem;
+  background: linear-gradient(135deg, rgba(79, 172, 254, 0.05), rgba(0, 242, 254, 0.05));
+  border-bottom: 1px solid var(--border-color);
+}
+
+.form-card-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+}
+
+.form-card-title i {
+  color: #4facfe;
+}
+
+.form-card-subtitle {
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.form-card-body {
+  padding: 2rem;
+}
+
+.modern-form {
+  display: grid;
+  gap: 2rem;
+}
+
+.form-group {
+  position: relative;
+}
+
+.form-label {
+  display: block;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+}
+
+.required-indicator {
+  color: #fa709a;
+  margin-left: 0.25rem;
+}
+
+.input-container {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  top: 50%;
+  left: 1rem;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.modern-form .form-control,
+.modern-form .form-select {
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1rem 1rem 1rem 3rem;
+  font-size: 1rem;
+  color: var(--text-primary);
+  transition: var(--transition-smooth);
+  min-height: 54px;
+}
+
+.modern-form .form-control:focus,
+.modern-form .form-select:focus {
+  background: var(--bg-card-hover);
+  border-color: #4facfe;
+  box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+  outline: none;
+}
+
+.modern-form .form-control::placeholder {
+  color: var(--text-muted);
+}
+
+.modern-form textarea.form-control {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.field-errors {
+  margin-top: 0.5rem;
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  color: #fa709a;
+  font-size: 0.875rem;
+  background: rgba(250, 112, 154, 0.1);
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid rgba(250, 112, 154, 0.2);
+}
+
+.form-help {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.btn-lg {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: var(--transition-smooth);
+  display: flex;
+  align-items: center;
+  min-width: 140px;
+  justify-content: center;
+}
+
+.btn-primary {
+  background: var(--primary-gradient);
+  border: none;
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  color: white;
+}
+
+.btn-outline-secondary {
+  background: transparent;
+  border: 2px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.btn-outline-secondary:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--accent-blue);
+  color: var(--text-primary);
+  transform: translateY(-2px);
+}
+
+/* Form validation states */
+.form-control.is-invalid,
+.form-select.is-invalid {
+  border-color: #fa709a;
+  box-shadow: 0 0 0 3px rgba(250, 112, 154, 0.1);
+}
+
+.form-control.is-valid,
+.form-select.is-valid {
+  border-color: #4facfe;
+  box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+}
+
+/* Loading state */
+.btn[disabled] {
+  opacity: 0.7;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .form-container {
+    padding: 1rem 0.5rem;
+  }
+  
+  .form-title {
+    font-size: 1.75rem;
+  }
+  
+  .form-header,
+  .form-card-header,
+  .form-card-body {
+    padding: 1.5rem;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .btn-lg {
+    width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .modern-form .form-control,
+  .modern-form .form-select {
+    padding: 0.875rem 0.875rem 0.875rem 2.75rem;
+    min-height: 50px;
+  }
+  
+  .input-icon {
+    left: 0.875rem;
+    font-size: 1rem;
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Form validation and enhancement
+  const form = document.querySelector('.modern-form');
+  const inputs = form.querySelectorAll('.form-control, .form-select');
+  
+  // Real-time validation
+  inputs.forEach(input => {
+    input.addEventListener('blur', function() {
+      validateField(this);
+    });
+    
+    input.addEventListener('input', function() {
+      if (this.classList.contains('is-invalid')) {
+        validateField(this);
+      }
+    });
+  });
+  
+  function validateField(field) {
+    const value = field.value.trim();
+    const isRequired = field.hasAttribute('required');
+    
+    // Remove existing validation classes
+    field.classList.remove('is-valid', 'is-invalid');
+    
+    if (isRequired && !value) {
+      field.classList.add('is-invalid');
+      return false;
+    } else if (value) {
+      field.classList.add('is-valid');
+      return true;
+    }
+    
+    return true;
+  }
+  
+  // Form submission
+  form.addEventListener('submit', function(e) {
+    let isValid = true;
+    
+    inputs.forEach(input => {
+      if (!validateField(input)) {
+        isValid = false;
+      }
+    });
+    
+    if (isValid) {
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerHTML;
+      
+      submitBtn.innerHTML = '<i class="bi bi-arrow-clockwise me-2 spin"></i>Atualizando...';
+      submitBtn.disabled = true;
+      
+      // Re-enable if form fails server validation
+      setTimeout(() => {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+      }, 5000);
+    } else {
+      e.preventDefault();
+      
+      // Scroll to first invalid field
+      const firstInvalid = form.querySelector('.is-invalid');
+      if (firstInvalid) {
+        firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        firstInvalid.focus();
+      }
+    }
+  });
+  
+  // Add floating label effect
+  inputs.forEach(input => {
+    if (input.value) {
+      input.parentElement.parentElement.classList.add('has-value');
+    }
+    
+    input.addEventListener('focus', function() {
+      this.parentElement.parentElement.classList.add('focused');
+    });
+    
+    input.addEventListener('blur', function() {
+      this.parentElement.parentElement.classList.remove('focused');
+      if (this.value) {
+        this.parentElement.parentElement.classList.add('has-value');
+      } else {
+        this.parentElement.parentElement.classList.remove('has-value');
+      }
+    });
+  });
+});
+</script>
+
 {% endblock %}

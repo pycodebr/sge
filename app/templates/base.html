@@ -1,37 +1,84 @@
 <!DOCTYPE html>
-<html lang="pt-br" data-bs-theme="dark">
+<html lang="pt-br" data-bs-theme="dark" data-theme="dark">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}{% endblock %}</title>
-
+  <title>{% block title %}SGE - Sistema de Gestão de Estoque{% endblock %}</title>
+  
+  <!-- Preconnect for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+  <!-- Modern fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Bootstrap 5.3.2 -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+  
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  
+  <!-- Custom Modern CSS -->
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/sge-modern.css' %}">
+  
+  <!-- Meta tags for SEO and PWA -->
+  <meta name="description" content="Sistema de Gestão de Estoque - SGE. Controle moderno e eficiente do seu inventário.">
+  <meta name="theme-color" content="#0f0f23">
+  <meta name="msapplication-navbutton-color" content="#0f0f23">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
+  {% block extra_head %}{% endblock %}
 </head>
 
-<body>
+<body class="loading">
   {% include 'components/_header.html' %}
 
   <div class="container-fluid">
-    {% if user.is_authenticated %}
-      {% include 'components/_sidebar.html' %}
-    {% endif %}
-
-      <div class="col py-3">
-
-        <div class="container mt-4">
-          <main>
-            {% block content %}
-            {% endblock %}
-          </main>
+    <div class="row">
+      {% if user.is_authenticated %}
+        {% include 'components/_sidebar.html' %}
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+      {% else %}
+        <main class="col-12 main-content">
+      {% endif %}
+        
+        <!-- Page content -->
+        <div class="page-wrapper py-4">
+          {% if messages %}
+            <div class="messages-container mb-4">
+              {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                  <i class="bi bi-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-triangle{% else %}info-circle{% endif %} me-2"></i>
+                  {{ message }}
+                  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+          
+          {% block content %}
+          {% endblock %}
         </div>
-
-      </div>
+      </main>
     </div>
   </div>
+  
   {% include 'components/_footer.html' %}
+  
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="{% static 'js/sge-modern.js' %}"></script>
+  
+  {% block extra_scripts %}{% endblock %}
+  
+  <!-- Remove loading class when page is ready -->
+  <script>
+    window.addEventListener('load', function() {
+      document.body.classList.remove('loading');
+    });
+  </script>
 </body>
 
 </html>

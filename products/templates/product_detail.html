@@ -1,22 +1,644 @@
 {% extends 'base.html' %}
 
-{% block content %}
-  <div class="container mt-4">
-    <h3 class="display-4">Detalhes do Produto</h3>
+{% block title %}
+{{ object.title }} - Detalhes do Produto - SGE
+{% endblock %}
 
-    <div class="card">
-      <div class="card-body">
-        <h3 class="card-title">{{ object.title }}</h3>
-        <p class="card-text">Categoria: {{ object.category }}</p>
-        <p class="card-text">Marca: {{ object.brand }}</p>
-        <p class="card-text">{{ object.description }}</p>
-        <p class="card-text">Número de Série: <strong>{{ object.serie_number }}</strong></p>
-        <p class="card-text">Preço de Custo: <strong>R$ {{ object.cost_price }}</strong></p>
-        <p class="card-text">Preço de Venda: <strong>R$ {{ object.selling_price }}</strong></p>
-        <p class="card-text">Quantidade em Estoque: <strong>{{ object.quantity }}</strong></p>
+{% block content %}
+<div class="detail-container">
+  <!-- Detail Header -->
+  <div class="detail-header mb-5">
+    <div class="row align-items-center">
+      <div class="col">
+        <h1 class="detail-title">
+          <i class="bi bi-box-seam me-3"></i>
+          Detalhes do Produto
+        </h1>
+        <p class="detail-subtitle">
+          Visualize as informações completas do produto
+        </p>
+      </div>
+      <div class="col-auto">
+        <div class="detail-actions">
+          <a href="{% url 'product_list' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>
+            Voltar
+          </a>
+          {% if perms.products.change_product %}
+          <a href="#" class="btn btn-primary">
+            <i class="bi bi-pencil me-2"></i>
+            Editar
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product Overview Card -->
+  <div class="detail-card overview-card mb-4">
+    <div class="detail-card-header">
+      <div class="card-header-content">
+        <div class="product-avatar">
+          <i class="bi bi-box-seam"></i>
+        </div>
+        <div class="product-info">
+          <h2 class="product-name">{{ object.title }}</h2>
+          <div class="product-meta">
+            <span class="category-badge">
+              <i class="bi bi-folder me-1"></i>
+              {{ object.category }}
+            </span>
+            <span class="brand-badge">
+              <i class="bi bi-award me-1"></i>
+              {{ object.brand }}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="stock-indicator">
+        {% if object.quantity > 10 %}
+        <div class="stock-status high">
+          <i class="bi bi-check-circle"></i>
+          <span>Em Estoque</span>
+        </div>
+        {% elif object.quantity > 0 %}
+        <div class="stock-status low">
+          <i class="bi bi-exclamation-triangle"></i>
+          <span>Estoque Baixo</span>
+        </div>
+        {% else %}
+        <div class="stock-status empty">
+          <i class="bi bi-x-circle"></i>
+          <span>Sem Estoque</span>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Details Grid -->
+  <div class="details-grid">
+    <!-- Basic Information -->
+    <div class="detail-card">
+      <div class="detail-card-header">
+        <h3 class="detail-card-title">
+          <i class="bi bi-info-circle me-2"></i>
+          Informações Básicas
+        </h3>
+      </div>
+      <div class="detail-card-body">
+        <div class="detail-field">
+          <label class="field-label">Nome do Produto</label>
+          <div class="field-value">{{ object.title }}</div>
+        </div>
+        
+        <div class="detail-field">
+          <label class="field-label">Descrição</label>
+          <div class="field-value">
+            {% if object.description %}
+              {{ object.description }}
+            {% else %}
+              <span class="empty-value">Não informado</span>
+            {% endif %}
+          </div>
+        </div>
+        
+        <div class="detail-field">
+          <label class="field-label">Número de Série</label>
+          <div class="field-value code-value">
+            {% if object.serie_number %}
+              {{ object.serie_number }}
+            {% else %}
+              <span class="empty-value">Não informado</span>
+            {% endif %}
+          </div>
+        </div>
       </div>
     </div>
 
-    <a href="{% url 'product_list' %}" class="btn btn-secondary mt-3">Voltar para a Lista de Produtos</a>
+    <!-- Pricing Information -->
+    <div class="detail-card">
+      <div class="detail-card-header">
+        <h3 class="detail-card-title">
+          <i class="bi bi-currency-dollar me-2"></i>
+          Informações de Preço
+        </h3>
+      </div>
+      <div class="detail-card-body">
+        <div class="detail-field">
+          <label class="field-label">Preço de Custo</label>
+          <div class="field-value price-value cost-price">
+            R$ {{ object.cost_price|floatformat:2 }}
+          </div>
+        </div>
+        
+        <div class="detail-field">
+          <label class="field-label">Preço de Venda</label>
+          <div class="field-value price-value selling-price">
+            R$ {{ object.selling_price|floatformat:2 }}
+          </div>
+        </div>
+        
+        <div class="detail-field">
+          <label class="field-label">Margem de Lucro</label>
+          <div class="field-value profit-margin">
+            {% widthratio object.selling_price object.cost_price 100 %}%
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stock Information -->
+    <div class="detail-card">
+      <div class="detail-card-header">
+        <h3 class="detail-card-title">
+          <i class="bi bi-boxes me-2"></i>
+          Informações de Estoque
+        </h3>
+      </div>
+      <div class="detail-card-body">
+        <div class="detail-field">
+          <label class="field-label">Quantidade em Estoque</label>
+          <div class="field-value stock-value">
+            <span class="stock-number">{{ object.quantity }}</span>
+            <span class="stock-unit">unidades</span>
+          </div>
+        </div>
+        
+        <div class="detail-field">
+          <label class="field-label">Valor Total em Estoque</label>
+          <div class="field-value total-value">
+            R$ {% widthratio object.selling_price 1 object.quantity %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category & Brand Information -->
+    <div class="detail-card">
+      <div class="detail-card-header">
+        <h3 class="detail-card-title">
+          <i class="bi bi-tags me-2"></i>
+          Categoria e Marca
+        </h3>
+      </div>
+      <div class="detail-card-body">
+        <div class="detail-field">
+          <label class="field-label">Categoria</label>
+          <div class="field-value">
+            <span class="category-link">
+              <i class="bi bi-folder me-2"></i>
+              {{ object.category }}
+            </span>
+          </div>
+        </div>
+        
+        <div class="detail-field">
+          <label class="field-label">Marca</label>
+          <div class="field-value">
+            <span class="brand-link">
+              <i class="bi bi-award me-2"></i>
+              {{ object.brand }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <!-- Action Buttons -->
+  <div class="detail-actions-footer">
+    <div class="row">
+      <div class="col-md-6">
+        <a href="{% url 'product_list' %}" class="btn btn-outline-secondary btn-lg w-100">
+          <i class="bi bi-arrow-left me-2"></i>
+          Voltar à Lista
+        </a>
+      </div>
+      {% if perms.products.change_product %}
+      <div class="col-md-6">
+        <a href="#" class="btn btn-primary btn-lg w-100">
+          <i class="bi bi-pencil me-2"></i>
+          Editar Produto
+        </a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<style>
+.detail-container {
+  animation: fadeInUp 0.6s ease-out;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.detail-header {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 2rem;
+  backdrop-filter: blur(20px);
+  position: relative;
+  overflow: hidden;
+}
+
+.detail-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.detail-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.detail-subtitle {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.detail-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.overview-card {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 0;
+  backdrop-filter: blur(20px);
+  position: relative;
+  overflow: hidden;
+}
+
+.overview-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+}
+
+.card-header-content {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem;
+}
+
+.product-avatar {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: white;
+  box-shadow: 0 8px 32px rgba(79, 172, 254, 0.3);
+}
+
+.product-info {
+  flex: 1;
+}
+
+.product-name {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.product-meta {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.category-badge,
+.brand-badge {
+  background: rgba(79, 172, 254, 0.1);
+  color: #4facfe;
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 1px solid rgba(79, 172, 254, 0.2);
+  display: flex;
+  align-items: center;
+}
+
+.brand-badge {
+  background: rgba(67, 233, 123, 0.1);
+  color: #43e97b;
+  border-color: rgba(67, 233, 123, 0.2);
+}
+
+.stock-indicator {
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+}
+
+.stock-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.stock-status.high {
+  background: rgba(67, 233, 123, 0.1);
+  color: #43e97b;
+  border: 1px solid rgba(67, 233, 123, 0.2);
+}
+
+.stock-status.low {
+  background: rgba(255, 183, 77, 0.1);
+  color: #ffb74d;
+  border: 1px solid rgba(255, 183, 77, 0.2);
+}
+
+.stock-status.empty {
+  background: rgba(250, 112, 154, 0.1);
+  color: #fa709a;
+  border: 1px solid rgba(250, 112, 154, 0.2);
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.detail-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  transition: var(--transition-smooth);
+}
+
+.detail-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.detail-card-header {
+  padding: 1.5rem 2rem 1rem;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.03), rgba(118, 75, 162, 0.03));
+  border-bottom: 1px solid var(--border-color);
+}
+
+.detail-card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+}
+
+.detail-card-title i {
+  color: var(--accent-blue);
+}
+
+.detail-card-body {
+  padding: 2rem;
+  display: grid;
+  gap: 1.5rem;
+}
+
+.detail-field {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.field-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.field-value {
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.price-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.cost-price {
+  color: #fa709a;
+}
+
+.selling-price {
+  color: #43e97b;
+}
+
+.profit-margin {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--accent-blue);
+}
+
+.stock-value {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.stock-number {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent-blue);
+}
+
+.stock-unit {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.total-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #4facfe;
+}
+
+.code-value {
+  font-family: 'Courier New', monospace;
+  background: rgba(102, 126, 234, 0.1);
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  display: inline-block;
+}
+
+.empty-value {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.category-link,
+.brand-link {
+  display: flex;
+  align-items: center;
+  color: var(--text-primary);
+  text-decoration: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  background: rgba(79, 172, 254, 0.05);
+  border: 1px solid rgba(79, 172, 254, 0.1);
+  transition: var(--transition-smooth);
+  display: inline-flex;
+}
+
+.brand-link {
+  background: rgba(67, 233, 123, 0.05);
+  border-color: rgba(67, 233, 123, 0.1);
+}
+
+.category-link:hover,
+.brand-link:hover {
+  background: rgba(79, 172, 254, 0.1);
+  transform: translateY(-1px);
+}
+
+.detail-actions-footer {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 2rem;
+  backdrop-filter: blur(20px);
+}
+
+.btn-lg {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: var(--transition-smooth);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-primary {
+  background: var(--primary-gradient);
+  border: none;
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  color: white;
+}
+
+.btn-outline-secondary {
+  background: transparent;
+  border: 2px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.btn-outline-secondary:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--accent-blue);
+  color: var(--text-primary);
+  transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .detail-container {
+    padding: 1rem 0.5rem;
+  }
+  
+  .detail-title {
+    font-size: 1.75rem;
+  }
+  
+  .detail-header {
+    padding: 1.5rem;
+  }
+  
+  .detail-actions {
+    flex-direction: column;
+  }
+  
+  .card-header-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .product-avatar {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+  
+  .product-name {
+    font-size: 1.5rem;
+  }
+  
+  .details-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .detail-card-header,
+  .detail-card-body {
+    padding: 1.5rem;
+  }
+  
+  .detail-actions-footer .row > div {
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .product-meta {
+    justify-content: center;
+  }
+  
+  .stock-indicator {
+    padding: 1rem;
+  }
+  
+  .overview-card .detail-card-header {
+    padding: 0;
+  }
+}
+</style>
+
 {% endblock %}
