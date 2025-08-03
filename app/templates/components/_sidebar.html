@@ -1,4 +1,4 @@
-<aside id="sidebar" class="fixed left-0 top-0 z-40 h-screen w-64 transform bg-gradient-to-b from-slate-950/90 to-blue-950/90 backdrop-blur-lg border-r border-border/40 transition-transform duration-300 ease-in-out md:translate-x-0 -translate-x-full">
+<aside id="sidebar" class="fixed left-0 top-0 z-50 h-screen w-64 transform bg-gradient-to-b from-slate-950/90 to-blue-950/90 backdrop-blur-lg border-r border-border/40 transition-transform duration-300 ease-in-out md:translate-x-0 -translate-x-full md:z-40">
   <div class="flex h-full flex-col">
     <!-- Sidebar Header -->
     <div class="flex items-center justify-between p-4 border-b border-border/40">
@@ -133,7 +133,7 @@
 </aside>
 
 <!-- Sidebar overlay for mobile -->
-<div id="sidebar-overlay" class="fixed inset-0 z-30 bg-black/50 backdrop-blur-sm md:hidden hidden"></div>
+<div id="sidebar-overlay" class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm md:hidden hidden"></div>
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
@@ -142,27 +142,49 @@
     const sidebarOverlay = document.getElementById('sidebar-overlay');
     const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
     
+    // Function to open sidebar
+    function openSidebar() {
+      console.log('Opening sidebar'); // Debug
+      sidebar.classList.remove('-translate-x-full');
+      if (sidebarOverlay) {
+        sidebarOverlay.classList.remove('hidden');
+      }
+    }
+    
+    // Function to close sidebar
+    function closeSidebar() {
+      console.log('Closing sidebar'); // Debug
+      sidebar.classList.add('-translate-x-full');
+      if (sidebarOverlay) {
+        sidebarOverlay.classList.add('hidden');
+      }
+    }
+    
     // Toggle sidebar for mobile
     if (mobileMenuToggle) {
-      mobileMenuToggle.addEventListener('click', function() {
-        sidebar.classList.toggle('-translate-x-full');
-        sidebarOverlay.classList.toggle('hidden');
+      mobileMenuToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log('Mobile menu toggle clicked'); // Debug
+        if (sidebar.classList.contains('-translate-x-full')) {
+          openSidebar();
+        } else {
+          closeSidebar();
+        }
       });
     }
     
     // Close sidebar
     if (sidebarClose) {
-      sidebarClose.addEventListener('click', function() {
-        sidebar.classList.add('-translate-x-full');
-        sidebarOverlay.classList.add('hidden');
+      sidebarClose.addEventListener('click', function(e) {
+        e.preventDefault();
+        closeSidebar();
       });
     }
     
     // Close sidebar when clicking overlay
     if (sidebarOverlay) {
       sidebarOverlay.addEventListener('click', function() {
-        sidebar.classList.add('-translate-x-full');
-        sidebarOverlay.classList.add('hidden');
+        closeSidebar();
       });
     }
     

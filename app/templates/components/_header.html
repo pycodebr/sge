@@ -1,4 +1,4 @@
-<header class="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+<header class="sticky top-0 z-30 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
   <div class="flex h-16 items-center justify-between px-4 md:px-6">
     <div class="flex items-center space-x-4">
       <a href="{% url 'home' %}" class="flex items-center space-x-3 group">
@@ -33,25 +33,14 @@
     {% endif %}
   </div>
   
-  <!-- Mobile Menu Toggle (if needed) -->
+  <!-- Mobile Menu Toggle (only for authenticated users) -->
+  {% if user.is_authenticated %}
   <div class="md:hidden px-4 pb-2">
     <button id="mobile-menu-toggle" class="w-full flex items-center justify-center space-x-2 p-2 text-muted-foreground hover:text-primary transition-colors duration-200 rounded-lg hover:bg-accent border border-border">
       <i data-lucide="menu" class="w-4 h-4"></i>
       <span class="text-sm">Menu</span>
     </button>
   </div>
+  {% endif %}
 </header>
 
-<script>
-  // Mobile menu toggle functionality
-  document.addEventListener('DOMContentLoaded', function() {
-    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-    const sidebar = document.getElementById('sidebar');
-    
-    if (mobileMenuToggle && sidebar) {
-      mobileMenuToggle.addEventListener('click', function() {
-        sidebar.classList.toggle('-translate-x-full');
-      });
-    }
-  });
-</script>
