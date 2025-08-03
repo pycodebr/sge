@@ -50,150 +50,518 @@
   </div>
 {% endif %}
 
-<!-- Charts Section -->
+<!-- Enhanced Charts Section -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+
+<style>
+.chart-container {
+  position: relative;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chart-container:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.chart-header {
+  position: relative;
+  overflow: hidden;
+}
+
+.chart-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+}
+
+.chart-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+}
+
+.chart-canvas {
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+}
+
+.chart-canvas.loaded {
+  opacity: 1;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+}
+
+.loading-shimmer {
+  background: linear-gradient(90deg, 
+    rgba(255, 255, 255, 0.1) 0%, 
+    rgba(255, 255, 255, 0.3) 50%, 
+    rgba(255, 255, 255, 0.1) 100%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+  height: 20px;
+  margin: 10px 0;
+}
+</style>
 
 {% if perms.outflows.view_outflow %}
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
   <!-- Daily Sales Chart -->
-  <div class="rounded-lg border border-border bg-card p-6 glass-effect">
-    <div class="flex items-center space-x-2 mb-4">
-      <div class="h-5 w-5 bg-gradient-to-r from-blue-500 to-cyan-500 rounded flex items-center justify-center">
-        <i data-lucide="line-chart" class="h-3 w-3 text-white"></i>
+  <div class="chart-container p-6">
+    <div class="chart-header flex items-center justify-between mb-6">
+      <div class="flex items-center space-x-3">
+        <div class="h-6 w-6 bg-gradient-to-r from-blue-500 via-cyan-500 to-blue-600 rounded-lg flex items-center justify-center shadow-lg">
+          <i data-lucide="trending-up" class="h-4 w-4 text-white"></i>
+        </div>
+        <div>
+          <h3 class="font-semibold text-lg">Valor de Vendas</h3>
+          <p class="text-sm text-muted-foreground">Últimos 7 dias</p>
+        </div>
       </div>
-      <h3 class="font-semibold">Valor de Vendas (Últimos 7 Dias)</h3>
+      <div class="flex items-center space-x-2">
+        <button id="resetZoomSales" class="px-3 py-1 text-xs bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 rounded-md transition-colors">
+          Reset Zoom
+        </button>
+      </div>
     </div>
-    <div class="h-80">
-      <canvas id="dailySalesChart" class="w-full h-full"></canvas>
+    <div class="chart-loading" id="salesLoading">
+      <div class="loading-shimmer w-full"></div>
+      <div class="loading-shimmer w-3/4"></div>
+      <div class="loading-shimmer w-1/2"></div>
+    </div>
+    <div class="h-80 relative">
+      <canvas id="dailySalesChart" class="chart-canvas w-full h-full"></canvas>
     </div>
   </div>
   
   <!-- Daily Sales Quantity Chart -->
-  <div class="rounded-lg border border-border bg-card p-6 glass-effect">
-    <div class="flex items-center space-x-2 mb-4">
-      <div class="h-5 w-5 bg-gradient-to-r from-purple-500 to-pink-500 rounded flex items-center justify-center">
-        <i data-lucide="bar-chart" class="h-3 w-3 text-white"></i>
+  <div class="chart-container p-6">
+    <div class="chart-header flex items-center justify-between mb-6">
+      <div class="flex items-center space-x-3">
+        <div class="h-6 w-6 bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
+          <i data-lucide="bar-chart-3" class="h-4 w-4 text-white"></i>
+        </div>
+        <div>
+          <h3 class="font-semibold text-lg">Quantidade de Vendas</h3>
+          <p class="text-sm text-muted-foreground">Vendas diárias</p>
+        </div>
       </div>
-      <h3 class="font-semibold">Quantidade de Vendas Diárias</h3>
+      <div class="flex items-center space-x-2">
+        <button id="resetZoomQuantity" class="px-3 py-1 text-xs bg-purple-500/20 hover:bg-purple-500/30 text-purple-400 rounded-md transition-colors">
+          Reset Zoom
+        </button>
+      </div>
     </div>
-    <div class="h-80">
-      <canvas id="dailySalesQuantityChart" class="w-full h-full"></canvas>
+    <div class="chart-loading" id="quantityLoading">
+      <div class="loading-shimmer w-full"></div>
+      <div class="loading-shimmer w-3/4"></div>
+      <div class="loading-shimmer w-1/2"></div>
+    </div>
+    <div class="h-80 relative">
+      <canvas id="dailySalesQuantityChart" class="chart-canvas w-full h-full"></canvas>
     </div>
   </div>
 </div>
 
 <script>
   document.addEventListener("DOMContentLoaded", function() {
-    const chartOptions = {
+    // Register zoom plugin
+    Chart.register(ChartZoom);
+    
+    // Enhanced gradient creation function
+    function createGradient(ctx, colorStops, direction = 'vertical') {
+      const gradient = direction === 'vertical' 
+        ? ctx.createLinearGradient(0, 0, 0, ctx.canvas.height)
+        : ctx.createLinearGradient(0, 0, ctx.canvas.width, 0);
+      
+      colorStops.forEach((stop, index) => {
+        gradient.addColorStop(index / (colorStops.length - 1), stop);
+      });
+      
+      return gradient;
+    }
+
+    // Enhanced tooltip configuration
+    const enhancedTooltip = {
+      backgroundColor: 'rgba(0, 0, 0, 0.9)',
+      titleColor: '#ffffff',
+      bodyColor: '#ffffff',
+      borderColor: 'rgba(255, 255, 255, 0.2)',
+      borderWidth: 1,
+      cornerRadius: 12,
+      displayColors: true,
+      padding: 16,
+      titleFont: {
+        size: 14,
+        weight: 'bold'
+      },
+      bodyFont: {
+        size: 13
+      },
+      animation: {
+        duration: 200
+      },
+      filter: function(tooltipItem) {
+        return tooltipItem.parsed.y !== null;
+      },
+      callbacks: {
+        title: function(context) {
+          return `📅 ${context[0].label}`;
+        },
+        label: function(context) {
+          const value = context.parsed.y;
+          const dataset = context.dataset;
+          
+          if (dataset.label.includes('Valor')) {
+            return `💰 ${dataset.label}: R$ ${value.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+          } else {
+            return `📦 ${dataset.label}: ${value} unidades`;
+          }
+        },
+        afterLabel: function(context) {
+          const dataIndex = context.dataIndex;
+          const dataset = context.dataset;
+          const total = dataset.data.reduce((sum, val) => sum + val, 0);
+          const percentage = ((context.parsed.y / total) * 100).toFixed(1);
+          return `📊 ${percentage}% do total`;
+        }
+      }
+    };
+
+    // Enhanced animation configuration
+    const enhancedAnimation = {
+      duration: 2000,
+      easing: 'easeOutQuart',
+      delay: (context) => {
+        return context.type === 'data' && context.mode === 'default' 
+          ? context.dataIndex * 100 
+          : 0;
+      }
+    };
+
+    // Base chart options with modern styling
+    const modernChartOptions = {
       responsive: true,
       maintainAspectRatio: false,
+      interaction: {
+        intersect: false,
+        mode: 'index'
+      },
+      animation: enhancedAnimation,
       plugins: {
         legend: {
+          display: true,
+          position: 'top',
+          align: 'end',
           labels: {
-            color: 'rgb(156, 163, 175)', // text-gray-400
+            color: 'rgb(156, 163, 175)',
             font: {
-              family: 'Inter, system-ui, sans-serif'
-            }
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+              weight: '500'
+            },
+            padding: 20,
+            usePointStyle: true,
+            pointStyle: 'circle'
+          }
+        },
+        tooltip: enhancedTooltip,
+        zoom: {
+          zoom: {
+            wheel: {
+              enabled: true,
+              speed: 0.1
+            },
+            pinch: {
+              enabled: true
+            },
+            mode: 'x'
+          },
+          pan: {
+            enabled: true,
+            mode: 'x'
           }
         }
       },
       scales: {
         x: {
           grid: {
-            color: 'rgba(156, 163, 175, 0.1)'
+            color: 'rgba(156, 163, 175, 0.1)',
+            drawBorder: false
           },
           ticks: {
-            color: 'rgb(156, 163, 175)'
+            color: 'rgb(156, 163, 175)',
+            font: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 11
+            },
+            maxTicksLimit: 7
           }
         },
         y: {
           grid: {
-            color: 'rgba(156, 163, 175, 0.1)'
+            color: 'rgba(156, 163, 175, 0.1)',
+            drawBorder: false
           },
           ticks: {
-            color: 'rgb(156, 163, 175)'
+            color: 'rgb(156, 163, 175)',
+            font: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 11
+            },
+            callback: function(value) {
+              if (this.chart.data.datasets[0].label.includes('Valor')) {
+                return 'R$ ' + value.toLocaleString('pt-BR');
+              }
+              return value;
+            }
           },
           beginAtZero: true
         }
+      },
+      onHover: (event, activeElements) => {
+        event.native.target.style.cursor = activeElements.length > 0 ? 'pointer' : 'default';
       }
     };
     
     var dailySalesData = JSON.parse('{{ daily_sales_data|safe }}');
     var dailySalesQuantityData = JSON.parse('{{ daily_sales_quantity_data|safe }}');
 
-    var ctxDailySales = document.getElementById('dailySalesChart').getContext('2d');
-    var dailySalesChart = new Chart(ctxDailySales, {
-      type: 'line',
-      data: {
-        labels: dailySalesData.dates,
-        datasets: [{
-          label: 'Valor em vendas',
-          data: dailySalesData.values,
-          fill: true,
-          backgroundColor: 'rgba(59, 130, 246, 0.1)',
-          borderColor: 'rgb(59, 130, 246)',
-          borderWidth: 2,
-          tension: 0.4,
-          pointBackgroundColor: 'rgb(59, 130, 246)',
-          pointBorderColor: 'rgb(255, 255, 255)',
-          pointBorderWidth: 2
-        }]
-      },
-      options: chartOptions
-    });
+    // Enhanced Daily Sales Chart
+    setTimeout(() => {
+      document.getElementById('salesLoading').style.display = 'none';
+      const salesCanvas = document.getElementById('dailySalesChart');
+      const salesCtx = salesCanvas.getContext('2d');
+      
+      const salesGradient = createGradient(salesCtx, [
+        'rgba(59, 130, 246, 0.8)',
+        'rgba(147, 51, 234, 0.4)',
+        'rgba(59, 130, 246, 0.1)'
+      ]);
+      
+      const salesBorderGradient = createGradient(salesCtx, [
+        'rgb(59, 130, 246)',
+        'rgb(147, 51, 234)'
+      ], 'horizontal');
 
-    var ctxDailySalesQuantity = document.getElementById('dailySalesQuantityChart').getContext('2d');
-    var dailySalesQuantityChart = new Chart(ctxDailySalesQuantity, {
-      type: 'bar',
-      data: {
-        labels: dailySalesQuantityData.dates,
-        datasets: [{
-          label: 'Quantidade de Vendas',
-          data: dailySalesQuantityData.values,
-          backgroundColor: 'rgba(147, 51, 234, 0.6)',
-          borderColor: 'rgb(147, 51, 234)',
-          borderWidth: 1,
-          borderRadius: 4
-        }]
-      },
-      options: chartOptions
-    });
+      salesCanvas.classList.add('loaded');
+      
+      var dailySalesChart = new Chart(salesCtx, {
+        type: 'line',
+        data: {
+          labels: dailySalesData.dates,
+          datasets: [{
+            label: 'Valor em vendas',
+            data: dailySalesData.values,
+            fill: true,
+            backgroundColor: salesGradient,
+            borderColor: salesBorderGradient,
+            borderWidth: 3,
+            tension: 0.4,
+            pointBackgroundColor: 'rgb(59, 130, 246)',
+            pointBorderColor: 'rgb(255, 255, 255)',
+            pointBorderWidth: 3,
+            pointRadius: 6,
+            pointHoverRadius: 8,
+            pointHoverBackgroundColor: 'rgb(147, 51, 234)',
+            pointHoverBorderColor: 'rgb(255, 255, 255)',
+            pointHoverBorderWidth: 3,
+            shadowColor: 'rgba(59, 130, 246, 0.3)',
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowOffsetY: 4
+          }]
+        },
+        options: {
+          ...modernChartOptions,
+          onClick: (event, elements) => {
+            if (elements.length > 0) {
+              const dataIndex = elements[0].index;
+              const value = dailySalesData.values[dataIndex];
+              const date = dailySalesData.dates[dataIndex];
+              
+              // Create a subtle notification
+              const notification = document.createElement('div');
+              notification.className = 'fixed top-4 right-4 bg-blue-500/90 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
+              notification.innerHTML = `📊 ${date}: R$ ${value.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+              document.body.appendChild(notification);
+              
+              setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 300);
+              }, 3000);
+            }
+          }
+        }
+      });
+
+      // Reset zoom functionality
+      document.getElementById('resetZoomSales').addEventListener('click', () => {
+        dailySalesChart.resetZoom();
+      });
+    }, 500);
+
+    // Enhanced Daily Sales Quantity Chart
+    setTimeout(() => {
+      document.getElementById('quantityLoading').style.display = 'none';
+      const quantityCanvas = document.getElementById('dailySalesQuantityChart');
+      const quantityCtx = quantityCanvas.getContext('2d');
+      
+      const quantityGradient = createGradient(quantityCtx, [
+        'rgba(147, 51, 234, 0.9)',
+        'rgba(236, 72, 153, 0.7)',
+        'rgba(147, 51, 234, 0.5)'
+      ]);
+
+      quantityCanvas.classList.add('loaded');
+      
+      var dailySalesQuantityChart = new Chart(quantityCtx, {
+        type: 'bar',
+        data: {
+          labels: dailySalesQuantityData.dates,
+          datasets: [{
+            label: 'Quantidade de Vendas',
+            data: dailySalesQuantityData.values,
+            backgroundColor: quantityGradient,
+            borderColor: 'rgb(147, 51, 234)',
+            borderWidth: 2,
+            borderRadius: {
+              topLeft: 8,
+              topRight: 8
+            },
+            borderSkipped: false,
+            shadowColor: 'rgba(147, 51, 234, 0.3)',
+            shadowBlur: 8,
+            shadowOffsetX: 0,
+            shadowOffsetY: 2
+          }]
+        },
+        options: {
+          ...modernChartOptions,
+          onClick: (event, elements) => {
+            if (elements.length > 0) {
+              const dataIndex = elements[0].index;
+              const value = dailySalesQuantityData.values[dataIndex];
+              const date = dailySalesQuantityData.dates[dataIndex];
+              
+              // Create a subtle notification
+              const notification = document.createElement('div');
+              notification.className = 'fixed top-4 right-4 bg-purple-500/90 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
+              notification.innerHTML = `📦 ${date}: ${value} unidades`;
+              document.body.appendChild(notification);
+              
+              setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 300);
+              }, 3000);
+            }
+          }
+        }
+      });
+
+      // Reset zoom functionality
+      document.getElementById('resetZoomQuantity').addEventListener('click', () => {
+        dailySalesQuantityChart.resetZoom();
+      });
+    }, 800);
   });
 </script>
 {% endif %}
 
-<!-- Product Distribution Charts -->
+<!-- Enhanced Product Distribution Charts -->
 {% if perms.products.view_product %}
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
   <!-- Products by Category -->
-  <div class="rounded-lg border border-border bg-card p-6 glass-effect">
+  <div class="chart-container p-6">
     {% if product_count_by_category != '{}' %}
-      <div class="flex items-center space-x-2 mb-4">
-        <div class="h-5 w-5 bg-gradient-to-r from-green-500 to-emerald-500 rounded flex items-center justify-center">
-          <i data-lucide="pie-chart" class="h-3 w-3 text-white"></i>
+      <div class="chart-header flex items-center justify-between mb-6">
+        <div class="flex items-center space-x-3">
+          <div class="h-6 w-6 bg-gradient-to-r from-green-500 via-emerald-500 to-teal-600 rounded-lg flex items-center justify-center shadow-lg">
+            <i data-lucide="pie-chart" class="h-4 w-4 text-white"></i>
+          </div>
+          <div>
+            <h3 class="font-semibold text-lg">Produtos por Categoria</h3>
+            <p class="text-sm text-muted-foreground">Distribuição por categoria</p>
+          </div>
         </div>
-        <h3 class="font-semibold">Produtos por Categoria</h3>
+        <div class="flex items-center space-x-2">
+          <button id="toggleCategoryLegend" class="px-3 py-1 text-xs bg-green-500/20 hover:bg-green-500/30 text-green-400 rounded-md transition-colors">
+            Toggle Legend
+          </button>
+        </div>
+      </div>
+      <div class="chart-loading" id="categoryLoading">
+        <div class="loading-shimmer w-full"></div>
+        <div class="loading-shimmer w-3/4"></div>
+        <div class="loading-shimmer w-1/2"></div>
       </div>
       <div class="flex justify-center">
-        <div class="w-80 h-80">
-          <canvas id="productByCategoryChart" class="w-full h-full"></canvas>
+        <div class="w-80 h-80 relative">
+          <canvas id="productByCategoryChart" class="chart-canvas w-full h-full"></canvas>
+          <div id="categoryCenter" class="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div class="text-center">
+              <div class="text-2xl font-bold text-green-500" id="categoryTotal">0</div>
+              <div class="text-sm text-muted-foreground">Total</div>
+            </div>
+          </div>
         </div>
       </div>
     {% endif %}
   </div>
   
   <!-- Products by Brand -->
-  <div class="rounded-lg border border-border bg-card p-6 glass-effect">
+  <div class="chart-container p-6">
     {% if product_count_by_category != '{}' %}
-      <div class="flex items-center space-x-2 mb-4">
-        <div class="h-5 w-5 bg-gradient-to-r from-orange-500 to-red-500 rounded flex items-center justify-center">
-          <i data-lucide="pie-chart" class="h-3 w-3 text-white"></i>
+      <div class="chart-header flex items-center justify-between mb-6">
+        <div class="flex items-center space-x-3">
+          <div class="h-6 w-6 bg-gradient-to-r from-orange-500 via-red-500 to-pink-600 rounded-lg flex items-center justify-center shadow-lg">
+            <i data-lucide="tag" class="h-4 w-4 text-white"></i>
+          </div>
+          <div>
+            <h3 class="font-semibold text-lg">Produtos por Marca</h3>
+            <p class="text-sm text-muted-foreground">Distribuição por marca</p>
+          </div>
         </div>
-        <h3 class="font-semibold">Produtos por Marca</h3>
+        <div class="flex items-center space-x-2">
+          <button id="toggleBrandLegend" class="px-3 py-1 text-xs bg-orange-500/20 hover:bg-orange-500/30 text-orange-400 rounded-md transition-colors">
+            Toggle Legend
+          </button>
+        </div>
+      </div>
+      <div class="chart-loading" id="brandLoading">
+        <div class="loading-shimmer w-full"></div>
+        <div class="loading-shimmer w-3/4"></div>
+        <div class="loading-shimmer w-1/2"></div>
       </div>
       <div class="flex justify-center">
-        <div class="w-80 h-80">
-          <canvas id="productByBrandChart" class="w-full h-full"></canvas>
+        <div class="w-80 h-80 relative">
+          <canvas id="productByBrandChart" class="chart-canvas w-full h-full"></canvas>
+          <div id="brandCenter" class="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div class="text-center">
+              <div class="text-2xl font-bold text-orange-500" id="brandTotal">0</div>
+              <div class="text-sm text-muted-foreground">Total</div>
+            </div>
+          </div>
         </div>
       </div>
     {% endif %}
@@ -202,20 +570,99 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", function() {
-    const doughnutOptions = {
+    // Enhanced doughnut options with modern styling
+    const modernDoughnutOptions = {
       responsive: true,
       maintainAspectRatio: false,
+      cutout: '60%',
+      interaction: {
+        intersect: false
+      },
+      animation: {
+        duration: 2000,
+        easing: 'easeOutQuart',
+        animateRotate: true,
+        delay: (context) => {
+          return context.type === 'data' && context.mode === 'default' 
+            ? context.dataIndex * 200 
+            : 0;
+        }
+      },
       plugins: {
         legend: {
           position: 'bottom',
+          align: 'center',
           labels: {
             color: 'rgb(156, 163, 175)',
             font: {
-              family: 'Inter, system-ui, sans-serif'
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+              weight: '500'
             },
             padding: 20,
-            usePointStyle: true
+            usePointStyle: true,
+            pointStyle: 'circle',
+            generateLabels: function(chart) {
+              const original = Chart.overrides.doughnut.plugins.legend.labels.generateLabels;
+              const labels = original.call(this, chart);
+              
+              labels.forEach((label, index) => {
+                const value = chart.data.datasets[0].data[index];
+                const total = chart.data.datasets[0].data.reduce((sum, val) => sum + val, 0);
+                const percentage = ((value / total) * 100).toFixed(1);
+                label.text = `${label.text} (${percentage}%)`;
+              });
+              
+              return labels;
+            }
           }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(0, 0, 0, 0.9)',
+          titleColor: '#ffffff',
+          bodyColor: '#ffffff',
+          borderColor: 'rgba(255, 255, 255, 0.2)',
+          borderWidth: 1,
+          cornerRadius: 12,
+          displayColors: true,
+          padding: 16,
+          titleFont: {
+            size: 14,
+            weight: 'bold'
+          },
+          bodyFont: {
+            size: 13
+          },
+          callbacks: {
+            title: function(context) {
+              return `📂 ${context[0].label}`;
+            },
+            label: function(context) {
+              const value = context.parsed;
+              const total = context.dataset.data.reduce((sum, val) => sum + val, 0);
+              const percentage = ((value / total) * 100).toFixed(1);
+              return `📦 ${value} produtos (${percentage}%)`;
+            }
+          }
+        }
+      },
+      onHover: (event, activeElements, chart) => {
+        event.native.target.style.cursor = activeElements.length > 0 ? 'pointer' : 'default';
+        
+        // Update center text on hover
+        const chartType = chart.canvas.id.includes('Category') ? 'category' : 'brand';
+        const centerElement = document.getElementById(`${chartType}Total`);
+        
+        if (activeElements.length > 0) {
+          const dataIndex = activeElements[0].index;
+          const value = chart.data.datasets[0].data[dataIndex];
+          const label = chart.data.labels[dataIndex];
+          centerElement.textContent = value;
+          centerElement.nextElementSibling.textContent = label;
+        } else {
+          const total = chart.data.datasets[0].data.reduce((sum, val) => sum + val, 0);
+          centerElement.textContent = total;
+          centerElement.nextElementSibling.textContent = 'Total';
         }
       }
     };
@@ -223,65 +670,166 @@
     var productCountByCategory = JSON.parse('{{ product_count_by_category|safe }}');
     var productCountByBrand = JSON.parse('{{ product_count_by_brand|safe }}');
 
-    // Category Chart
-    var ctxCategory = document.getElementById('productByCategoryChart').getContext('2d');
-    var productByCategoryChart = new Chart(ctxCategory, {
-      type: 'doughnut',
-      data: {
-        labels: Object.keys(productCountByCategory),
-        datasets: [{
-          data: Object.values(productCountByCategory),
-          backgroundColor: [
-            'rgba(59, 130, 246, 0.8)',
-            'rgba(147, 51, 234, 0.8)',
-            'rgba(16, 185, 129, 0.8)',
-            'rgba(245, 158, 11, 0.8)',
-            'rgba(239, 68, 68, 0.8)',
-            'rgba(139, 92, 246, 0.8)'
-          ],
-          borderColor: [
-            'rgb(59, 130, 246)',
-            'rgb(147, 51, 234)',
-            'rgb(16, 185, 129)',
-            'rgb(245, 158, 11)',
-            'rgb(239, 68, 68)',
-            'rgb(139, 92, 246)'
-          ],
-          borderWidth: 2
-        }]
-      },
-      options: doughnutOptions
-    });
+    // Modern color palettes with gradients
+    const vibrantCategoryColors = {
+      background: [
+        'rgba(59, 130, 246, 0.8)',   // Blue
+        'rgba(147, 51, 234, 0.8)',   // Purple
+        'rgba(16, 185, 129, 0.8)',   // Emerald
+        'rgba(245, 158, 11, 0.8)',   // Amber
+        'rgba(239, 68, 68, 0.8)',    // Red
+        'rgba(139, 92, 246, 0.8)',   // Violet
+        'rgba(34, 197, 94, 0.8)',    // Green
+        'rgba(249, 115, 22, 0.8)'    // Orange
+      ],
+      border: [
+        'rgb(59, 130, 246)',
+        'rgb(147, 51, 234)',
+        'rgb(16, 185, 129)',
+        'rgb(245, 158, 11)',
+        'rgb(239, 68, 68)',
+        'rgb(139, 92, 246)',
+        'rgb(34, 197, 94)',
+        'rgb(249, 115, 22)'
+      ]
+    };
 
-    // Brand Chart
-    var ctxBrand = document.getElementById('productByBrandChart').getContext('2d');
-    var productByBrandChart = new Chart(ctxBrand, {
-      type: 'doughnut',
-      data: {
-        labels: Object.keys(productCountByBrand),
-        datasets: [{
-          data: Object.values(productCountByBrand),
-          backgroundColor: [
-            'rgba(249, 115, 22, 0.8)',
-            'rgba(239, 68, 68, 0.8)',
-            'rgba(236, 72, 153, 0.8)',
-            'rgba(168, 85, 247, 0.8)',
-            'rgba(99, 102, 241, 0.8)',
-            'rgba(59, 130, 246, 0.8)'
-          ],
-          borderColor: [
-            'rgb(249, 115, 22)',
-            'rgb(239, 68, 68)',
-            'rgb(236, 72, 153)',
-            'rgb(168, 85, 247)',
-            'rgb(99, 102, 241)',
-            'rgb(59, 130, 246)'
-          ],
-          borderWidth: 2
-        }]
-      },
-      options: doughnutOptions
-    });
+    const vibrantBrandColors = {
+      background: [
+        'rgba(249, 115, 22, 0.8)',   // Orange
+        'rgba(239, 68, 68, 0.8)',    // Red
+        'rgba(236, 72, 153, 0.8)',   // Pink
+        'rgba(168, 85, 247, 0.8)',   // Purple
+        'rgba(99, 102, 241, 0.8)',   // Indigo
+        'rgba(59, 130, 246, 0.8)',   // Blue
+        'rgba(14, 165, 233, 0.8)',   // Sky
+        'rgba(6, 182, 212, 0.8)'     // Cyan
+      ],
+      border: [
+        'rgb(249, 115, 22)',
+        'rgb(239, 68, 68)',
+        'rgb(236, 72, 153)',
+        'rgb(168, 85, 247)',
+        'rgb(99, 102, 241)',
+        'rgb(59, 130, 246)',
+        'rgb(14, 165, 233)',
+        'rgb(6, 182, 212)'
+      ]
+    };
+
+    // Enhanced Category Chart
+    setTimeout(() => {
+      document.getElementById('categoryLoading').style.display = 'none';
+      const categoryCanvas = document.getElementById('productByCategoryChart');
+      const categoryCtx = categoryCanvas.getContext('2d');
+      
+      categoryCanvas.classList.add('loaded');
+      
+      // Calculate total for center display
+      const categoryTotal = Object.values(productCountByCategory).reduce((sum, val) => sum + val, 0);
+      document.getElementById('categoryTotal').textContent = categoryTotal;
+
+      var productByCategoryChart = new Chart(categoryCtx, {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(productCountByCategory),
+          datasets: [{
+            data: Object.values(productCountByCategory),
+            backgroundColor: vibrantCategoryColors.background,
+            borderColor: vibrantCategoryColors.border,
+            borderWidth: 3,
+            hoverBackgroundColor: vibrantCategoryColors.background.map(color => color.replace('0.8', '1')),
+            hoverBorderColor: vibrantCategoryColors.border,
+            hoverBorderWidth: 4,
+            hoverOffset: 8
+          }]
+        },
+        options: {
+          ...modernDoughnutOptions,
+          onClick: (event, elements) => {
+            if (elements.length > 0) {
+              const dataIndex = elements[0].index;
+              const value = Object.values(productCountByCategory)[dataIndex];
+              const label = Object.keys(productCountByCategory)[dataIndex];
+              
+              // Create notification
+              const notification = document.createElement('div');
+              notification.className = 'fixed top-4 right-4 bg-green-500/90 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
+              notification.innerHTML = `📂 ${label}: ${value} produtos`;
+              document.body.appendChild(notification);
+              
+              setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 300);
+              }, 3000);
+            }
+          }
+        }
+      });
+
+      // Toggle legend functionality
+      document.getElementById('toggleCategoryLegend').addEventListener('click', () => {
+        productByCategoryChart.options.plugins.legend.display = !productByCategoryChart.options.plugins.legend.display;
+        productByCategoryChart.update();
+      });
+    }, 1000);
+
+    // Enhanced Brand Chart
+    setTimeout(() => {
+      document.getElementById('brandLoading').style.display = 'none';
+      const brandCanvas = document.getElementById('productByBrandChart');
+      const brandCtx = brandCanvas.getContext('2d');
+      
+      brandCanvas.classList.add('loaded');
+      
+      // Calculate total for center display
+      const brandTotal = Object.values(productCountByBrand).reduce((sum, val) => sum + val, 0);
+      document.getElementById('brandTotal').textContent = brandTotal;
+
+      var productByBrandChart = new Chart(brandCtx, {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(productCountByBrand),
+          datasets: [{
+            data: Object.values(productCountByBrand),
+            backgroundColor: vibrantBrandColors.background,
+            borderColor: vibrantBrandColors.border,
+            borderWidth: 3,
+            hoverBackgroundColor: vibrantBrandColors.background.map(color => color.replace('0.8', '1')),
+            hoverBorderColor: vibrantBrandColors.border,
+            hoverBorderWidth: 4,
+            hoverOffset: 8
+          }]
+        },
+        options: {
+          ...modernDoughnutOptions,
+          onClick: (event, elements) => {
+            if (elements.length > 0) {
+              const dataIndex = elements[0].index;
+              const value = Object.values(productCountByBrand)[dataIndex];
+              const label = Object.keys(productCountByBrand)[dataIndex];
+              
+              // Create notification
+              const notification = document.createElement('div');
+              notification.className = 'fixed top-4 right-4 bg-orange-500/90 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
+              notification.innerHTML = `🏷️ ${label}: ${value} produtos`;
+              document.body.appendChild(notification);
+              
+              setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 300);
+              }, 3000);
+            }
+          }
+        }
+      });
+
+      // Toggle legend functionality
+      document.getElementById('toggleBrandLegend').addEventListener('click', () => {
+        productByBrandChart.options.plugins.legend.display = !productByBrandChart.options.plugins.legend.display;
+        productByBrandChart.update();
+      });
+    }, 1300);
   });
 </script>
 {% endif %}
