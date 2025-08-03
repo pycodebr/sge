@@ -1,0 +1,297 @@
+{% extends 'base.html' %}
+{% block title %}SGE - Perfil do Usuário{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+  <!-- Header Section -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">
+        Perfil do Usuário
+      </h1>
+      <p class="text-muted-foreground mt-2">Gerencie suas informações pessoais e configurações</p>
+    </div>
+    <div class="flex items-center space-x-2">
+      <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+      <span class="text-sm text-muted-foreground">Online</span>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Profile Information Card -->
+    <div class="lg:col-span-2">
+      <div class="relative overflow-hidden rounded-lg border border-border bg-card glass-effect">
+        <!-- Animated background -->
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-cyan-500/5"></div>
+        
+        <div class="relative p-6">
+          <div class="flex items-center space-x-3 mb-6">
+            <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+              <i data-lucide="user" class="w-5 h-5 text-white"></i>
+            </div>
+            <h2 class="text-xl font-semibold">Informações Pessoais</h2>
+          </div>
+
+          <!-- Success Message -->
+          {% if messages %}
+            {% for message in messages %}
+              <div class="mb-6 p-4 rounded-md border border-green-500/50 bg-green-500/10">
+                <div class="flex items-center space-x-2">
+                  <i data-lucide="check-circle" class="h-4 w-4 text-green-500"></i>
+                  <p class="text-sm text-green-400">{{ message }}</p>
+                </div>
+              </div>
+            {% endfor %}
+          {% endif %}
+
+          <!-- Profile Form -->
+          <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- First Name Field -->
+              <div class="space-y-2">
+                <label for="first_name" class="text-sm font-medium leading-none">
+                  Nome
+                </label>
+                <div class="relative">
+                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i data-lucide="user-check" class="h-4 w-4 text-muted-foreground"></i>
+                  </div>
+                  <input 
+                    type="text" 
+                    id="first_name" 
+                    name="first_name" 
+                    value="{{ form.first_name.value|default:'' }}"
+                    class="flex h-10 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200"
+                    placeholder="Digite seu nome"
+                  >
+                </div>
+                {% if form.first_name.errors %}
+                  <div class="text-xs text-destructive">
+                    {% for error in form.first_name.errors %}
+                      <p>{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+
+              <!-- Last Name Field -->
+              <div class="space-y-2">
+                <label for="last_name" class="text-sm font-medium leading-none">
+                  Sobrenome
+                </label>
+                <div class="relative">
+                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i data-lucide="users" class="h-4 w-4 text-muted-foreground"></i>
+                  </div>
+                  <input 
+                    type="text" 
+                    id="last_name" 
+                    name="last_name" 
+                    value="{{ form.last_name.value|default:'' }}"
+                    class="flex h-10 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200"
+                    placeholder="Digite seu sobrenome"
+                  >
+                </div>
+                {% if form.last_name.errors %}
+                  <div class="text-xs text-destructive">
+                    {% for error in form.last_name.errors %}
+                      <p>{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Username Field -->
+            <div class="space-y-2">
+              <label for="username" class="text-sm font-medium leading-none">
+                Usuário
+              </label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <i data-lucide="at-sign" class="h-4 w-4 text-muted-foreground"></i>
+                </div>
+                <input 
+                  type="text" 
+                  id="username" 
+                  name="username" 
+                  required
+                  value="{{ form.username.value|default:'' }}"
+                  class="flex h-10 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200"
+                  placeholder="Digite seu usuário"
+                >
+              </div>
+              {% if form.username.errors %}
+                <div class="text-xs text-destructive">
+                  {% for error in form.username.errors %}
+                    <p>{{ error }}</p>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+
+            <!-- Email Field -->
+            <div class="space-y-2">
+              <label for="email" class="text-sm font-medium leading-none">
+                Email
+              </label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <i data-lucide="mail" class="h-4 w-4 text-muted-foreground"></i>
+                </div>
+                <input 
+                  type="email" 
+                  id="email" 
+                  name="email" 
+                  value="{{ form.email.value|default:'' }}"
+                  class="flex h-10 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200"
+                  placeholder="Digite seu email"
+                >
+              </div>
+              {% if form.email.errors %}
+                <div class="text-xs text-destructive">
+                  {% for error in form.email.errors %}
+                    <p>{{ error }}</p>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+
+            <!-- Submit Button -->
+            <div class="flex justify-end">
+              <button 
+                type="submit" 
+                class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-6 py-2 group"
+              >
+                <i data-lucide="save" class="w-4 h-4 mr-2 group-hover:scale-110 transition-transform duration-200"></i>
+                Salvar Alterações
+              </button>
+            </div>
+          </form>
+
+          <!-- Form Errors -->
+          {% if form.errors %}
+            <div class="mt-6 p-4 rounded-md border border-destructive/50 bg-destructive/10">
+              <div class="flex items-center space-x-2 mb-2">
+                <i data-lucide="alert-circle" class="h-4 w-4 text-destructive"></i>
+                <h3 class="text-sm font-medium text-destructive">Erro ao salvar</h3>
+              </div>
+              <ul class="text-sm text-destructive-foreground space-y-1">
+                {% for field in form %}
+                  {% for error in field.errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                  <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Actions Sidebar -->
+    <div class="space-y-6">
+      <!-- User Avatar Card -->
+      <div class="relative overflow-hidden rounded-lg border border-border bg-card glass-effect">
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-cyan-500/5"></div>
+        
+        <div class="relative p-6 text-center">
+          <div class="mx-auto w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4 animate-glow">
+            <i data-lucide="user" class="w-10 h-10 text-white"></i>
+          </div>
+          <h3 class="text-lg font-semibold">{{ user.first_name|default:user.username }}</h3>
+          <p class="text-sm text-muted-foreground">{{ user.email }}</p>
+          <div class="mt-4 flex items-center justify-center space-x-2 text-xs text-green-400">
+            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <span>Usuário Ativo</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions Card -->
+      <div class="relative overflow-hidden rounded-lg border border-border bg-card glass-effect">
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-cyan-500/5"></div>
+        
+        <div class="relative p-6">
+          <div class="flex items-center space-x-3 mb-4">
+            <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+              <i data-lucide="settings" class="w-4 h-4 text-white"></i>
+            </div>
+            <h3 class="text-lg font-semibold">Ações Rápidas</h3>
+          </div>
+
+          <div class="space-y-3">
+            <!-- Change Password Link -->
+            <a 
+              href="{% url 'password_change' %}" 
+              class="flex items-center space-x-3 p-3 rounded-lg border border-border/50 hover:border-primary/50 bg-background/50 hover:bg-primary/5 transition-all duration-200 group"
+            >
+              <div class="w-8 h-8 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
+                <i data-lucide="key" class="w-4 h-4 text-white"></i>
+              </div>
+              <div>
+                <p class="text-sm font-medium">Alterar Senha</p>
+                <p class="text-xs text-muted-foreground">Mude sua senha de acesso</p>
+              </div>
+              <i data-lucide="arrow-right" class="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all duration-200 ml-auto"></i>
+            </a>
+
+            <!-- Back to Dashboard Link -->
+            <a 
+              href="{% url 'home' %}" 
+              class="flex items-center space-x-3 p-3 rounded-lg border border-border/50 hover:border-primary/50 bg-background/50 hover:bg-primary/5 transition-all duration-200 group"
+            >
+              <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
+                <i data-lucide="home" class="w-4 h-4 text-white"></i>
+              </div>
+              <div>
+                <p class="text-sm font-medium">Dashboard</p>
+                <p class="text-xs text-muted-foreground">Voltar ao painel principal</p>
+              </div>
+              <i data-lucide="arrow-right" class="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all duration-200 ml-auto"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Account Info Card -->
+      <div class="relative overflow-hidden rounded-lg border border-border bg-card glass-effect">
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-cyan-500/5"></div>
+        
+        <div class="relative p-6">
+          <div class="flex items-center space-x-3 mb-4">
+            <div class="w-8 h-8 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg flex items-center justify-center">
+              <i data-lucide="info" class="w-4 h-4 text-white"></i>
+            </div>
+            <h3 class="text-lg font-semibold">Informações da Conta</h3>
+          </div>
+
+          <div class="space-y-3 text-sm">
+            <div class="flex justify-between">
+              <span class="text-muted-foreground">Data de Cadastro:</span>
+              <span>{{ user.date_joined|date:"d/m/Y" }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-muted-foreground">Último Login:</span>
+              <span>{{ user.last_login|date:"d/m/Y H:i" }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-muted-foreground">Status:</span>
+              <span class="text-green-400">
+                <i data-lucide="check-circle" class="w-3 h-3 inline mr-1"></i>
+                Ativo
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

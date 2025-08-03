@@ -95,8 +95,19 @@
           </div>
         {% endif %}
 
-        <!-- Additional Info -->
+        <!-- Registration Link -->
         <div class="mt-8 text-center">
+          <div class="text-sm text-muted-foreground">
+            Não tem uma conta? 
+            <a href="{% url 'register' %}" class="text-primary hover:text-primary/80 font-medium transition-colors duration-200 group">
+              <span class="group-hover:underline">Registre-se aqui</span>
+              <i data-lucide="user-plus" class="inline w-3 h-3 ml-1 group-hover:scale-110 transition-transform duration-200"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Additional Info -->
+        <div class="mt-6 text-center">
           <div class="flex items-center justify-center space-x-2 text-xs text-muted-foreground">
             <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
             <span>Sistema Online e Seguro</span>

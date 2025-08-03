@@ -19,14 +19,93 @@
     
     {% if user.is_authenticated %}
       <div class="flex items-center space-x-4">
-        <!-- User Menu -->
-        <div class="flex items-center space-x-3 glass-effect rounded-lg px-3 py-2">
-          <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-            <i data-lucide="user" class="w-4 h-4 text-white"></i>
-          </div>
-          <div class="hidden md:block">
-            <p class="text-sm font-medium">{{ user.first_name|default:user.username }}</p>
-            <p class="text-xs text-muted-foreground">{{ user.email }}</p>
+        <!-- User Menu Dropdown -->
+        <div class="relative">
+          <button 
+            id="user-menu-button" 
+            class="flex items-center space-x-3 glass-effect rounded-lg px-3 py-2 hover:bg-accent/50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 group"
+            type="button" 
+            aria-expanded="false" 
+            aria-haspopup="true"
+          >
+            <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
+              <i data-lucide="user" class="w-4 h-4 text-white"></i>
+            </div>
+            <div class="hidden md:block">
+              <p class="text-sm font-medium">{{ user.first_name|default:user.username }}</p>
+              <p class="text-xs text-muted-foreground">{{ user.email }}</p>
+            </div>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors duration-200"></i>
+          </button>
+
+          <!-- Dropdown Menu -->
+          <div 
+            id="user-menu-dropdown" 
+            class="absolute right-0 mt-2 w-56 origin-top-right bg-background/95 backdrop-blur-lg rounded-lg border border-border shadow-lg opacity-0 scale-95 transform transition-all duration-200 pointer-events-none z-50"
+          >
+            <div class="py-2">
+              <!-- User Info Section -->
+              <div class="px-4 py-3 border-b border-border/50">
+                <div class="flex items-center space-x-3">
+                  <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                    <i data-lucide="user" class="w-5 h-5 text-white"></i>
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <p class="text-sm font-medium truncate">{{ user.first_name|default:user.username }}</p>
+                    <p class="text-xs text-muted-foreground truncate">{{ user.email }}</p>
+                    <div class="flex items-center space-x-1 mt-1">
+                      <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <span class="text-xs text-green-400">Online</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Menu Items -->
+              <div class="py-1">
+                <a 
+                  href="{% url 'profile' %}" 
+                  class="flex items-center space-x-3 px-4 py-2 text-sm text-foreground hover:bg-accent hover:text-accent-foreground transition-colors duration-200 group"
+                >
+                  <div class="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-600 rounded-md flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
+                    <i data-lucide="user" class="w-3 h-3 text-white"></i>
+                  </div>
+                  <span>Perfil</span>
+                  <i data-lucide="arrow-right" class="w-3 h-3 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all duration-200 ml-auto"></i>
+                </a>
+
+                <a 
+                  href="{% url 'password_change' %}" 
+                  class="flex items-center space-x-3 px-4 py-2 text-sm text-foreground hover:bg-accent hover:text-accent-foreground transition-colors duration-200 group"
+                >
+                  <div class="w-6 h-6 bg-gradient-to-r from-orange-500 to-red-500 rounded-md flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
+                    <i data-lucide="key" class="w-3 h-3 text-white"></i>
+                  </div>
+                  <span>Alterar Senha</span>
+                  <i data-lucide="arrow-right" class="w-3 h-3 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all duration-200 ml-auto"></i>
+                </a>
+              </div>
+
+              <!-- Separator -->
+              <div class="border-t border-border/50 my-1"></div>
+
+              <!-- Logout -->
+              <div class="py-1">
+                <form action="{% url 'logout' %}" method="post" class="w-full">
+                  {% csrf_token %}
+                  <button 
+                    type="submit"
+                    class="flex items-center space-x-3 px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors duration-200 group w-full text-left"
+                  >
+                    <div class="w-6 h-6 bg-gradient-to-r from-red-500 to-red-600 rounded-md flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
+                      <i data-lucide="log-out" class="w-3 h-3 text-white"></i>
+                    </div>
+                    <span>Sair</span>
+                    <i data-lucide="arrow-right" class="w-3 h-3 text-muted-foreground group-hover:text-red-400 group-hover:translate-x-1 transition-all duration-200 ml-auto"></i>
+                  </button>
+                </form>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -43,4 +122,62 @@
   </div>
   {% endif %}
 </header>
+
+<!-- User Dropdown JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const userMenuButton = document.getElementById('user-menu-button');
+  const userMenuDropdown = document.getElementById('user-menu-dropdown');
+  
+  if (userMenuButton && userMenuDropdown) {
+    let isOpen = false;
+    
+    function toggleDropdown() {
+      isOpen = !isOpen;
+      
+      if (isOpen) {
+        userMenuDropdown.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+        userMenuDropdown.classList.add('opacity-100', 'scale-100');
+        userMenuButton.setAttribute('aria-expanded', 'true');
+      } else {
+        userMenuDropdown.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+        userMenuDropdown.classList.remove('opacity-100', 'scale-100');
+        userMenuButton.setAttribute('aria-expanded', 'false');
+      }
+    }
+    
+    function closeDropdown() {
+      isOpen = false;
+      userMenuDropdown.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+      userMenuDropdown.classList.remove('opacity-100', 'scale-100');
+      userMenuButton.setAttribute('aria-expanded', 'false');
+    }
+    
+    // Toggle dropdown on button click
+    userMenuButton.addEventListener('click', function(e) {
+      e.stopPropagation();
+      toggleDropdown();
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+      if (isOpen && !userMenuButton.contains(e.target) && !userMenuDropdown.contains(e.target)) {
+        closeDropdown();
+      }
+    });
+    
+    // Close dropdown on escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && isOpen) {
+        closeDropdown();
+      }
+    });
+    
+    // Prevent dropdown from closing when clicking inside it
+    userMenuDropdown.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+  }
+});
+</script>
 

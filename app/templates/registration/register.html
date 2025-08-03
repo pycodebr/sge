@@ -1,0 +1,252 @@
+{% extends 'base.html' %}
+{% block title %}SGE - Registro{% endblock %}
+
+{% block login %}
+<div class="min-h-[80vh] flex items-center justify-center p-4">
+  <div class="w-full max-w-md">
+    <!-- Registration Card -->
+    <div class="relative overflow-hidden rounded-lg border border-border bg-card glass-effect">
+      <!-- Animated background -->
+      <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-cyan-500/5 animate-pulse"></div>
+      
+      <div class="relative p-8">
+        <!-- Logo and Title -->
+        <div class="text-center mb-8">
+          <div class="mx-auto w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mb-4 animate-glow">
+            <i data-lucide="user-plus" class="w-8 h-8 text-white"></i>
+          </div>
+          <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">
+            Criar Nova Conta
+          </h1>
+          <p class="text-muted-foreground mt-2">Registre-se para acessar o sistema</p>
+        </div>
+
+        <!-- Registration Form -->
+        <form method="post" class="space-y-6">
+          {% csrf_token %}
+          
+          <!-- Username Field -->
+          <div class="space-y-2">
+            <label for="username" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              Usuário
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i data-lucide="user" class="h-4 w-4 text-muted-foreground"></i>
+              </div>
+              <input 
+                type="text" 
+                id="username" 
+                name="username" 
+                required
+                value="{{ form.username.value|default:'' }}"
+                class="flex h-10 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200"
+                placeholder="Digite seu usuário"
+              >
+            </div>
+            {% if form.username.errors %}
+              <div class="text-xs text-destructive">
+                {% for error in form.username.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Email Field -->
+          <div class="space-y-2">
+            <label for="email" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              Email
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i data-lucide="mail" class="h-4 w-4 text-muted-foreground"></i>
+              </div>
+              <input 
+                type="email" 
+                id="email" 
+                name="email" 
+                required
+                value="{{ form.email.value|default:'' }}"
+                class="flex h-10 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200"
+                placeholder="Digite seu email"
+              >
+            </div>
+            {% if form.email.errors %}
+              <div class="text-xs text-destructive">
+                {% for error in form.email.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- First Name Field -->
+          <div class="space-y-2">
+            <label for="first_name" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              Nome
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i data-lucide="user-check" class="h-4 w-4 text-muted-foreground"></i>
+              </div>
+              <input 
+                type="text" 
+                id="first_name" 
+                name="first_name" 
+                required
+                value="{{ form.first_name.value|default:'' }}"
+                class="flex h-10 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200"
+                placeholder="Digite seu nome"
+              >
+            </div>
+            {% if form.first_name.errors %}
+              <div class="text-xs text-destructive">
+                {% for error in form.first_name.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Last Name Field -->
+          <div class="space-y-2">
+            <label for="last_name" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              Sobrenome
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i data-lucide="users" class="h-4 w-4 text-muted-foreground"></i>
+              </div>
+              <input 
+                type="text" 
+                id="last_name" 
+                name="last_name" 
+                required
+                value="{{ form.last_name.value|default:'' }}"
+                class="flex h-10 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200"
+                placeholder="Digite seu sobrenome"
+              >
+            </div>
+            {% if form.last_name.errors %}
+              <div class="text-xs text-destructive">
+                {% for error in form.last_name.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Password Field -->
+          <div class="space-y-2">
+            <label for="password1" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              Senha
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i data-lucide="lock" class="h-4 w-4 text-muted-foreground"></i>
+              </div>
+              <input 
+                type="password" 
+                id="password1" 
+                name="password1" 
+                required
+                class="flex h-10 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200"
+                placeholder="Digite sua senha"
+              >
+            </div>
+            {% if form.password1.errors %}
+              <div class="text-xs text-destructive">
+                {% for error in form.password1.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Password Confirmation Field -->
+          <div class="space-y-2">
+            <label for="password2" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              Confirmar Senha
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i data-lucide="key" class="h-4 w-4 text-muted-foreground"></i>
+              </div>
+              <input 
+                type="password" 
+                id="password2" 
+                name="password2" 
+                required
+                class="flex h-10 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200"
+                placeholder="Confirme sua senha"
+              >
+            </div>
+            {% if form.password2.errors %}
+              <div class="text-xs text-destructive">
+                {% for error in form.password2.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Submit Button -->
+          <button 
+            type="submit" 
+            class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full group"
+          >
+            <i data-lucide="user-plus" class="w-4 h-4 mr-2 group-hover:scale-110 transition-transform duration-200"></i>
+            Criar Conta
+          </button>
+        </form>
+
+        <!-- Error Messages -->
+        {% if form.errors %}
+          <div class="mt-6 p-4 rounded-md border border-destructive/50 bg-destructive/10">
+            <div class="flex items-center space-x-2 mb-2">
+              <i data-lucide="alert-circle" class="h-4 w-4 text-destructive"></i>
+              <h3 class="text-sm font-medium text-destructive">Erro no registro</h3>
+            </div>
+            <ul class="text-sm text-destructive-foreground space-y-1">
+              {% for field in form %}
+                {% for error in field.errors %}
+                  <li>{{ error }}</li>
+                {% endfor %}
+              {% endfor %}
+              {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+
+        <!-- Login Link -->
+        <div class="mt-8 text-center">
+          <div class="text-sm text-muted-foreground">
+            Já tem uma conta? 
+            <a href="{% url 'login' %}" class="text-primary hover:text-primary/80 font-medium transition-colors duration-200 group">
+              <span class="group-hover:underline">Faça login aqui</span>
+              <i data-lucide="arrow-right" class="inline w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform duration-200"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Additional Info -->
+        <div class="mt-6 text-center">
+          <div class="flex items-center justify-center space-x-2 text-xs text-muted-foreground">
+            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <span>Sistema Online e Seguro</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="mt-8 text-center text-xs text-muted-foreground">
+      © 2024 SGE - Sistema de Gestão de Estoque v2.0
+    </div>
+  </div>
+</div>
+
+{% endblock %}
