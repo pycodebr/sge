@@ -1,22 +1,214 @@
 {% extends 'base.html' %}
 
-{% block content %}
-  <div class="container mt-4">
-    <h3 class="display-4">Detalhes do Produto</h3>
+{% block title %}
+Detalhes do Produto - {{ object.title }}
+{% endblock %}
 
-    <div class="card">
-      <div class="card-body">
-        <h3 class="card-title">{{ object.title }}</h3>
-        <p class="card-text">Categoria: {{ object.category }}</p>
-        <p class="card-text">Marca: {{ object.brand }}</p>
-        <p class="card-text">{{ object.description }}</p>
-        <p class="card-text">Número de Série: <strong>{{ object.serie_number }}</strong></p>
-        <p class="card-text">Preço de Custo: <strong>R$ {{ object.cost_price }}</strong></p>
-        <p class="card-text">Preço de Venda: <strong>R$ {{ object.selling_price }}</strong></p>
-        <p class="card-text">Quantidade em Estoque: <strong>{{ object.quantity }}</strong></p>
+{% block content %}
+<!-- Page Header -->
+<div class="mb-8">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold bg-gradient-to-r from-green-400 via-emerald-400 to-green-400 bg-clip-text text-transparent">
+        Detalhes do Produto
+      </h1>
+      <p class="text-muted-foreground mt-2">Informações completas sobre o produto</p>
+    </div>
+    <div class="flex items-center space-x-2">
+      <div class="h-2 w-2 {% if object.quantity > 0 %}bg-green-500{% else %}bg-red-500{% endif %} rounded-full animate-pulse"></div>
+      <span class="text-sm text-muted-foreground">{% if object.quantity > 0 %}Em Estoque{% else %}Sem Estoque{% endif %}</span>
+    </div>
+  </div>
+</div>
+
+<!-- Product Details Card -->
+<div class="max-w-6xl mx-auto">
+  <div class="rounded-lg border border-border bg-gradient-to-br from-green-500/10 via-emerald-500/5 to-green-500/10 p-8 glass-effect">
+    <!-- Header with Icon -->
+    <div class="flex items-center space-x-4 mb-8">
+      <div class="h-16 w-16 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
+        <i data-lucide="package" class="h-8 w-8 text-white"></i>
+      </div>
+      <div>
+        <h2 class="text-2xl font-bold text-primary">{{ object.title }}</h2>
+        <p class="text-muted-foreground">Produto registrado no sistema</p>
       </div>
     </div>
 
-    <a href="{% url 'product_list' %}" class="btn btn-secondary mt-3">Voltar para a Lista de Produtos</a>
+    <!-- Information Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+      <!-- Product Name -->
+      <div class="space-y-2">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="box" class="h-4 w-4 text-green-400"></i>
+          <span class="text-sm font-medium text-muted-foreground">Nome do Produto</span>
+        </div>
+        <p class="text-lg font-semibold pl-6">{{ object.title }}</p>
+      </div>
+
+      <!-- Category -->
+      <div class="space-y-2">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="tags" class="h-4 w-4 text-green-400"></i>
+          <span class="text-sm font-medium text-muted-foreground">Categoria</span>
+        </div>
+        <p class="text-lg font-semibold pl-6">{{ object.category }}</p>
+      </div>
+
+      <!-- Brand -->
+      <div class="space-y-2">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="badge" class="h-4 w-4 text-green-400"></i>
+          <span class="text-sm font-medium text-muted-foreground">Marca</span>
+        </div>
+        <p class="text-lg font-semibold pl-6">{{ object.brand }}</p>
+      </div>
+
+      <!-- Serial Number -->
+      {% if object.serie_number %}
+      <div class="space-y-2">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="barcode" class="h-4 w-4 text-green-400"></i>
+          <span class="text-sm font-medium text-muted-foreground">Número de Série</span>
+        </div>
+        <p class="text-lg font-semibold pl-6">{{ object.serie_number }}</p>
+      </div>
+      {% endif %}
+
+      <!-- Cost Price -->
+      <div class="space-y-2">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="shopping-cart" class="h-4 w-4 text-green-400"></i>
+          <span class="text-sm font-medium text-muted-foreground">Preço de Custo</span>
+        </div>
+        <p class="text-lg font-semibold pl-6 text-orange-400">R$ {{ object.cost_price|floatformat:2 }}</p>
+      </div>
+
+      <!-- Selling Price -->
+      <div class="space-y-2">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="dollar-sign" class="h-4 w-4 text-green-400"></i>
+          <span class="text-sm font-medium text-muted-foreground">Preço de Venda</span>
+        </div>
+        <p class="text-lg font-semibold pl-6 text-green-400">R$ {{ object.selling_price|floatformat:2 }}</p>
+      </div>
+
+      <!-- Quantity in Stock -->
+      <div class="space-y-2">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="warehouse" class="h-4 w-4 text-green-400"></i>
+          <span class="text-sm font-medium text-muted-foreground">Quantidade em Estoque</span>
+        </div>
+        <p class="text-lg font-semibold pl-6 {% if object.quantity > 0 %}text-green-400{% else %}text-red-400{% endif %}">
+          {{ object.quantity }} unidades
+        </p>
+      </div>
+
+      <!-- Profit Margin -->
+      <div class="space-y-2">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="trending-up" class="h-4 w-4 text-green-400"></i>
+          <span class="text-sm font-medium text-muted-foreground">Margem de Lucro</span>
+        </div>
+        <p class="text-lg font-semibold pl-6 text-blue-400">
+          {% widthratio object.selling_price object.cost_price 1 %}%
+        </p>
+      </div>
+
+      <!-- Created Date -->
+      <div class="space-y-2">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="calendar-plus" class="h-4 w-4 text-green-400"></i>
+          <span class="text-sm font-medium text-muted-foreground">Data de Criação</span>
+        </div>
+        <p class="text-lg font-semibold pl-6">{{ object.created_at|date:"d/m/Y H:i" }}</p>
+      </div>
+    </div>
+
+    <!-- Stock Status Banner -->
+    <div class="mb-8">
+      {% if object.quantity <= 0 %}
+      <div class="bg-red-500/20 border border-red-500/50 rounded-lg p-4 flex items-center space-x-3">
+        <i data-lucide="alert-triangle" class="h-5 w-5 text-red-400"></i>
+        <div>
+          <p class="font-semibold text-red-400">Produto em Falta</p>
+          <p class="text-sm text-red-300">Este produto está fora de estoque</p>
+        </div>
+      </div>
+      {% elif object.quantity <= 5 %}
+      <div class="bg-yellow-500/20 border border-yellow-500/50 rounded-lg p-4 flex items-center space-x-3">
+        <i data-lucide="alert-circle" class="h-5 w-5 text-yellow-400"></i>
+        <div>
+          <p class="font-semibold text-yellow-400">Estoque Baixo</p>
+          <p class="text-sm text-yellow-300">Recomendamos reabastecer o estoque</p>
+        </div>
+      </div>
+      {% else %}
+      <div class="bg-green-500/20 border border-green-500/50 rounded-lg p-4 flex items-center space-x-3">
+        <i data-lucide="check-circle" class="h-5 w-5 text-green-400"></i>
+        <div>
+          <p class="font-semibold text-green-400">Estoque Disponível</p>
+          <p class="text-sm text-green-300">Produto disponível para venda</p>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Description Section -->
+    {% if object.description %}
+    <div class="space-y-4 mb-8">
+      <div class="flex items-center space-x-2">
+        <i data-lucide="file-text" class="h-4 w-4 text-green-400"></i>
+        <span class="text-sm font-medium text-muted-foreground">Descrição</span>
+      </div>
+      <div class="bg-secondary/30 rounded-lg p-4 border border-border/50">
+        <p class="text-foreground leading-relaxed">{{ object.description|linebreaks }}</p>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Action Buttons -->
+    <div class="flex flex-wrap items-center justify-between pt-6 border-t border-border/40">
+      <div class="flex items-center space-x-4">
+        {% if perms.products.change_product %}
+        <a href="{% url 'product_update' object.pk %}" 
+           class="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl">
+          <i data-lucide="edit" class="h-4 w-4"></i>
+          <span>Editar</span>
+        </a>
+        {% endif %}
+      </div>
+      
+      <a href="{% url 'product_list' %}" 
+         class="inline-flex items-center space-x-2 bg-secondary hover:bg-secondary/80 text-secondary-foreground px-4 py-2 rounded-lg font-medium transition-all duration-200">
+        <i data-lucide="arrow-left" class="h-4 w-4"></i>
+        <span>Voltar</span>
+      </a>
+    </div>
   </div>
+
+  <!-- Additional Actions Card -->
+  {% if perms.products.delete_product %}
+  <div class="mt-6 glass-effect rounded-2xl border border-red-500/20 bg-gradient-to-br from-red-950/30 to-pink-950/20 p-6">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-red-600/20 border border-red-500/30">
+          <i data-lucide="trash-2" class="w-5 h-5 text-red-400"></i>
+        </div>
+        <div>
+          <h3 class="font-semibold text-foreground">Zona de Perigo</h3>
+          <p class="text-sm text-muted-foreground">Excluir este produto permanentemente</p>
+        </div>
+      </div>
+      <a 
+        href="{% url 'product_delete' object.pk %}" 
+        class="flex items-center px-4 py-2 bg-red-600/20 hover:bg-red-600/30 text-red-400 hover:text-red-300 border border-red-500/30 rounded-lg transition-all duration-200"
+      >
+        <i data-lucide="trash-2" class="w-4 h-4 mr-2"></i>
+        Excluir Produto
+      </a>
+    </div>
+  </div>
+  {% endif %}
+</div>
 {% endblock %}

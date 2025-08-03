@@ -1,37 +1,143 @@
 <!DOCTYPE html>
-<html lang="pt-br" data-bs-theme="dark">
+<html lang="pt-br" class="dark">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}{% endblock %}</title>
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+  <!-- TailwindCSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  
+  <!-- Custom Tailwind Config -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            background: "hsl(222, 84%, 4%)",
+            foreground: "hsl(210, 40%, 98%)",
+            card: "hsl(222, 84%, 4%)",
+            'card-foreground': "hsl(210, 40%, 98%)",
+            popover: "hsl(222, 84%, 4%)",
+            'popover-foreground': "hsl(210, 40%, 98%)",
+            primary: "hsl(221, 83%, 53%)",
+            'primary-foreground': "hsl(210, 40%, 98%)",
+            secondary: "hsl(217, 32%, 17%)",
+            'secondary-foreground': "hsl(210, 40%, 98%)",
+            muted: "hsl(217, 32%, 17%)",
+            'muted-foreground': "hsl(215, 20%, 65%)",
+            accent: "hsl(217, 32%, 17%)",
+            'accent-foreground': "hsl(210, 40%, 98%)",
+            destructive: "hsl(0, 62%, 30%)",
+            'destructive-foreground': "hsl(210, 40%, 98%)",
+            border: "hsl(217, 32%, 17%)",
+            input: "hsl(217, 32%, 17%)",
+            ring: "hsl(224, 71%, 4%)",
+          },
+          animation: {
+            'fade-in': 'fade-in 0.5s ease-in-out',
+            'slide-in': 'slide-in 0.3s ease-out',
+            'glow': 'glow 2s ease-in-out infinite alternate',
+          },
+          keyframes: {
+            'fade-in': {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' },
+            },
+            'slide-in': {
+              '0%': { transform: 'translateX(-100%)' },
+              '100%': { transform: 'translateX(0)' },
+            },
+            'glow': {
+              '0%': { boxShadow: '0 0 5px hsl(221, 83%, 53%), 0 0 10px hsl(221, 83%, 53%), 0 0 15px hsl(221, 83%, 53%)' },
+              '100%': { boxShadow: '0 0 10px hsl(221, 83%, 53%), 0 0 20px hsl(221, 83%, 53%), 0 0 30px hsl(221, 83%, 53%)' },
+            },
+          },
+        },
+      },
+    }
+  </script>
+  
+  <style>
+    .gradient-bg {
+      background: linear-gradient(135deg, hsl(222, 84%, 4%) 0%, hsl(217, 32%, 17%) 100%);
+    }
+    
+    .card-gradient {
+      background: linear-gradient(135deg, hsl(217, 32%, 17%) 0%, hsl(222, 84%, 4%) 100%);
+    }
+    
+    .glass-effect {
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .neon-border {
+      box-shadow: 0 0 5px hsl(221, 83%, 53%), inset 0 0 5px hsl(221, 83%, 53%);
+    }
+    
+    .scrollbar-custom::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .scrollbar-custom::-webkit-scrollbar-track {
+      background: hsl(217, 32%, 17%);
+    }
+    
+    .scrollbar-custom::-webkit-scrollbar-thumb {
+      background: hsl(221, 83%, 53%);
+      border-radius: 3px;
+    }
+    
+    .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+      background: hsl(221, 83%, 60%);
+    }
+  </style>
 </head>
 
-<body>
-  {% include 'components/_header.html' %}
-
-  <div class="container-fluid">
-    {% if user.is_authenticated %}
-      {% include 'components/_sidebar.html' %}
-    {% endif %}
-
-      <div class="col py-3">
-
-        <div class="container mt-4">
-          <main>
-            {% block content %}
-            {% endblock %}
-          </main>
+<body class="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 text-foreground antialiased">
+  {% if user.is_authenticated %}
+    {% include 'components/_sidebar.html' %}
+    
+    <!-- Main Content Area with Left Margin for Sidebar -->
+    <div class="md:ml-64 flex flex-col min-h-screen">
+      {% include 'components/_header.html' %}
+      
+      <main class="flex-1 p-4 md:p-6 lg:p-8 overflow-auto scrollbar-custom">
+        <div class="max-w-7xl mx-auto animate-fade-in">
+          {% block content %}
+          {% endblock %}
         </div>
-
-      </div>
+      </main>
+      
+      {% include 'components/_footer.html' %}
     </div>
-  </div>
-  {% include 'components/_footer.html' %}
+  {% else %}
+    <!-- Layout for Non-Authenticated Users -->
+    <div class="flex flex-col min-h-screen">
+      {% include 'components/_header.html' %}
+      
+      <main class="flex-1 p-4 md:p-6 lg:p-8 overflow-auto scrollbar-custom">
+        <div class="max-w-7xl mx-auto animate-fade-in">
+          {% block login %}
+          {% endblock %}
+        </div>
+      </main>
+      
+      {% include 'components/_footer.html' %}
+    </div>
+  {% endif %}
+  
+  <!-- Initialize Lucide Icons -->
+  <script>
+    lucide.createIcons();
+  </script>
 </body>
 
 </html>

@@ -1,43 +1,113 @@
 {% extends 'base.html' %}
-{% block title %}Login{% endblock %}
+{% block title %}SGE - Login{% endblock %}
 
-{% block content %}
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title text-center mb-4">Login</h5>
-          <form method="post">
-            {% csrf_token %}
-            <div class="mb-3">
-              <label for="username" class="form-label">Usuário</label>
-              <input type="text" class="form-control" id="username" name="username" required>
+{% block login %}
+<div class="min-h-[80vh] flex items-center justify-center p-4">
+  <div class="w-full max-w-md">
+    <!-- Login Card -->
+    <div class="relative overflow-hidden rounded-lg border border-border bg-card glass-effect">
+      <!-- Animated background -->
+      <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-cyan-500/5 animate-pulse"></div>
+      
+      <div class="relative p-8">
+        <!-- Logo and Title -->
+        <div class="text-center mb-8">
+          <div class="mx-auto w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mb-4 animate-glow">
+            <i data-lucide="package" class="w-8 h-8 text-white"></i>
+          </div>
+          <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">
+            Sistema de Gestão de Estoque
+          </h1>
+          <p class="text-muted-foreground mt-2">Faça login para acessar o sistema</p>
+        </div>
+
+        <!-- Login Form -->
+        <form method="post" class="space-y-6">
+          {% csrf_token %}
+          
+          <!-- Username Field -->
+          <div class="space-y-2">
+            <label for="username" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              Usuário
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i data-lucide="user" class="h-4 w-4 text-muted-foreground"></i>
+              </div>
+              <input 
+                type="text" 
+                id="username" 
+                name="username" 
+                required
+                class="flex h-10 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200"
+                placeholder="Digite seu usuário"
+              >
             </div>
-            <div class="mb-3">
-              <label for="password" class="form-label">Senha</label>
-              <input type="password" class="form-control" id="password" name="password" required>
+          </div>
+
+          <!-- Password Field -->
+          <div class="space-y-2">
+            <label for="password" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              Senha
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i data-lucide="lock" class="h-4 w-4 text-muted-foreground"></i>
+              </div>
+              <input 
+                type="password" 
+                id="password" 
+                name="password" 
+                required
+                class="flex h-10 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200"
+                placeholder="Digite sua senha"
+              >
             </div>
-            <div class="d-grid gap-2">
-              <button type="submit" class="btn btn-primary">Entrar</button>
+          </div>
+
+          <!-- Submit Button -->
+          <button 
+            type="submit" 
+            class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full group"
+          >
+            <i data-lucide="log-in" class="w-4 h-4 mr-2 group-hover:translate-x-1 transition-transform duration-200"></i>
+            Entrar no Sistema
+          </button>
+        </form>
+
+        <!-- Error Messages -->
+        {% if form.errors %}
+          <div class="mt-6 p-4 rounded-md border border-destructive/50 bg-destructive/10">
+            <div class="flex items-center space-x-2 mb-2">
+              <i data-lucide="alert-circle" class="h-4 w-4 text-destructive"></i>
+              <h3 class="text-sm font-medium text-destructive">Erro no login</h3>
             </div>
-          </form>
-          {% if form.errors %}
-            <div class="alert alert-danger mt-4">
-              <ul class="mb-0">
-                {% for field in form %}
-                  {% for error in field.errors %}
-                    <li>{{ error }}</li>
-                  {% endfor %}
-                {% endfor %}
-                {% for error in form.non_field_errors %}
+            <ul class="text-sm text-destructive-foreground space-y-1">
+              {% for field in form %}
+                {% for error in field.errors %}
                   <li>{{ error }}</li>
                 {% endfor %}
-              </ul>
-            </div>
-          {% endif %}
+              {% endfor %}
+              {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+
+        <!-- Additional Info -->
+        <div class="mt-8 text-center">
+          <div class="flex items-center justify-center space-x-2 text-xs text-muted-foreground">
+            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <span>Sistema Online e Seguro</span>
+          </div>
         </div>
       </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="mt-8 text-center text-xs text-muted-foreground">
+      © 2024 SGE - Sistema de Gestão de Estoque v2.0
     </div>
   </div>
 </div>

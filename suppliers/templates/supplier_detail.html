@@ -1,16 +1,118 @@
 {% extends 'base.html' %}
 
-{% block content %}
-  <div class="container mt-4">
-    <h3 class="display-4">Detalhes do Fornecedor</h3>
+{% block title %}
+Detalhes do Fornecedor - {{ object.name }}
+{% endblock %}
 
-    <div class="card">
-      <div class="card-body">
-        <h3 class="card-title">{{ object.name }}</h3>
-        <p class="card-text">{{ object.description }}</p>
+{% block content %}
+<!-- Page Header -->
+<div class="mb-8">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-400 bg-clip-text text-transparent">
+        Detalhes do Fornecedor
+      </h1>
+      <p class="text-muted-foreground mt-2">Informações completas sobre o fornecedor</p>
+    </div>
+    <div class="flex items-center space-x-2">
+      <div class="h-2 w-2 bg-blue-500 rounded-full animate-pulse"></div>
+      <span class="text-sm text-muted-foreground">ID: {{ object.id }}</span>
+    </div>
+  </div>
+</div>
+
+<!-- Supplier Details Card -->
+<div class="max-w-4xl mx-auto">
+  <div class="rounded-lg border border-border bg-gradient-to-br from-blue-500/10 via-cyan-500/5 to-blue-500/10 p-8 glass-effect">
+    <!-- Header with Icon -->
+    <div class="flex items-center space-x-4 mb-8">
+      <div class="h-16 w-16 bg-gradient-to-r from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg">
+        <i data-lucide="truck" class="h-8 w-8 text-white"></i>
+      </div>
+      <div>
+        <h2 class="text-2xl font-bold text-primary">{{ object.name }}</h2>
+        <p class="text-muted-foreground">Fornecedor registrado no sistema</p>
       </div>
     </div>
 
-    <a href="{% url 'supplier_list' %}" class="btn btn-secondary mt-3">Voltar para a Lista de Fornecedores</a>
+    <!-- Information Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <!-- Supplier Name -->
+      <div class="space-y-2">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="building" class="h-4 w-4 text-blue-400"></i>
+          <span class="text-sm font-medium text-muted-foreground">Nome do Fornecedor</span>
+        </div>
+        <p class="text-lg font-semibold pl-6">{{ object.name }}</p>
+      </div>
+
+      <!-- Created Date -->
+      <div class="space-y-2">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="calendar-plus" class="h-4 w-4 text-blue-400"></i>
+          <span class="text-sm font-medium text-muted-foreground">Data de Criação</span>
+        </div>
+        <p class="text-lg font-semibold pl-6">{{ object.created_at|date:"d/m/Y H:i" }}</p>
+      </div>
+
+      <!-- Updated Date -->
+      <div class="space-y-2">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="calendar-clock" class="h-4 w-4 text-blue-400"></i>
+          <span class="text-sm font-medium text-muted-foreground">Última Atualização</span>
+        </div>
+        <p class="text-lg font-semibold pl-6">{{ object.updated_at|date:"d/m/Y H:i" }}</p>
+      </div>
+
+      <!-- ID -->
+      <div class="space-y-2">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="hash" class="h-4 w-4 text-blue-400"></i>
+          <span class="text-sm font-medium text-muted-foreground">ID</span>
+        </div>
+        <p class="text-lg font-semibold pl-6">#{{ object.id }}</p>
+      </div>
+    </div>
+
+    <!-- Description Section -->
+    {% if object.description %}
+    <div class="space-y-4 mb-8">
+      <div class="flex items-center space-x-2">
+        <i data-lucide="file-text" class="h-4 w-4 text-blue-400"></i>
+        <span class="text-sm font-medium text-muted-foreground">Descrição</span>
+      </div>
+      <div class="bg-secondary/30 rounded-lg p-4 border border-border/50">
+        <p class="text-foreground leading-relaxed">{{ object.description|linebreaks }}</p>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Action Buttons -->
+    <div class="flex flex-wrap items-center justify-between pt-6 border-t border-border/40">
+      <div class="flex items-center space-x-4">
+        {% if perms.suppliers.change_supplier %}
+        <a href="{% url 'supplier_update' object.pk %}" 
+           class="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl">
+          <i data-lucide="edit" class="h-4 w-4"></i>
+          <span>Editar</span>
+        </a>
+        {% endif %}
+        
+        {% if perms.suppliers.delete_supplier %}
+        <a href="{% url 'supplier_delete' object.pk %}" 
+           class="inline-flex items-center space-x-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl">
+          <i data-lucide="trash-2" class="h-4 w-4"></i>
+          <span>Excluir</span>
+        </a>
+        {% endif %}
+      </div>
+      
+      <a href="{% url 'supplier_list' %}" 
+         class="inline-flex items-center space-x-2 bg-secondary hover:bg-secondary/80 text-secondary-foreground px-4 py-2 rounded-lg font-medium transition-all duration-200">
+        <i data-lucide="arrow-left" class="h-4 w-4"></i>
+        <span>Voltar</span>
+      </a>
+    </div>
   </div>
+</div>
 {% endblock %}

@@ -1,5 +1,43 @@
-<footer class="footer mt-auto py-3 text-center">
-  <div class="container">
-    <span class="text-muted">© 2024 SGE</span>
+<footer class="border-t border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 mt-auto">
+  <div class="container mx-auto px-4 py-6">
+    <div class="flex flex-col md:flex-row items-center justify-between">
+      <div class="flex items-center space-x-3 mb-4 md:mb-0">
+        <div class="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-600 rounded flex items-center justify-center">
+          <i data-lucide="package" class="w-3 h-3 text-white"></i>
+        </div>
+        <span class="text-sm text-muted-foreground">© 2024 SGE - Sistema de Gestão de Estoque</span>
+      </div>
+      
+      <div class="flex items-center space-x-6 text-sm text-muted-foreground">
+        <div class="flex items-center space-x-2">
+          <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+          <span>v2.0</span>
+        </div>
+        <div class="flex items-center space-x-2">
+          <i data-lucide="clock" class="w-4 h-4"></i>
+          <span id="current-time"></span>
+        </div>
+      </div>
+    </div>
   </div>
 </footer>
+
+<script>
+  // Update current time
+  function updateTime() {
+    const now = new Date();
+    const timeString = now.toLocaleTimeString('pt-BR', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      second: '2-digit'
+    });
+    const timeElement = document.getElementById('current-time');
+    if (timeElement) {
+      timeElement.textContent = timeString;
+    }
+  }
+  
+  // Update time immediately and then every second
+  updateTime();
+  setInterval(updateTime, 1000);
+</script>

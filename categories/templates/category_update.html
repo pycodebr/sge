@@ -1,19 +1,126 @@
 {% extends 'base.html' %}
 
-{% block content %}
-  <div class="container mt-4">
-    <h3 class="display-4">Editar Categoria</h3>
+{% block title %}Editar Categoria - SGE{% endblock %}
 
-    <div class="card">
-      <div class="card-body">
-        <form method="post" class="form">
-          {% csrf_token %}
-          {{ form.as_p }}
-          <button type="submit" class="btn btn-primary">Salvar Categoria</button>
-        </form>
+{% block content %}
+<div class="min-h-screen">
+  <!-- Header with Breadcrumb -->
+  <div class="mb-8">
+    <nav class="flex items-center space-x-2 text-sm text-muted-foreground mb-4">
+      <a href="{% url 'category_list' %}" class="hover:text-foreground transition-colors">
+        <i data-lucide="folder" class="w-4 h-4 inline mr-1"></i>
+        Categorias
+      </a>
+      <i data-lucide="chevron-right" class="w-4 h-4"></i>
+      <span class="text-foreground">Editar Categoria</span>
+    </nav>
+    
+    <div class="flex items-center space-x-4">
+      <div class="flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-500/30">
+        <i data-lucide="edit" class="w-6 h-6 text-orange-400"></i>
+      </div>
+      <div>
+        <h1 class="text-3xl font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
+          Editar Categoria
+        </h1>
+        <p class="text-muted-foreground">Modifique as informações da categoria selecionada</p>
       </div>
     </div>
-
-    <a href="{% url 'category_list' %}" class="btn btn-secondary mt-3">Cancelar e Voltar para a Lista de Categorias</a>
   </div>
+
+  <!-- Main Form Card -->
+  <div class="glass-effect rounded-2xl border border-orange-500/20 bg-gradient-to-br from-orange-950/50 to-red-950/30 p-6">
+    <form method="post" class="space-y-6">
+      {% csrf_token %}
+      
+      <!-- Form Fields -->
+      <div class="grid gap-6 md:grid-cols-1">
+        <!-- Name Field -->
+        <div class="space-y-2">
+          <label for="{{ form.name.id_for_label }}" class="flex items-center text-sm font-medium text-foreground">
+            <i data-lucide="folder-open" class="w-4 h-4 mr-2 text-orange-400"></i>
+            Nome da Categoria
+          </label>
+          <div class="relative">
+            <input 
+              type="text" 
+              name="{{ form.name.name }}" 
+              id="{{ form.name.id_for_label }}"
+              value="{{ form.name.value|default:'' }}"
+              class="w-full px-4 py-3 pl-11 bg-secondary/50 border border-border rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 text-foreground placeholder-muted-foreground"
+              placeholder="Digite o nome da categoria"
+              required
+            >
+            <i data-lucide="folder-open" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground"></i>
+          </div>
+          {% if form.name.errors %}
+            <div class="text-red-400 text-sm">{{ form.name.errors.0 }}</div>
+          {% endif %}
+        </div>
+
+        <!-- Description Field -->
+        <div class="space-y-2">
+          <label for="{{ form.description.id_for_label }}" class="flex items-center text-sm font-medium text-foreground">
+            <i data-lucide="file-text" class="w-4 h-4 mr-2 text-orange-400"></i>
+            Descrição
+          </label>
+          <div class="relative">
+            <textarea 
+              name="{{ form.description.name }}" 
+              id="{{ form.description.id_for_label }}"
+              rows="4"
+              class="w-full px-4 py-3 pl-11 bg-secondary/50 border border-border rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 text-foreground placeholder-muted-foreground resize-none"
+              placeholder="Digite uma descrição para a categoria (opcional)"
+            >{{ form.description.value|default:'' }}</textarea>
+            <i data-lucide="file-text" class="absolute left-3 top-4 w-4 h-4 text-muted-foreground"></i>
+          </div>
+          {% if form.description.errors %}
+            <div class="text-red-400 text-sm">{{ form.description.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-border">
+        <button 
+          type="submit" 
+          class="flex items-center justify-center px-8 py-3 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white font-semibold rounded-xl transition-all duration-200 transform hover:scale-105 focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-background"
+        >
+          <i data-lucide="save" class="w-4 h-4 mr-2"></i>
+          Salvar Alterações
+        </button>
+        
+        <a 
+          href="{% url 'category_list' %}" 
+          class="flex items-center justify-center px-8 py-3 bg-secondary hover:bg-secondary/80 text-foreground font-semibold rounded-xl transition-all duration-200 border border-border"
+        >
+          <i data-lucide="x" class="w-4 h-4 mr-2"></i>
+          Cancelar
+        </a>
+      </div>
+    </form>
+  </div>
+
+  <!-- Additional Actions Card -->
+  <div class="mt-6 glass-effect rounded-2xl border border-red-500/20 bg-gradient-to-br from-red-950/30 to-pink-950/20 p-6">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-red-600/20 border border-red-500/30">
+          <i data-lucide="trash-2" class="w-5 h-5 text-red-400"></i>
+        </div>
+        <div>
+          <h3 class="font-semibold text-foreground">Zona de Perigo</h3>
+          <p class="text-sm text-muted-foreground">Excluir esta categoria permanentemente</p>
+        </div>
+      </div>
+      <a 
+        href="{% url 'category_delete' object.pk %}" 
+        class="flex items-center px-4 py-2 bg-red-600/20 hover:bg-red-600/30 text-red-400 hover:text-red-300 border border-red-500/30 rounded-lg transition-all duration-200"
+      >
+        <i data-lucide="trash-2" class="w-4 h-4 mr-2"></i>
+        Excluir Categoria
+      </a>
+    </div>
+  </div>
+</div>
 {% endblock %}

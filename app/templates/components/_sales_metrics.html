@@ -1,37 +1,80 @@
-<div class="card mt-4">
-  <div class="card-body">
-    <div class="row">
-      <div class="col-md-3">
-        <div class="card bg-primary">
-          <div class="card-body">
-            <h5 class="card-title">Quantidade de vendas</h5>
-            <p class="card-text text-white font-weight-bold display-6">{{ sales_metrics.total_sales }}</p>
-          </div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+  <!-- Total Sales Card -->
+  <div class="relative overflow-hidden rounded-lg border border-border bg-gradient-to-br from-indigo-500/10 to-blue-600/10 p-6 glass-effect group hover:scale-105 transition-transform duration-300">
+    <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-blue-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+    <div class="relative">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-muted-foreground">Quantidade de Vendas</p>
+          <p class="text-3xl font-bold text-foreground">{{ sales_metrics.total_sales }}</p>
+        </div>
+        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-500/20">
+          <i data-lucide="shopping-cart" class="h-6 w-6 text-indigo-400"></i>
         </div>
       </div>
-      <div class="col-md-3">
-        <div class="card bg-danger">
-          <div class="card-body">
-            <h5 class="card-title">Produtos vendidos</h5>
-            <p class="card-text text-white font-weight-bold display-6">{{ sales_metrics.total_products_sold }}</p>
-          </div>
+      <div class="mt-4 flex items-center text-sm">
+        <i data-lucide="activity" class="mr-1 h-4 w-4 text-indigo-400"></i>
+        <span class="text-indigo-400 font-medium">Total de vendas</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Products Sold Card -->
+  <div class="relative overflow-hidden rounded-lg border border-border bg-gradient-to-br from-purple-500/10 to-pink-600/10 p-6 glass-effect group hover:scale-105 transition-transform duration-300">
+    <div class="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+    <div class="relative">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-muted-foreground">Produtos Vendidos</p>
+          <p class="text-3xl font-bold text-foreground">{{ sales_metrics.total_products_sold }}</p>
+        </div>
+        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-500/20">
+          <i data-lucide="package-check" class="h-6 w-6 text-purple-400"></i>
         </div>
       </div>
-      <div class="col-md-3">
-        <div class="card bg-success">
-          <div class="card-body">
-            <h5 class="card-title">Valor das vendas</h5>
-            <p class="card-text text-white font-weight-bold display-6">R$ {{ sales_metrics.total_sales_value }}</p>
-          </div>
+      <div class="mt-4 flex items-center text-sm">
+        <i data-lucide="box" class="mr-1 h-4 w-4 text-purple-400"></i>
+        <span class="text-purple-400 font-medium">Unidades vendidas</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sales Value Card -->
+  <div class="relative overflow-hidden rounded-lg border border-border bg-gradient-to-br from-emerald-500/10 to-teal-600/10 p-6 glass-effect group hover:scale-105 transition-transform duration-300">
+    <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-teal-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+    <div class="relative">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-muted-foreground">Valor das Vendas</p>
+          <p class="text-3xl font-bold text-foreground">R$ {{ sales_metrics.total_sales_value }}</p>
+        </div>
+        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-500/20">
+          <i data-lucide="banknote" class="h-6 w-6 text-emerald-400"></i>
         </div>
       </div>
-      <div class="col-md-3">
-        <div class="card bg-warning">
-          <div class="card-body">
-            <h5 class="card-title">Lucro das vendas</h5>
-            <p class="card-text text-white font-weight-bold display-6">R$ {{ sales_metrics.total_sales_profit }}</p>
-          </div>
+      <div class="mt-4 flex items-center text-sm">
+        <i data-lucide="trending-up" class="mr-1 h-4 w-4 text-emerald-400"></i>
+        <span class="text-emerald-400 font-medium">Receita total</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sales Profit Card -->
+  <div class="relative overflow-hidden rounded-lg border border-border bg-gradient-to-br from-orange-500/10 to-red-600/10 p-6 glass-effect group hover:scale-105 transition-transform duration-300">
+    <div class="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-red-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+    <div class="relative">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-muted-foreground">Lucro das Vendas</p>
+          <p class="text-3xl font-bold text-foreground">R$ {{ sales_metrics.total_sales_profit }}</p>
         </div>
+        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-orange-500/20">
+          <i data-lucide="target" class="h-6 w-6 text-orange-400"></i>
+        </div>
+      </div>
+      <div class="mt-4 flex items-center text-sm">
+        <i data-lucide="percent" class="mr-1 h-4 w-4 text-orange-400"></i>
+        <span class="text-orange-400 font-medium">Lucro líquido</span>
       </div>
     </div>
   </div>

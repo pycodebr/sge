@@ -1,74 +1,132 @@
 {% extends 'base.html' %}
 
 {% block title %}
-SGE - Fornecedores
+  SGE - Fornecedores
 {% endblock %}
 
 {% block content %}
 
-<div class="row mb-3">
-  <div class="col-md-6">
-    <form method="get" action="{% url 'supplier_list' %}">
-      <div class="input-group">
-        <input type="text" class="form-control" name="name" placeholder="Nome" value="{{ request.GET.name }}">
-        <button type="submit" class="btn btn-primary">
-          <i class="bi bi-search"></i>
-        </button>
+<!-- Page Header -->
+<div class="mb-8">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold bg-gradient-to-r from-green-400 via-emerald-400 to-green-400 bg-clip-text text-transparent">
+        Fornecedores
+      </h1>
+      <p class="text-muted-foreground mt-2">Gerencie os fornecedores dos produtos em seu estoque</p>
+    </div>
+    {% if perms.suppliers.add_supplier %}
+      <a href="{% url 'supplier_create' %}" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 group">
+        <i data-lucide="plus" class="w-4 h-4 mr-2 group-hover:rotate-90 transition-transform duration-200"></i>
+        Novo Fornecedor
+      </a>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Filters Section -->
+<div class="mb-6">
+  <!-- Search Form -->
+  <div class="rounded-lg border border-border bg-card p-4 glass-effect">
+    <form method="get" action="{% url 'supplier_list' %}" class="space-y-4">
+      <div class="flex items-center space-x-2 mb-3">
+        <i data-lucide="search" class="w-4 h-4 text-muted-foreground"></i>
+        <h3 class="font-medium">Buscar Fornecedores</h3>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div class="space-y-2">
+          <label for="name" class="text-sm font-medium leading-none">Nome do Fornecedor</label>
+          <input 
+            type="text" 
+            id="name"
+            name="name" 
+            value="{{ request.GET.name }}"
+            placeholder="Digite o nome do fornecedor"
+            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+        </div>
+        <div class="flex items-end">
+          <button type="submit" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">
+            <i data-lucide="search" class="w-4 h-4 mr-2"></i>
+            Buscar
+          </button>
+        </div>
       </div>
     </form>
   </div>
-  {% if perms.suppliers.add_supplier %}
-  <div class="col-md-6">
-    <a href="{% url 'supplier_create' %}" class="btn btn-success float-end">
-      <i class="bi bi-plus"></i> Novo Fornecedor
-    </a>
+</div>
+
+<!-- Suppliers Table -->
+<div class="rounded-lg border border-border bg-card glass-effect">
+  <div class="overflow-x-auto">
+    <table class="w-full">
+      <thead>
+        <tr class="border-b border-border">
+          <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">ID</th>
+          <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Fornecedor</th>
+          <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Descrição</th>
+          <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for supplier in suppliers %}
+          <tr class="border-b border-border transition-colors hover:bg-muted/50">
+            <td class="p-4 align-middle">
+              <a href="{% url 'supplier_detail' supplier.id %}" class="font-medium text-primary hover:text-primary/80 transition-colors">
+                #{{ supplier.id }}
+              </a>
+            </td>
+            <td class="p-4 align-middle">
+              <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-gradient-to-r from-green-500/20 to-emerald-600/20 rounded-lg flex items-center justify-center">
+                  <i data-lucide="truck" class="w-4 h-4 text-green-400"></i>
+                </div>
+                <div>
+                  <div class="font-medium">{{ supplier.name }}</div>
+                </div>
+              </div>
+            </td>
+            <td class="p-4 align-middle">
+              <div class="text-sm text-muted-foreground max-w-xs truncate">
+                {{ supplier.description|default:"Sem descrição" }}
+              </div>
+            </td>
+            <td class="p-4 align-middle">
+              <div class="flex space-x-2">
+                <a href="{% url 'supplier_detail' supplier.id %}" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 w-8">
+                  <i data-lucide="eye" class="w-3 h-3"></i>
+                </a>
+                {% if perms.suppliers.change_supplier %}
+                  <a href="{% url 'supplier_update' supplier.id %}" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground hover:bg-secondary/80 h-8 w-8">
+                    <i data-lucide="pencil" class="w-3 h-3"></i>
+                  </a>
+                {% endif %}
+                {% if perms.suppliers.delete_supplier %}
+                  <a href="{% url 'supplier_delete' supplier.id %}" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-destructive text-destructive-foreground hover:bg-destructive/90 h-8 w-8 btn-delete">
+                    <i data-lucide="trash-2" class="w-3 h-3"></i>
+                  </a>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="4" class="p-8 text-center">
+              <div class="flex flex-col items-center space-y-3">
+                <div class="w-12 h-12 bg-muted rounded-full flex items-center justify-center">
+                  <i data-lucide="truck" class="w-6 h-6 text-muted-foreground"></i>
+                </div>
+                <div class="text-muted-foreground">Nenhum fornecedor encontrado</div>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
-  {% endif %}
 </div>
 
-<div class="table-responsive">
-  <table class="table table-striped table-bordered">
-    <thead class="thead-dark">
-      <tr>
-        <th>ID</th>
-        <th>Nome</th>
-        <th>Descrição</th>
-        <th>Ações</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for supplier in suppliers %}
-      <tr>
-        <td>
-          <a href="{% url 'supplier_detail' supplier.id %}" class="text-primary fw-semibold">
-            {{ supplier.id }}
-          </a>
-        </td>
-        <td>{{ supplier.name }}</td>
-        <td>{{ supplier.description }}</td>
-        <td>
-          <a href="{% url 'supplier_detail' supplier.id %}" class="btn btn-info btn-sm">
-            <i class="bi bi-eye"></i>
-          </a>
-
-          {% if perms.suppliers.change_supplier %}
-          <a href="{% url 'supplier_update' supplier.id %}" class="btn btn-warning btn-sm">
-            <i class="bi bi-pencil"></i>
-          </a>
-          {% endif %}
-
-          {% if perms.suppliers.delete_supplier %}
-          <a href="{% url 'supplier_delete' supplier.id %}" class="btn btn-danger btn-sm btn-delete">
-            <i class="bi bi-trash"></i>
-          </a>
-          {% endif %}
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
-
+<!-- Pagination -->
 {% include 'components/_pagination.html' %}
 
 {% endblock %}

@@ -43,6 +43,7 @@ class OutflowDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView)
     permission_required = 'outflows.view_outflow'
 
 
+
 class OutflowCreateListAPIView(generics.ListCreateAPIView):
     queryset = models.Outflow.objects.all()
     serializer_class = serializers.OutflowSerializer

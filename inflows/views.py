@@ -36,6 +36,7 @@ class InflowDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
     permission_required = 'inflows.view_inflow'
 
 
+
 class InflowCreateListAPIView(generics.ListCreateAPIView):
     queryset = models.Inflow.objects.all()
     serializer_class = serializers.InflowSerializer

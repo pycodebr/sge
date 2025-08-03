@@ -1,18 +1,183 @@
 {% extends 'base.html' %}
 
-{% block content %}
-  <div class="container mt-4">
-    <h3 class="display-4">Detalhes da Saída</h3>
+{% block title %}
+Detalhes da Saída - {{ object.product }}
+{% endblock %}
 
-    <div class="card">
-      <div class="card-body">
-        <h3 class="card-title">{{ object.product }}</h3>
-        <p class="card-text">Fornecedor: <strong>{{ object.supplier }}</strong></p>
-        <p class="card-text">Quantidade: <strong>{{ object.quantity }}</strong></p>
-        <p class="card-text">{{ object.description }}</p>
+{% block content %}
+<!-- Page Header -->
+<div class="mb-8">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold bg-gradient-to-r from-red-400 via-pink-400 to-red-400 bg-clip-text text-transparent">
+        Detalhes da Saída
+      </h1>
+      <p class="text-muted-foreground mt-2">Informações completas sobre a saída de estoque</p>
+    </div>
+    <div class="flex items-center space-x-2">
+      <div class="h-2 w-2 bg-red-500 rounded-full animate-pulse"></div>
+      <span class="text-sm text-muted-foreground">ID: {{ object.id }}</span>
+    </div>
+  </div>
+</div>
+
+<!-- Outflow Details Card -->
+<div class="max-w-5xl mx-auto">
+  <div class="rounded-lg border border-border bg-gradient-to-br from-red-500/10 via-pink-500/5 to-red-500/10 p-8 glass-effect">
+    <!-- Header with Icon -->
+    <div class="flex items-center space-x-4 mb-8">
+      <div class="h-16 w-16 bg-gradient-to-r from-red-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
+        <i data-lucide="arrow-up-right" class="h-8 w-8 text-white"></i>
+      </div>
+      <div>
+        <h2 class="text-2xl font-bold text-primary">{{ object.product }}</h2>
+        <p class="text-muted-foreground">Saída de estoque registrada</p>
+      </div>
+      <div class="ml-auto">
+        <span class="inline-flex items-center rounded-full bg-red-500/20 px-3 py-1 text-sm font-medium text-red-300">
+          <i data-lucide="trending-down" class="h-4 w-4 mr-1"></i>
+          SAÍDA
+        </span>
       </div>
     </div>
 
-    <a href="{% url 'outflow_list' %}" class="btn btn-secondary mt-3">Voltar para a Lista de Saídas</a>
+    <!-- Information Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+      <!-- Product -->
+      <div class="space-y-2">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="package" class="h-4 w-4 text-red-400"></i>
+          <span class="text-sm font-medium text-muted-foreground">Produto</span>
+        </div>
+        <p class="text-lg font-semibold pl-6">{{ object.product }}</p>
+      </div>
+
+      <!-- Quantity -->
+      <div class="space-y-2">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="minus-circle" class="h-4 w-4 text-red-400"></i>
+          <span class="text-sm font-medium text-muted-foreground">Quantidade</span>
+        </div>
+        <p class="text-lg font-semibold pl-6 text-red-400">-{{ object.quantity }} unidades</p>
+      </div>
+
+      <!-- Total Value -->
+      <div class="space-y-2">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="dollar-sign" class="h-4 w-4 text-red-400"></i>
+          <span class="text-sm font-medium text-muted-foreground">Valor Total</span>
+        </div>
+        <p class="text-lg font-semibold pl-6 text-green-400">
+          R$ {% widthratio object.product.selling_price 1 object.quantity %}
+        </p>
+      </div>
+
+      <!-- Created Date -->
+      <div class="space-y-2">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="calendar-plus" class="h-4 w-4 text-red-400"></i>
+          <span class="text-sm font-medium text-muted-foreground">Data de Saída</span>
+        </div>
+        <p class="text-lg font-semibold pl-6">{{ object.created_at|date:"d/m/Y H:i" }}</p>
+      </div>
+
+      <!-- Updated Date -->
+      <div class="space-y-2">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="calendar-clock" class="h-4 w-4 text-red-400"></i>
+          <span class="text-sm font-medium text-muted-foreground">Última Atualização</span>
+        </div>
+        <p class="text-lg font-semibold pl-6">{{ object.updated_at|date:"d/m/Y H:i" }}</p>
+      </div>
+
+      <!-- ID -->
+      <div class="space-y-2">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="hash" class="h-4 w-4 text-red-400"></i>
+          <span class="text-sm font-medium text-muted-foreground">ID</span>
+        </div>
+        <p class="text-lg font-semibold pl-6">#{{ object.id }}</p>
+      </div>
+    </div>
+
+    <!-- Product Information Card -->
+    <div class="bg-secondary/20 rounded-lg p-4 border border-border/50 mb-8">
+      <div class="flex items-center space-x-2 mb-3">
+        <i data-lucide="info" class="h-4 w-4 text-red-400"></i>
+        <span class="text-sm font-medium text-muted-foreground">Informações do Produto</span>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+        <div>
+          <span class="text-muted-foreground">Categoria:</span>
+          <span class="ml-2 font-medium">{{ object.product.category }}</span>
+        </div>
+        <div>
+          <span class="text-muted-foreground">Marca:</span>
+          <span class="ml-2 font-medium">{{ object.product.brand }}</span>
+        </div>
+        <div>
+          <span class="text-muted-foreground">Preço Unitário:</span>
+          <span class="ml-2 font-medium text-green-400">R$ {{ object.product.selling_price|floatformat:2 }}</span>
+        </div>
+        <div>
+          <span class="text-muted-foreground">Estoque Atual:</span>
+          <span class="ml-2 font-medium {% if object.product.quantity > 0 %}text-green-400{% else %}text-red-400{% endif %}">
+            {{ object.product.quantity }} unidades
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Financial Summary Card -->
+    <div class="bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-lg p-4 border border-green-500/20 mb-8">
+      <div class="flex items-center space-x-2 mb-3">
+        <i data-lucide="calculator" class="h-4 w-4 text-green-400"></i>
+        <span class="text-sm font-medium text-muted-foreground">Resumo Financeiro</span>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="text-center">
+          <p class="text-2xl font-bold text-green-400">R$ {% widthratio object.product.selling_price 1 object.quantity %}</p>
+          <p class="text-sm text-muted-foreground">Receita Total</p>
+        </div>
+        <div class="text-center">
+          <p class="text-2xl font-bold text-orange-400">R$ {% widthratio object.product.cost_price 1 object.quantity %}</p>
+          <p class="text-sm text-muted-foreground">Custo Total</p>
+        </div>
+        <div class="text-center">
+          <p class="text-2xl font-bold text-blue-400" id="profit-total">
+            R$ 0,00
+          </p>
+          <p class="text-sm text-muted-foreground">Lucro Total</p>
+          <script>
+            // Calculate profit: (selling_price - cost_price) * quantity
+            const sellingPrice = {{ object.product.selling_price }};
+            const costPrice = {{ object.product.cost_price }};
+            const quantity = {{ object.quantity }};
+            const profit = (sellingPrice - costPrice) * quantity;
+            document.getElementById('profit-total').textContent = 'R$ ' + profit.toFixed(2).replace('.', ',');
+          </script>
+        </div>
+      </div>
+    </div>
+
+    <!-- Description Section -->
+    {% if object.description %}
+    <div class="space-y-4 mb-8">
+      <div class="flex items-center space-x-2">
+        <i data-lucide="file-text" class="h-4 w-4 text-red-400"></i>
+        <span class="text-sm font-medium text-muted-foreground">Observações</span>
+      </div>
+      <div class="bg-secondary/30 rounded-lg p-4 border border-border/50">
+        <p class="text-foreground leading-relaxed">{{ object.description|linebreaks }}</p>
+      </div>
+    </div>
+    {% endif %}
+      <a href="{% url 'outflow_list' %}" 
+         class="inline-flex items-center space-x-2 bg-secondary hover:bg-secondary/80 text-secondary-foreground px-4 py-2 rounded-lg font-medium transition-all duration-200">
+        <i data-lucide="arrow-left" class="h-4 w-4"></i>
+        <span>Voltar</span>
+      </a>
+    </div>
   </div>
+</div>
 {% endblock %}

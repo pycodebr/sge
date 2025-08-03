@@ -1,20 +1,156 @@
 {% extends 'base.html' %}
 
+{% block title %}
+Excluir Produto - {{ object.title }}
+{% endblock %}
+
 {% block content %}
-  <div class="container mt-4">
-    <h3 class="display-4">Deletar Produto</h3>
-
-    <div class="card">
-      <div class="card-body">
-        <p class="card-text">Tem certeza de que deseja excluir o produto <strong>{{ object.title }}</strong>?</p>
-
-        <form method="post">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-danger">Deletar</button>
-        </form>
-        
-        <a href="{% url 'product_list' %}" class="btn btn-secondary mt-3">Cancelar e Voltar para a Lista de Produtos</a>
-      </div>
+<!-- Page Header -->
+<div class="mb-8">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold bg-gradient-to-r from-green-400 via-emerald-400 to-green-400 bg-clip-text text-transparent">
+        Excluir Produto
+      </h1>
+      <p class="text-muted-foreground mt-2">Confirme a exclusão permanente do produto</p>
+    </div>
+    <div class="flex items-center space-x-2">
+      <div class="h-2 w-2 bg-red-500 rounded-full animate-pulse"></div>
+      <span class="text-sm text-muted-foreground">Ação Irreversível</span>
     </div>
   </div>
+</div>
+
+<!-- Delete Confirmation Card -->
+<div class="max-w-3xl mx-auto">
+  <div class="rounded-lg border border-red-500/50 bg-gradient-to-br from-green-500/10 via-emerald-500/5 to-green-500/10 p-8 glass-effect">
+    <!-- Header with Warning Icon -->
+    <div class="flex items-center justify-center mb-8">
+      <div class="h-20 w-20 bg-gradient-to-r from-red-500 to-pink-600 rounded-full flex items-center justify-center shadow-lg">
+        <i data-lucide="alert-triangle" class="h-10 w-10 text-white"></i>
+      </div>
+    </div>
+
+    <!-- Warning Title -->
+    <div class="text-center mb-8">
+      <h2 class="text-2xl font-bold text-red-400 mb-2">Atenção!</h2>
+      <p class="text-muted-foreground">Esta ação não pode ser desfeita</p>
+    </div>
+
+    <!-- Product Information -->
+    <div class="bg-secondary/20 rounded-lg p-6 border border-border/50 mb-8">
+      <div class="flex items-center space-x-4 mb-4">
+        <div class="h-12 w-12 bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
+          <i data-lucide="package" class="h-6 w-6 text-white"></i>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-primary">{{ object.title }}</h3>
+          <p class="text-sm text-muted-foreground">Produto a ser excluído</p>
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+        <div>
+          <span class="text-muted-foreground">Categoria:</span>
+          <span class="ml-2 font-medium">{{ object.category }}</span>
+        </div>
+        <div>
+          <span class="text-muted-foreground">Marca:</span>
+          <span class="ml-2 font-medium">{{ object.brand }}</span>
+        </div>
+        <div>
+          <span class="text-muted-foreground">Estoque:</span>
+          <span class="ml-2 font-medium {% if object.quantity > 0 %}text-green-400{% else %}text-red-400{% endif %}">
+            {{ object.quantity }} unidades
+          </span>
+        </div>
+        <div>
+          <span class="text-muted-foreground">Preço de Custo:</span>
+          <span class="ml-2 font-medium text-orange-400">R$ {{ object.cost_price|floatformat:2 }}</span>
+        </div>
+        <div>
+          <span class="text-muted-foreground">Preço de Venda:</span>
+          <span class="ml-2 font-medium text-green-400">R$ {{ object.selling_price|floatformat:2 }}</span>
+        </div>
+        <div>
+          <span class="text-muted-foreground">Valor em Estoque:</span>
+          <span class="ml-2 font-medium text-blue-400">
+            R$ {% widthratio object.cost_price 1 object.quantity %}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Warning Messages -->
+    <div class="bg-red-500/20 border border-red-500/50 rounded-lg p-4 mb-8">
+      <div class="flex items-start space-x-3">
+        <i data-lucide="shield-alert" class="h-5 w-5 text-red-400 mt-0.5 flex-shrink-0"></i>
+        <div class="space-y-2">
+          <p class="font-semibold text-red-400">Consequências da exclusão:</p>
+          <div class="text-sm text-red-300 space-y-1">
+            <p>• O produto "{{ object.title }}" será removido permanentemente</p>
+            <p>• Todo histórico de entradas e saídas será perdido</p>
+            <p>• Valor em estoque de R$ {% widthratio object.cost_price 1 object.quantity %} será perdido</p>
+            <p>• Esta ação não pode ser revertida</p>
+            <p>• Verifique se não há transações pendentes antes de prosseguir</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stock Warning (se houver estoque) -->
+    {% if object.quantity > 0 %}
+    <div class="bg-yellow-500/20 border border-yellow-500/50 rounded-lg p-4 mb-8">
+      <div class="flex items-start space-x-3">
+        <i data-lucide="alert-circle" class="h-5 w-5 text-yellow-400 mt-0.5 flex-shrink-0"></i>
+        <div>
+          <p class="font-semibold text-yellow-400">Atenção: Produto em Estoque!</p>
+          <p class="text-sm text-yellow-300 mt-1">
+            Este produto ainda possui {{ object.quantity }} unidades em estoque. 
+            Considere fazer uma saída de estoque antes de excluir o produto.
+          </p>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Confirmation Question -->
+    <div class="text-center mb-8">
+      <p class="text-lg font-medium text-foreground mb-2">
+        Tem certeza de que deseja excluir o produto 
+        <span class="text-green-400 font-bold">"{{ object.title }}"</span>?
+      </p>
+      <p class="text-sm text-muted-foreground">
+        Esta ação removerá permanentemente o produto e todo seu histórico
+      </p>
+    </div>
+
+    <!-- Action Buttons -->
+    <form method="post" class="space-y-6">
+      {% csrf_token %}
+      
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <button type="submit" 
+                class="inline-flex items-center justify-center space-x-2 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white px-8 py-3 rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl border border-red-500/50">
+          <i data-lucide="trash-2" class="h-5 w-5"></i>
+          <span>Sim, Excluir Produto</span>
+        </button>
+        
+        <a href="{% url 'product_list' %}" 
+           class="inline-flex items-center justify-center space-x-2 bg-secondary hover:bg-secondary/80 text-secondary-foreground px-8 py-3 rounded-lg font-medium transition-all duration-200">
+          <i data-lucide="arrow-left" class="h-5 w-5"></i>
+          <span>Cancelar</span>
+        </a>
+      </div>
+    </form>
+
+    <!-- Additional Info -->
+    <div class="mt-8 pt-6 border-t border-border/30 text-center">
+      <p class="text-xs text-muted-foreground">
+        <i data-lucide="info" class="h-3 w-3 inline mr-1"></i>
+        Se você não tem certeza, cancele e revise o histórico de movimentações primeiro
+      </p>
+    </div>
+  </div>
+</div>
 {% endblock %}

@@ -1,20 +1,116 @@
 {% extends 'base.html' %}
 
+{% block title %}
+Excluir Categoria - {{ object.name }}
+{% endblock %}
+
 {% block content %}
-  <div class="container mt-4">
-    <h3 class="display-4">Deletar Categoria</h3>
-
-    <div class="card">
-      <div class="card-body">
-        <p class="card-text">Tem certeza de que deseja excluir a categoria <strong>{{ object.name }}</strong>?</p>
-
-        <form method="post">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-danger">Deletar</button>
-        </form>
-        
-        <a href="{% url 'category_list' %}" class="btn btn-secondary mt-3">Cancelar e Voltar para a Lista de Categorias</a>
-      </div>
+<!-- Page Header -->
+<div class="mb-8">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold bg-gradient-to-r from-orange-400 via-red-400 to-orange-400 bg-clip-text text-transparent">
+        Excluir Categoria
+      </h1>
+      <p class="text-muted-foreground mt-2">Confirme a exclusão permanente da categoria</p>
+    </div>
+    <div class="flex items-center space-x-2">
+      <div class="h-2 w-2 bg-red-500 rounded-full animate-pulse"></div>
+      <span class="text-sm text-muted-foreground">Ação Irreversível</span>
     </div>
   </div>
+</div>
+
+<!-- Delete Confirmation Card -->
+<div class="max-w-2xl mx-auto">
+  <div class="rounded-lg border border-red-500/50 bg-gradient-to-br from-orange-500/10 via-red-500/5 to-orange-500/10 p-8 glass-effect">
+    <!-- Header with Warning Icon -->
+    <div class="flex items-center justify-center mb-8">
+      <div class="h-20 w-20 bg-gradient-to-r from-red-500 to-pink-600 rounded-full flex items-center justify-center shadow-lg">
+        <i data-lucide="alert-triangle" class="h-10 w-10 text-white"></i>
+      </div>
+    </div>
+
+    <!-- Warning Title -->
+    <div class="text-center mb-8">
+      <h2 class="text-2xl font-bold text-red-400 mb-2">Atenção!</h2>
+      <p class="text-muted-foreground">Esta ação não pode ser desfeita</p>
+    </div>
+
+    <!-- Category Information -->
+    <div class="bg-secondary/20 rounded-lg p-6 border border-border/50 mb-8">
+      <div class="flex items-center space-x-4 mb-4">
+        <div class="h-12 w-12 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg flex items-center justify-center">
+          <i data-lucide="folder" class="h-6 w-6 text-white"></i>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-primary">{{ object.name }}</h3>
+          <p class="text-sm text-muted-foreground">Categoria a ser excluída</p>
+        </div>
+      </div>
+      
+      {% if object.description %}
+      <div class="mt-4 pt-4 border-t border-border/30">
+        <p class="text-sm text-muted-foreground">
+          <strong>Descrição:</strong> {{ object.description }}
+        </p>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Warning Messages -->
+    <div class="bg-red-500/20 border border-red-500/50 rounded-lg p-4 mb-8">
+      <div class="flex items-start space-x-3">
+        <i data-lucide="shield-alert" class="h-5 w-5 text-red-400 mt-0.5 flex-shrink-0"></i>
+        <div class="space-y-2">
+          <p class="font-semibold text-red-400">Consequências da exclusão:</p>
+          <div class="text-sm text-red-300 space-y-1">
+            <p>• A categoria "{{ object.name }}" será removida permanentemente</p>
+            <p>• Produtos associados a esta categoria podem ser afetados</p>
+            <p>• Esta ação não pode ser revertida</p>
+            <p>• Verifique se não há produtos usando esta categoria antes de prosseguir</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirmation Question -->
+    <div class="text-center mb-8">
+      <p class="text-lg font-medium text-foreground mb-2">
+        Tem certeza de que deseja excluir a categoria 
+        <span class="text-orange-400 font-bold">"{{ object.name }}"</span>?
+      </p>
+      <p class="text-sm text-muted-foreground">
+        Esta ação removerá permanentemente a categoria do sistema
+      </p>
+    </div>
+
+    <!-- Action Buttons -->
+    <form method="post" class="space-y-6">
+      {% csrf_token %}
+      
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <button type="submit" 
+                class="inline-flex items-center justify-center space-x-2 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white px-8 py-3 rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl border border-red-500/50">
+          <i data-lucide="trash-2" class="h-5 w-5"></i>
+          <span>Sim, Excluir Categoria</span>
+        </button>
+        
+        <a href="{% url 'category_list' %}" 
+           class="inline-flex items-center justify-center space-x-2 bg-secondary hover:bg-secondary/80 text-secondary-foreground px-8 py-3 rounded-lg font-medium transition-all duration-200">
+          <i data-lucide="arrow-left" class="h-5 w-5"></i>
+          <span>Cancelar</span>
+        </a>
+      </div>
+    </form>
+
+    <!-- Additional Info -->
+    <div class="mt-8 pt-6 border-t border-border/30 text-center">
+      <p class="text-xs text-muted-foreground">
+        <i data-lucide="info" class="h-3 w-3 inline mr-1"></i>
+        Se você não tem certeza, cancele e revise os produtos associados primeiro
+      </p>
+    </div>
+  </div>
+</div>
 {% endblock %}

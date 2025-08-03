@@ -1,15 +1,136 @@
-<div class="accordion" id="accordionExample">
-  <div class="accordion-item">
-    <h2 class="accordion-header">
-      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo"
-        aria-expanded="false" aria-controls="collapseTwo">
-        SGE Agent
-      </button>
-    </h2>
-    <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-      <div class="accordion-body">
-        {{ ai_result|linebreaks }}
+<!-- SGE Agent Section -->
+<div class="mb-8">
+  <div class="rounded-lg border border-border bg-gradient-to-br from-purple-500/10 via-blue-500/5 to-purple-500/10 glass-effect overflow-hidden">
+    <!-- Agent Header -->
+    <div class="cursor-pointer p-6 hover:bg-accent/20 transition-all duration-300" 
+         onclick="toggleSGEAgent()" 
+         id="sge-agent-header">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <!-- AI Icon with Glow Effect -->
+          <div class="relative">
+            <div class="absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-600 rounded-xl blur opacity-60 animate-pulse"></div>
+            <div class="relative h-12 w-12 bg-gradient-to-r from-purple-600 to-blue-700 rounded-xl flex items-center justify-center shadow-lg">
+              <i data-lucide="brain" class="h-6 w-6 text-white"></i>
+            </div>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold bg-gradient-to-r from-purple-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+              SGE Agent
+            </h3>
+            <p class="text-muted-foreground text-sm">Assistente Inteligente de Gestão</p>
+          </div>
+        </div>
+        <div class="flex items-center space-x-3">
+          <div class="flex items-center space-x-2">
+            <div class="h-2 w-2 bg-green-500 rounded-full animate-pulse"></div>
+            <span class="text-xs text-muted-foreground">Ativo</span>
+          </div>
+          <div class="transition-transform duration-300" id="sge-agent-chevron">
+            <i data-lucide="chevron-down" class="h-5 w-5 text-muted-foreground"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Agent Content (Collapsible) -->
+    <div class="hidden transition-all duration-500 ease-in-out" id="sge-agent-content">
+      <div class="border-t border-border/40 p-6 space-y-6">
+        <!-- AI Insights Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Insight Card 1 -->
+          <div class="bg-secondary/30 rounded-lg p-4 border border-border/50">
+            <div class="flex items-center space-x-2 mb-2">
+              <i data-lucide="trending-up" class="h-4 w-4 text-green-400"></i>
+              <span class="text-sm font-medium text-green-400">Análise de Vendas</span>
+            </div>
+            <p class="text-sm text-muted-foreground">
+              Produtos com alta rotatividade identificados. Considere aumentar o estoque dos itens mais vendidos.
+            </p>
+          </div>
+
+          <!-- Insight Card 2 -->
+          <div class="bg-secondary/30 rounded-lg p-4 border border-border/50">
+            <div class="flex items-center space-x-2 mb-2">
+              <i data-lucide="alert-triangle" class="h-4 w-4 text-yellow-400"></i>
+              <span class="text-sm font-medium text-yellow-400">Estoque Baixo</span>
+            </div>
+            <p class="text-sm text-muted-foreground">
+              Detectados produtos com estoque crítico. Recomenda-se reposição imediata para evitar ruptura.
+            </p>
+          </div>
+
+          <!-- Insight Card 3 -->
+          <div class="bg-secondary/30 rounded-lg p-4 border border-border/50">
+            <div class="flex items-center space-x-2 mb-2">
+              <i data-lucide="dollar-sign" class="h-4 w-4 text-blue-400"></i>
+              <span class="text-sm font-medium text-blue-400">Oportunidades</span>
+            </div>
+            <p class="text-sm text-muted-foreground">
+              Margem de lucro pode ser otimizada em algumas categorias. Analise preços da concorrência.
+            </p>
+          </div>
+        </div>
+
+        <!-- AI Result Content -->
+        {% if ai_result %}
+        <div class="bg-gradient-to-r from-purple-500/10 to-blue-500/10 rounded-lg p-4 border border-purple-500/20">
+          <div class="flex items-center space-x-2 mb-3">
+            <i data-lucide="sparkles" class="h-4 w-4 text-purple-400"></i>
+            <span class="text-sm font-medium text-purple-400">Análise Personalizada</span>
+          </div>
+          <div class="prose prose-invert prose-sm max-w-none">
+            {{ ai_result|linebreaks }}
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Quick Actions -->
+        <div class="flex flex-wrap gap-3 pt-4 border-t border-border/40">
+          <button class="inline-flex items-center space-x-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg hover:shadow-xl">
+            <i data-lucide="refresh-cw" class="h-4 w-4"></i>
+            <span>Atualizar Análise</span>
+          </button>
+          <button class="inline-flex items-center space-x-2 bg-secondary hover:bg-secondary/80 text-secondary-foreground px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
+            <i data-lucide="download" class="h-4 w-4"></i>
+            <span>Exportar Relatório</span>
+          </button>
+          <button class="inline-flex items-center space-x-2 bg-secondary hover:bg-secondary/80 text-secondary-foreground px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
+            <i data-lucide="settings" class="h-4 w-4"></i>
+            <span>Configurar IA</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
 </div>
+
+<script>
+function toggleSGEAgent() {
+  const content = document.getElementById('sge-agent-content');
+  const chevron = document.getElementById('sge-agent-chevron');
+  const header = document.getElementById('sge-agent-header');
+  
+  if (content.classList.contains('hidden')) {
+    // Show content
+    content.classList.remove('hidden');
+    content.style.maxHeight = content.scrollHeight + 'px';
+    chevron.style.transform = 'rotate(180deg)';
+    header.classList.add('bg-accent/10');
+  } else {
+    // Hide content
+    content.style.maxHeight = '0';
+    setTimeout(() => {
+      content.classList.add('hidden');
+    }, 500);
+    chevron.style.transform = 'rotate(0deg)';
+    header.classList.remove('bg-accent/10');
+  }
+}
+
+// Start minimized by default
+document.addEventListener('DOMContentLoaded', function() {
+  // Component starts minimized, no need to auto-expand
+  // Users can click to expand when needed
+});
+</script>

@@ -1,79 +1,180 @@
-<div class="row flex-nowrap">
-  <div class="col-auto col-md-0 col-xl-0 px-0 bg-dark">
-    <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white">
-      <button class="btn btn-dark d-block d-sm-none mb-3" type="button" data-bs-toggle="collapse"
-        data-bs-target="#menuCollapse" aria-expanded="false" aria-controls="menuCollapse">
-        <i class="bi bi-list fs-4"></i>
-      </button>
-      <div class="collapse d-sm-block" id="menuCollapse">
-        <ul class="nav flex-column align-items-start" id="menu">
-          <li>
-            <a href="{% url 'home' %}" class="nav-link px-0 align-middle">
-              <i class="bi bi-speedometer2 fs-4"></i>
-              <span class="ms-1">Dashboard</span>
-            </a>
-          </li>
-          {% if perms.suppliers.view_supplier %}
-            <li>
-              <a href="{% url 'supplier_list' %}" class="nav-link px-0 align-middle">
-                <i class="bi bi-truck fs-4"></i>
-                <span class="ms-1">Fornecedores</span>
-              </a>
-            </li>
-          {% endif %}
-          {% if perms.brands.view_brand %}
-            <li>
-              <a href="{% url 'brand_list' %}" class="nav-link px-0 align-middle">
-                <i class="bi bi-shop fs-4"></i>
-                <span class="ms-1">Marcas</span>
-              </a>
-            </li>
-          {% endif %}
-          {% if perms.categories.view_category %}
-            <li>
-              <a href="{% url 'category_list' %}" class="nav-link px-0 align-middle">
-                <i class="bi bi-tags fs-4"></i>
-                <span class="ms-1">Categorias</span>
-              </a>
-            </li>
-          {% endif %}
-          {% if perms.products.view_product %}
-            <li>
-              <a href="{% url 'product_list' %}" class="nav-link px-0 align-middle">
-                <i class="bi bi-box-seam fs-4"></i>
-                <span class="ms-1">Produtos</span>
-              </a>
-            </li>
-          {% endif %}
-          {% if perms.inflows.view_inflow %}
-            <li>
-              <a href="{% url 'inflow_list' %}" class="nav-link px-0 align-middle">
-                <i class="bi bi-arrow-down-left-square fs-4"></i>
-                <span class="ms-1">Entradas</span>
-              </a>
-            </li>
-          {% endif %}
-          {% if perms.outflows.view_outflow %}
-            <li>
-              <a href="{% url 'outflow_list' %}" class="nav-link px-0 align-middle">
-                <i class="bi bi-arrow-up-right-square fs-4"></i>
-                <span class="ms-1">Saídas</span>
-              </a>
-            </li>
-          {% endif %}
-          <li class="nav-item">
-            {% if user.is_authenticated %}
-            <form action="{% url 'logout' %}" method="post" id="logout-form" class="nav-link px-0 align-middle">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-link text-decoration-none text-reset nav-link px-0 align-middle">
-                <i class="bi bi-box-arrow-right fs-4 align-middle"></i>
-                <span class="ms-1 align-middle">Sair</span>
-              </button>
-            </form>
-            {% endif %}
-          </li>
-        </ul>
+<aside id="sidebar" class="fixed left-0 top-0 z-40 h-screen w-64 transform bg-gradient-to-b from-slate-950/90 to-blue-950/90 backdrop-blur-lg border-r border-border/40 transition-transform duration-300 ease-in-out md:translate-x-0 -translate-x-full">
+  <div class="flex h-full flex-col">
+    <!-- Sidebar Header -->
+    <div class="flex items-center justify-between p-4 border-b border-border/40">
+      <div class="flex items-center space-x-2">
+        <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+          <i data-lucide="package" class="w-4 h-4 text-white"></i>
+        </div>
+        <span class="font-semibold text-sm text-primary">SGE</span>
       </div>
-      <hr>
+      <button id="sidebar-close" class="md:hidden p-1 text-muted-foreground hover:text-primary transition-colors rounded">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+    </div>
+    
+    <!-- Navigation Menu -->
+    <nav class="flex-1 overflow-y-auto scrollbar-custom p-4" style="max-height: calc(100vh - 120px);">
+      <ul class="space-y-2">
+        <!-- Dashboard -->
+        <li>
+          <a href="{% url 'home' %}" class="group flex items-center space-x-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-all duration-200 hover:bg-accent hover:text-primary">
+            <div class="flex h-6 w-6 items-center justify-center">
+              <i data-lucide="layout-dashboard" class="h-4 w-4"></i>
+            </div>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        
+        <!-- Suppliers -->
+        {% if perms.suppliers.view_supplier %}
+        <li>
+          <a href="{% url 'supplier_list' %}" class="group flex items-center space-x-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-all duration-200 hover:bg-accent hover:text-primary">
+            <div class="flex h-6 w-6 items-center justify-center">
+              <i data-lucide="truck" class="h-4 w-4"></i>
+            </div>
+            <span>Fornecedores</span>
+          </a>
+        </li>
+        {% endif %}
+        
+        <!-- Brands -->
+        {% if perms.brands.view_brand %}
+        <li>
+          <a href="{% url 'brand_list' %}" class="group flex items-center space-x-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-all duration-200 hover:bg-accent hover:text-primary">
+            <div class="flex h-6 w-6 items-center justify-center">
+              <i data-lucide="badge" class="h-4 w-4"></i>
+            </div>
+            <span>Marcas</span>
+          </a>
+        </li>
+        {% endif %}
+        
+        <!-- Categories -->
+        {% if perms.categories.view_category %}
+        <li>
+          <a href="{% url 'category_list' %}" class="group flex items-center space-x-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-all duration-200 hover:bg-accent hover:text-primary">
+            <div class="flex h-6 w-6 items-center justify-center">
+              <i data-lucide="tags" class="h-4 w-4"></i>
+            </div>
+            <span>Categorias</span>
+          </a>
+        </li>
+        {% endif %}
+        
+        <!-- Products -->
+        {% if perms.products.view_product %}
+        <li>
+          <a href="{% url 'product_list' %}" class="group flex items-center space-x-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-all duration-200 hover:bg-accent hover:text-primary">
+            <div class="flex h-6 w-6 items-center justify-center">
+              <i data-lucide="package" class="h-4 w-4"></i>
+            </div>
+            <span>Produtos</span>
+          </a>
+        </li>
+        {% endif %}
+        
+        <!-- Divider -->
+        <li>
+          <div class="my-4 border-t border-border/40"></div>
+        </li>
+        
+        <!-- Inflows -->
+        {% if perms.inflows.view_inflow %}
+        <li>
+          <a href="{% url 'inflow_list' %}" class="group flex items-center space-x-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-all duration-200 hover:bg-accent hover:text-primary">
+            <div class="flex h-6 w-6 items-center justify-center">
+              <i data-lucide="arrow-down-left" class="h-4 w-4"></i>
+            </div>
+            <span>Entradas</span>
+            <div class="ml-auto">
+              <span class="inline-flex items-center rounded-full bg-green-500/20 px-2 py-1 text-xs font-medium text-green-300">
+                IN
+              </span>
+            </div>
+          </a>
+        </li>
+        {% endif %}
+        
+        <!-- Outflows -->
+        {% if perms.outflows.view_outflow %}
+        <li>
+          <a href="{% url 'outflow_list' %}" class="group flex items-center space-x-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-all duration-200 hover:bg-accent hover:text-primary">
+            <div class="flex h-6 w-6 items-center justify-center">
+              <i data-lucide="arrow-up-right" class="h-4 w-4"></i>
+            </div>
+            <span>Saídas</span>
+            <div class="ml-auto">
+              <span class="inline-flex items-center rounded-full bg-red-500/20 px-2 py-1 text-xs font-medium text-red-300">
+                OUT
+              </span>
+            </div>
+          </a>
+        </li>
+        {% endif %}
+      </ul>
+    </nav>
+    
+    <!-- Sidebar Footer -->
+    <div class="border-t border-border/40 p-4">
+      {% if user.is_authenticated %}
+      <form action="{% url 'logout' %}" method="post" class="w-full">
+        {% csrf_token %}
+        <button type="submit" class="group flex w-full items-center space-x-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-all duration-200 hover:bg-destructive hover:text-destructive-foreground">
+          <div class="flex h-6 w-6 items-center justify-center">
+            <i data-lucide="log-out" class="h-4 w-4"></i>
+          </div>
+          <span>Sair</span>
+        </button>
+      </form>
+      {% endif %}
     </div>
   </div>
+</aside>
+
+<!-- Sidebar overlay for mobile -->
+<div id="sidebar-overlay" class="fixed inset-0 z-30 bg-black/50 backdrop-blur-sm md:hidden hidden"></div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const sidebar = document.getElementById('sidebar');
+    const sidebarClose = document.getElementById('sidebar-close');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+    
+    // Toggle sidebar for mobile
+    if (mobileMenuToggle) {
+      mobileMenuToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('-translate-x-full');
+        sidebarOverlay.classList.toggle('hidden');
+      });
+    }
+    
+    // Close sidebar
+    if (sidebarClose) {
+      sidebarClose.addEventListener('click', function() {
+        sidebar.classList.add('-translate-x-full');
+        sidebarOverlay.classList.add('hidden');
+      });
+    }
+    
+    // Close sidebar when clicking overlay
+    if (sidebarOverlay) {
+      sidebarOverlay.addEventListener('click', function() {
+        sidebar.classList.add('-translate-x-full');
+        sidebarOverlay.classList.add('hidden');
+      });
+    }
+    
+    // Highlight active menu item
+    const currentPath = window.location.pathname;
+    const menuLinks = sidebar.querySelectorAll('a');
+    
+    menuLinks.forEach(link => {
+      if (link.getAttribute('href') === currentPath) {
+        link.classList.remove('text-muted-foreground');
+        link.classList.add('bg-accent', 'text-primary', 'font-semibold');
+      }
+    });
+  });
+</script>

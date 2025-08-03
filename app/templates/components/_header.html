@@ -1,5 +1,57 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-dark">
-  <div class="container-fluid">
-    <a class="navbar-brand text-white" href="{% url 'home' %}">Sistema de Gestão de Estoque (SGE)</a>
+<header class="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+  <div class="flex h-16 items-center justify-between px-4 md:px-6">
+    <div class="flex items-center space-x-4">
+      <a href="{% url 'home' %}" class="flex items-center space-x-3 group">
+        <div class="relative">
+          <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-300"></div>
+          <div class="relative bg-gradient-to-r from-blue-600 to-purple-700 text-white p-2 rounded-lg">
+            <i data-lucide="package" class="w-6 h-6"></i>
+          </div>
+        </div>
+        <div class="hidden md:block">
+          <h1 class="text-xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">
+            Sistema de Gestão de Estoque
+          </h1>
+          <p class="text-xs text-muted-foreground">SGE - Controle Inteligente</p>
+        </div>
+      </a>
+    </div>
+    
+    {% if user.is_authenticated %}
+      <div class="flex items-center space-x-4">
+        <!-- User Menu -->
+        <div class="flex items-center space-x-3 glass-effect rounded-lg px-3 py-2">
+          <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+            <i data-lucide="user" class="w-4 h-4 text-white"></i>
+          </div>
+          <div class="hidden md:block">
+            <p class="text-sm font-medium">{{ user.first_name|default:user.username }}</p>
+            <p class="text-xs text-muted-foreground">{{ user.email }}</p>
+          </div>
+        </div>
+      </div>
+    {% endif %}
   </div>
-</nav>
+  
+  <!-- Mobile Menu Toggle (if needed) -->
+  <div class="md:hidden px-4 pb-2">
+    <button id="mobile-menu-toggle" class="w-full flex items-center justify-center space-x-2 p-2 text-muted-foreground hover:text-primary transition-colors duration-200 rounded-lg hover:bg-accent border border-border">
+      <i data-lucide="menu" class="w-4 h-4"></i>
+      <span class="text-sm">Menu</span>
+    </button>
+  </div>
+</header>
+
+<script>
+  // Mobile menu toggle functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+    const sidebar = document.getElementById('sidebar');
+    
+    if (mobileMenuToggle && sidebar) {
+      mobileMenuToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('-translate-x-full');
+      });
+    }
+  });
+</script>

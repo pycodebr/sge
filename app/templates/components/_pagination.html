@@ -1,49 +1,84 @@
 {% if page_obj.has_other_pages %}
-  <nav>
-    <ul class="pagination justify-content-center">
+  <div class="flex items-center justify-between mt-6">
+    <!-- Page Info -->
+    <div class="text-sm text-muted-foreground">
+      Mostrando 
+      <span class="font-medium text-foreground">{{ page_obj.start_index }}</span>
+      até 
+      <span class="font-medium text-foreground">{{ page_obj.end_index }}</span>
+      de 
+      <span class="font-medium text-foreground">{{ page_obj.paginator.count }}</span>
+      resultados
+    </div>
+
+    <!-- Pagination Controls -->
+    <nav class="flex items-center space-x-2">
       {% if page_obj.has_previous %}
-        <li class="page-item">
-          <a class="page-link" href="?page=1">
-            Primeira
-          </a>
-        </li>
-        <li class="page-item">
-          <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
-            Anterior
-          </a>
-        </li>
+        <!-- First Page -->
+        <a href="?page=1" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-3">
+          <i data-lucide="chevrons-left" class="w-4 h-4"></i>
+        </a>
+        
+        <!-- Previous Page -->
+        <a href="?page={{ page_obj.previous_page_number }}" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-3">
+          <i data-lucide="chevron-left" class="w-4 h-4 mr-1"></i>
+          Anterior
+        </a>
+      {% else %}
+        <!-- Disabled First -->
+        <span class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors disabled:pointer-events-none disabled:opacity-50 border border-input bg-background text-muted-foreground h-9 px-3">
+          <i data-lucide="chevrons-left" class="w-4 h-4"></i>
+        </span>
+        
+        <!-- Disabled Previous -->
+        <span class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors disabled:pointer-events-none disabled:opacity-50 border border-input bg-background text-muted-foreground h-9 px-3">
+          <i data-lucide="chevron-left" class="w-4 h-4 mr-1"></i>
+          Anterior
+        </span>
       {% endif %}
 
-      {% for page_number in page_obj.paginator.page_range %}
-        {% if page_number <= page_obj.number|add:3 and page_number >= page_obj.number|add:-3 %}
-          {% if page_obj.number == page_number %}
-            <li class="page-item active">
-              <a class="page-link" href="?page={{ page_number }}">
+      <!-- Page Numbers -->
+      <div class="flex items-center space-x-1">
+        {% for page_number in page_obj.paginator.page_range %}
+          {% if page_number <= page_obj.number|add:2 and page_number >= page_obj.number|add:-2 %}
+            {% if page_obj.number == page_number %}
+              <!-- Current Page -->
+              <span class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors bg-primary text-primary-foreground h-9 w-9">
+                {{ page_number }}
+              </span>
+            {% else %}
+              <!-- Other Pages -->
+              <a href="?page={{ page_number }}" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 w-9">
                 {{ page_number }}
               </a>
-            </li>
-          {% else %}
-            <li class="page-item">
-              <a class="page-link" href="?page={{ page_number }}">
-                {{ page_number }}
-              </a>
-            </li>
+            {% endif %}
           {% endif %}
-        {% endif %}
-      {% endfor %}
+        {% endfor %}
+      </div>
 
       {% if page_obj.has_next %}
-        <li class="page-item">
-          <a class="page-link" href="?page={{ page_obj.next_page_number }}">
-            Próxima
-          </a>
-        </li>
-        <li class="page-item">
-          <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">
-            Última
-          </a>
-        </li>
+        <!-- Next Page -->
+        <a href="?page={{ page_obj.next_page_number }}" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-3">
+          Próxima
+          <i data-lucide="chevron-right" class="w-4 h-4 ml-1"></i>
+        </a>
+        
+        <!-- Last Page -->
+        <a href="?page={{ page_obj.paginator.num_pages }}" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-3">
+          <i data-lucide="chevrons-right" class="w-4 h-4"></i>
+        </a>
+      {% else %}
+        <!-- Disabled Next -->
+        <span class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors disabled:pointer-events-none disabled:opacity-50 border border-input bg-background text-muted-foreground h-9 px-3">
+          Próxima
+          <i data-lucide="chevron-right" class="w-4 h-4 ml-1"></i>
+        </span>
+        
+        <!-- Disabled Last -->
+        <span class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors disabled:pointer-events-none disabled:opacity-50 border border-input bg-background text-muted-foreground h-9 px-3">
+          <i data-lucide="chevrons-right" class="w-4 h-4"></i>
+        </span>
       {% endif %}
-    </ul>
-  </nav>
+    </nav>
+  </div>
 {% endif %}

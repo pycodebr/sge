@@ -1,18 +1,98 @@
 {% extends 'base.html' %}
 
-{% block content %}
-  <div class="container mt-4">
-    <h3 class="display-4">Cadastrar Categoria</h3>
+{% block title %}
+  SGE - Nova Categoria
+{% endblock %}
 
-    <div class="card">
-      <div class="card-body">
-        <form method="post" class="form">
-          {% csrf_token %}
-          {{ form.as_p }}
-          <button type="submit" class="btn btn-primary">Salvar Categoria</button>
-        </form>
-      </div>
+{% block content %}
+
+<!-- Page Header -->
+<div class="mb-8">
+  <div class="flex items-center space-x-4">
+    <a href="{% url 'category_list' %}" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 w-10">
+      <i data-lucide="arrow-left" class="w-4 h-4"></i>
+    </a>
+    <div>
+      <h1 class="text-3xl font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent">
+        Nova Categoria
+      </h1>
+      <p class="text-muted-foreground mt-2">Cadastre uma nova categoria para organizar seus produtos</p>
     </div>
-    <a href="{% url 'category_list' %}" class="btn btn-secondary mt-3">Cancelar e Voltar para a Lista de Categorias</a>
   </div>
+</div>
+
+<!-- Form Card -->
+<div class="max-w-2xl">
+  <div class="rounded-lg border border-border bg-card p-6 glass-effect">
+    <div class="flex items-center space-x-2 mb-6">
+      <div class="w-8 h-8 bg-gradient-to-r from-orange-500/20 to-red-600/20 rounded-lg flex items-center justify-center">
+        <i data-lucide="folder-tree" class="w-4 h-4 text-orange-400"></i>
+      </div>
+      <h2 class="text-xl font-semibold">Informações da Categoria</h2>
+    </div>
+
+    <form method="post" class="space-y-6">
+      {% csrf_token %}
+      
+      <!-- Form Fields -->
+      <div class="space-y-4">
+        {% for field in form %}
+          <div class="space-y-2">
+            <label for="{{ field.id_for_label }}" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              {{ field.label }}
+              {% if field.field.required %}
+                <span class="text-destructive">*</span>
+              {% endif %}
+            </label>
+            
+            {% if field.name == 'description' %}
+              <textarea 
+                id="{{ field.id_for_label }}"
+                name="{{ field.name }}"
+                placeholder="{{ field.field.widget.attrs.placeholder|default:'Descreva a categoria...' }}"
+                class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
+                {% if field.field.required %}required{% endif %}
+              >{{ field.value|default:'' }}</textarea>
+            {% else %}
+              <input 
+                type="{{ field.field.widget.input_type|default:'text' }}"
+                id="{{ field.id_for_label }}"
+                name="{{ field.name }}"
+                value="{{ field.value|default:'' }}"
+                placeholder="{{ field.field.widget.attrs.placeholder|default:'Digite o '|add:field.label|lower }}"
+                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                {% if field.field.required %}required{% endif %}
+              >
+            {% endif %}
+            
+            {% if field.errors %}
+              <div class="text-sm font-medium text-destructive">
+                {% for error in field.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+            
+            {% if field.help_text %}
+              <p class="text-sm text-muted-foreground">{{ field.help_text }}</p>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Form Actions -->
+      <div class="flex items-center space-x-4 pt-4 border-t border-border">
+        <button type="submit" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">
+          <i data-lucide="save" class="w-4 h-4 mr-2"></i>
+          Salvar Categoria
+        </button>
+        <a href="{% url 'category_list' %}" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+          <i data-lucide="x" class="w-4 h-4 mr-2"></i>
+          Cancelar
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
 {% endblock %}

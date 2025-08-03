@@ -1,18 +1,118 @@
 {% extends 'base.html' %}
 
-{% block content %}
-  <div class="container mt-4">
-    <h3 class="display-4">Cadastrar Saída</h3>
+{% block title %}
+Cadastrar Saída
+{% endblock %}
 
-    <div class="card">
-      <div class="card-body">
-        <form method="post">
-          {% csrf_token %}
-          {{ form.as_p }}
-          <button type="submit" class="btn btn-primary">Registrar Saída</button>
-        </form>
+{% block content %}
+<!-- Page Header -->
+<div class="mb-8">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold bg-gradient-to-r from-red-400 via-pink-400 to-red-400 bg-clip-text text-transparent">
+        Cadastrar Saída
+      </h1>
+      <p class="text-muted-foreground mt-2">Registre uma nova saída de estoque no sistema</p>
+    </div>
+    <div class="flex items-center space-x-2">
+      <div class="h-2 w-2 bg-red-500 rounded-full animate-pulse"></div>
+      <span class="text-sm text-muted-foreground">Nova Saída</span>
+    </div>
+  </div>
+</div>
+
+<!-- Create Form Card -->
+<div class="max-w-3xl mx-auto">
+  <div class="rounded-lg border border-border bg-gradient-to-br from-red-500/10 via-pink-500/5 to-red-500/10 p-8 glass-effect">
+    <!-- Header with Icon -->
+    <div class="flex items-center space-x-4 mb-8">
+      <div class="h-16 w-16 bg-gradient-to-r from-red-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
+        <i data-lucide="arrow-up-from-line" class="h-8 w-8 text-white"></i>
+      </div>
+      <div>
+        <h2 class="text-2xl font-bold text-primary">Nova Saída de Estoque</h2>
+        <p class="text-muted-foreground">Preencha os dados abaixo para registrar a saída</p>
       </div>
     </div>
-    <a href="{% url 'outflow_list' %}" class="btn btn-secondary mt-3">Cancelar e Voltar para a Lista de Saídas</a>
+
+    <!-- Form -->
+    <form method="post" class="space-y-6">
+      {% csrf_token %}
+      
+      <!-- Form Fields -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for field in form %}
+        <div class="space-y-2">
+          <label for="{{ field.id_for_label }}" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center space-x-2">
+            {% if field.name == 'product' %}
+              <i data-lucide="package" class="h-4 w-4 text-red-400"></i>
+            {% elif field.name == 'quantity' %}
+              <i data-lucide="minus-circle" class="h-4 w-4 text-red-400"></i>
+            {% elif field.name == 'description' %}
+              <i data-lucide="file-text" class="h-4 w-4 text-red-400"></i>
+            {% else %}
+              <i data-lucide="edit" class="h-4 w-4 text-red-400"></i>
+            {% endif %}
+            <span>{{ field.label }}</span>
+          </label>
+          
+          {% if field.name == 'description' %}
+          <textarea 
+            name="{{ field.name }}"
+            id="{{ field.id_for_label }}"
+            class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            placeholder="Digite a descrição da saída (opcional)"
+            rows="4">{{ field.value|default:'' }}</textarea>
+          {% elif field.name == 'product' %}
+          <select 
+            name="{{ field.name }}"
+            id="{{ field.id_for_label }}"
+            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            required>
+            <option value="">Selecione um produto</option>
+            {% for choice in field.field.queryset %}
+            <option value="{{ choice.pk }}" {% if choice.pk == field.value %}selected{% endif %}>{{ choice }}</option>
+            {% endfor %}
+          </select>
+          {% else %}
+          <input 
+            type="{% if field.name == 'quantity' %}number{% else %}text{% endif %}"
+            name="{{ field.name }}"
+            id="{{ field.id_for_label }}"
+            value="{{ field.value|default:'' }}"
+            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            placeholder="{% if field.name == 'quantity' %}Digite a quantidade{% else %}{{ field.label }}{% endif %}"
+            {% if field.field.required %}required{% endif %}
+            {% if field.name == 'quantity' %}min="1"{% endif %}
+          >
+          {% endif %}
+          
+          {% if field.errors %}
+          <div class="text-red-400 text-sm flex items-center space-x-1">
+            <i data-lucide="alert-circle" class="h-4 w-4"></i>
+            <span>{{ field.errors.0 }}</span>
+          </div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-wrap items-center justify-between pt-6 border-t border-border/40">
+        <button type="submit" 
+                class="inline-flex items-center space-x-2 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl">
+          <i data-lucide="save" class="h-4 w-4"></i>
+          <span>Registrar Saída</span>
+        </button>
+        
+        <a href="{% url 'outflow_list' %}" 
+           class="inline-flex items-center space-x-2 bg-secondary hover:bg-secondary/80 text-secondary-foreground px-4 py-2 rounded-lg font-medium transition-all duration-200">
+          <i data-lucide="arrow-left" class="h-4 w-4"></i>
+          <span>Cancelar</span>
+        </a>
+      </div>
+    </form>
   </div>
+</div>
+
 {% endblock %}
