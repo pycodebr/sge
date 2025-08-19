@@ -1,43 +1,120 @@
 {% extends 'base.html' %}
-{% block title %}Login{% endblock %}
+{% block title %}SGE - Login{% endblock %}
 
-{% block content %}
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title text-center mb-4">Login</h5>
-          <form method="post">
-            {% csrf_token %}
-            <div class="mb-3">
-              <label for="username" class="form-label">Usuário</label>
-              <input type="text" class="form-control" id="username" name="username" required>
-            </div>
-            <div class="mb-3">
-              <label for="password" class="form-label">Senha</label>
-              <input type="password" class="form-control" id="password" name="password" required>
-            </div>
-            <div class="d-grid gap-2">
-              <button type="submit" class="btn btn-primary">Entrar</button>
-            </div>
-          </form>
-          {% if form.errors %}
-            <div class="alert alert-danger mt-4">
-              <ul class="mb-0">
-                {% for field in form %}
-                  {% for error in field.errors %}
-                    <li>{{ error }}</li>
-                  {% endfor %}
-                {% endfor %}
-                {% for error in form.non_field_errors %}
-                  <li>{{ error }}</li>
-                {% endfor %}
-              </ul>
-            </div>
-          {% endif %}
-        </div>
+{% block login_content %}
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 py-12 px-4 sm:px-6 lg:px-8">
+  <!-- Background Pattern -->
+  <div class="absolute inset-0 opacity-30">
+    <div class="absolute inset-0 bg-gradient-to-r from-purple-400/20 via-pink-400/20 to-indigo-400/20"></div>
+    <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Cpath d="M11 18c7.727 0 14 6.273 14 14s-6.273 14-14 14-14-6.273-14-14 6.273-14 14-14zm0 10c2.21 0 4 1.79 4 4s-1.79 4-4 4-4-1.79-4-4 1.79-4 4-4z" fill="%23ffffff" fill-opacity="0.05"/%3E%3C/svg%3E')] bg-repeat"></div>
+  </div>
+
+  <div class="max-w-md w-full space-y-8 relative z-10">
+    <!-- Logo/Brand Section -->
+    <div class="text-center">
+      <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-gradient-to-r from-violet-500 to-purple-600 shadow-lg">
+        <i class="bi bi-box-seam text-2xl text-white"></i>
       </div>
+      <h1 class="mt-6 text-3xl font-bold text-white">SGE</h1>
+      <p class="mt-2 text-sm text-gray-300">Sistema de Gestão de Estoque</p>
+      <p class="text-xs text-gray-400">Faça login em sua conta</p>
+    </div>
+
+    <!-- Login Form -->
+    <div class="bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl p-8 border border-white/20">
+      <form method="post" class="space-y-6">
+        {% csrf_token %}
+        
+        <div class="space-y-4">
+          <!-- Username Field -->
+          <div>
+            <label for="username" class="block text-sm font-medium text-gray-200 mb-2">
+              Usuário
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="bi bi-person text-gray-400"></i>
+              </div>
+              <input 
+                type="text" 
+                id="username" 
+                name="username" 
+                required
+                class="block w-full pl-10 pr-3 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200 hover:bg-gray-800/70"
+                placeholder="Digite seu usuário"
+              >
+            </div>
+          </div>
+
+          <!-- Password Field -->
+          <div>
+            <label for="password" class="block text-sm font-medium text-gray-200 mb-2">
+              Senha
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="bi bi-lock text-gray-400"></i>
+              </div>
+              <input 
+                type="password" 
+                id="password" 
+                name="password" 
+                required
+                class="block w-full pl-10 pr-3 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200 hover:bg-gray-800/70"
+                placeholder="Digite sua senha"
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div>
+          <button 
+            type="submit"
+            class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl"
+          >
+            <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+              <i class="bi bi-box-arrow-in-right text-violet-300 group-hover:text-violet-200"></i>
+            </span>
+            Entrar
+          </button>
+        </div>
+
+        <!-- Error Messages -->
+        {% if form.errors %}
+          <div class="bg-red-500/20 backdrop-blur-sm border border-red-500/50 rounded-lg p-4 mt-4">
+            <div class="flex items-start">
+              <div class="flex-shrink-0">
+                <i class="bi bi-exclamation-triangle-fill text-red-400"></i>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-red-200">
+                  Erro ao fazer login
+                </h3>
+                <div class="mt-2 text-sm text-red-300">
+                  <ul class="list-disc pl-5 space-y-1">
+                    {% for field in form %}
+                      {% for error in field.errors %}
+                        <li>{{ error }}</li>
+                      {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                      <li>{{ error }}</li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      </form>
+    </div>
+
+    <!-- Footer Text -->
+    <div class="text-center">
+      <p class="text-xs text-gray-400">
+        Versão 1.0 • Sistema Seguro
+      </p>
     </div>
   </div>
 </div>

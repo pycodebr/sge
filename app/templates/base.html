@@ -1,37 +1,59 @@
 <!DOCTYPE html>
-<html lang="pt-br" data-bs-theme="dark">
+<html lang="pt-br" class="dark">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}{% endblock %}</title>
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- TailwindCSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#eff6ff',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              900: '#1e3a8a'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Keep Bootstrap Icons for existing components -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
 </head>
 
-<body>
-  {% include 'components/_header.html' %}
-
-  <div class="container-fluid">
-    {% if user.is_authenticated %}
+<body class="bg-gray-900 text-gray-100 min-h-screen">
+  {% if user.is_authenticated %}
+    {% include 'components/_header.html' %}
+    
+    <div class="flex">
       {% include 'components/_sidebar.html' %}
-    {% endif %}
-
-      <div class="col py-3">
-
-        <div class="container mt-4">
-          <main>
-            {% block content %}
-            {% endblock %}
-          </main>
-        </div>
-
+      
+      <div class="flex-1 p-6">
+        <main>
+          {% block content %}
+          {% endblock %}
+        </main>
       </div>
     </div>
-  </div>
-  {% include 'components/_footer.html' %}
+    
+    {% include 'components/_footer.html' %}
+  {% else %}
+    <!-- Login page layout - full screen -->
+    <main>
+      {% block login_content %}
+      {% endblock %}
+    </main>
+  {% endif %}
 </body>
 
 </html>
