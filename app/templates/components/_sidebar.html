@@ -1,36 +1,52 @@
+<!-- Mobile Menu Button (Hamburguer) -->
+<button id="mobile-menu-button" class="lg:hidden fixed top-4 left-4 z-50 p-3 bg-black/90 backdrop-blur-md rounded-xl border border-white/20 text-white hover:bg-black/95 shadow-lg transition-all duration-300">
+  <i class="bi bi-list text-xl" id="menu-icon"></i>
+</button>
+
+<!-- Mobile Overlay -->
+<div id="mobile-overlay" class="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40 opacity-0 pointer-events-none transition-all duration-300"></div>
+
 <!-- Sidebar -->
-<aside class="w-64 bg-black/20 backdrop-blur-md border-r border-white/10 min-h-screen sticky top-0">
+<aside id="sidebar" class="fixed lg:static top-0 left-0 h-screen lg:h-full w-80 lg:w-64 bg-black/90 lg:bg-black/20 backdrop-blur-md border-r border-white/10 transform -translate-x-full lg:translate-x-0 transition-all duration-300 ease-in-out lg:z-auto z-50">
   <div class="flex flex-col h-full">
     <!-- Brand Section -->
     <div class="p-6 border-b border-white/10">
-      <div class="flex items-center space-x-3">
-        <div class="h-10 w-10 bg-gradient-to-r from-violet-500 to-purple-600 rounded-lg flex items-center justify-center">
-          <i class="bi bi-box-seam text-white text-lg"></i>
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="h-12 w-12 bg-gradient-to-r from-violet-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+            <i class="bi bi-box-seam text-white text-xl"></i>
+          </div>
+          <div>
+            <h1 class="text-white font-bold text-xl">SGE</h1>
+            <p class="text-gray-400 text-sm">Sistema de Gestão</p>
+          </div>
         </div>
-        <div>
-          <h1 class="text-white font-semibold text-lg">SGE</h1>
-          <p class="text-gray-400 text-xs">Sistema de Gestão</p>
-        </div>
+        <!-- Close Button (Mobile Only) -->
+        <button id="close-sidebar-button" class="lg:hidden p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200">
+          <i class="bi bi-x-lg text-lg"></i>
+        </button>
       </div>
     </div>
 
     <!-- Navigation Menu -->
-    <nav class="flex-1 px-4 py-6">
-      <ul class="space-y-2">
+    <nav class="flex-1 px-4 py-6 overflow-y-auto">
+      <ul class="space-y-1">
         <li>
           <a href="{% url 'home' %}" 
-             class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200 group">
-            <i class="bi bi-speedometer2 text-lg group-hover:text-violet-400 transition-colors duration-200"></i>
-            <span class="font-medium">Dashboard</span>
+             class="flex items-center space-x-4 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-violet-500/20 hover:to-purple-500/20 transition-all duration-200 group sidebar-link"
+             data-page="dashboard">
+            <i class="bi bi-speedometer2 text-xl group-hover:text-violet-400 transition-colors duration-200"></i>
+            <span class="font-medium text-base">Dashboard</span>
           </a>
         </li>
         
         {% if perms.suppliers.view_supplier %}
           <li>
             <a href="{% url 'supplier_list' %}" 
-               class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200 group">
-              <i class="bi bi-truck text-lg group-hover:text-violet-400 transition-colors duration-200"></i>
-              <span class="font-medium">Fornecedores</span>
+               class="flex items-center space-x-4 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-violet-500/20 hover:to-purple-500/20 transition-all duration-200 group sidebar-link"
+               data-page="suppliers">
+              <i class="bi bi-truck text-xl group-hover:text-violet-400 transition-colors duration-200"></i>
+              <span class="font-medium text-base">Fornecedores</span>
             </a>
           </li>
         {% endif %}
@@ -38,9 +54,10 @@
         {% if perms.brands.view_brand %}
           <li>
             <a href="{% url 'brand_list' %}" 
-               class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200 group">
-              <i class="bi bi-shop text-lg group-hover:text-violet-400 transition-colors duration-200"></i>
-              <span class="font-medium">Marcas</span>
+               class="flex items-center space-x-4 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-violet-500/20 hover:to-purple-500/20 transition-all duration-200 group sidebar-link"
+               data-page="brands">
+              <i class="bi bi-shop text-xl group-hover:text-violet-400 transition-colors duration-200"></i>
+              <span class="font-medium text-base">Marcas</span>
             </a>
           </li>
         {% endif %}
@@ -48,9 +65,10 @@
         {% if perms.categories.view_category %}
           <li>
             <a href="{% url 'category_list' %}" 
-               class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200 group">
-              <i class="bi bi-tags text-lg group-hover:text-violet-400 transition-colors duration-200"></i>
-              <span class="font-medium">Categorias</span>
+               class="flex items-center space-x-4 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-violet-500/20 hover:to-purple-500/20 transition-all duration-200 group sidebar-link"
+               data-page="categories">
+              <i class="bi bi-tags text-xl group-hover:text-violet-400 transition-colors duration-200"></i>
+              <span class="font-medium text-base">Categorias</span>
             </a>
           </li>
         {% endif %}
@@ -58,9 +76,10 @@
         {% if perms.products.view_product %}
           <li>
             <a href="{% url 'product_list' %}" 
-               class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200 group">
-              <i class="bi bi-box-seam text-lg group-hover:text-violet-400 transition-colors duration-200"></i>
-              <span class="font-medium">Produtos</span>
+               class="flex items-center space-x-4 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-violet-500/20 hover:to-purple-500/20 transition-all duration-200 group sidebar-link"
+               data-page="products">
+              <i class="bi bi-box-seam text-xl group-hover:text-violet-400 transition-colors duration-200"></i>
+              <span class="font-medium text-base">Produtos</span>
             </a>
           </li>
         {% endif %}
@@ -68,9 +87,10 @@
         {% if perms.inflows.view_inflow %}
           <li>
             <a href="{% url 'inflow_list' %}" 
-               class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200 group">
-              <i class="bi bi-arrow-down-left-square text-lg group-hover:text-green-400 transition-colors duration-200"></i>
-              <span class="font-medium">Entradas</span>
+               class="flex items-center space-x-4 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-green-500/20 hover:to-emerald-500/20 transition-all duration-200 group sidebar-link"
+               data-page="inflows">
+              <i class="bi bi-arrow-down-left-square text-xl group-hover:text-green-400 transition-colors duration-200"></i>
+              <span class="font-medium text-base">Entradas</span>
             </a>
           </li>
         {% endif %}
@@ -78,27 +98,117 @@
         {% if perms.outflows.view_outflow %}
           <li>
             <a href="{% url 'outflow_list' %}" 
-               class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200 group">
-              <i class="bi bi-arrow-up-right-square text-lg group-hover:text-red-400 transition-colors duration-200"></i>
-              <span class="font-medium">Saídas</span>
+               class="flex items-center space-x-4 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-red-500/20 hover:to-rose-500/20 transition-all duration-200 group sidebar-link"
+               data-page="outflows">
+              <i class="bi bi-arrow-up-right-square text-xl group-hover:text-red-400 transition-colors duration-200"></i>
+              <span class="font-medium text-base">Saídas</span>
             </a>
           </li>
         {% endif %}
       </ul>
+      
+      <!-- User Info Section (Mobile) -->
+      <div class="lg:hidden mt-8 pt-6 border-t border-white/10">
+        <div class="flex items-center space-x-3 px-4 py-3">
+          <div class="h-10 w-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+            <i class="bi bi-person-fill text-white"></i>
+          </div>
+          <div>
+            <p class="text-white font-medium">{{ user.get_full_name|default:user.username }}</p>
+            <p class="text-gray-400 text-sm">Usuário logado</p>
+          </div>
+        </div>
+      </div>
     </nav>
 
-    <!-- User Section / Logout -->
+    <!-- Logout Section -->
     <div class="p-4 border-t border-white/10">
-      {% if user.is_authenticated %}
-        <form action="{% url 'logout' %}" method="post" class="w-full">
-          {% csrf_token %}
-          <button type="submit" 
-                  class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-gray-300 hover:text-white hover:bg-red-500/20 transition-all duration-200 group">
-            <i class="bi bi-box-arrow-right text-lg group-hover:text-red-400 transition-colors duration-200"></i>
-            <span class="font-medium">Sair</span>
-          </button>
-        </form>
-      {% endif %}
+      <form action="{% url 'logout' %}" method="post" class="w-full">
+        {% csrf_token %}
+        <button type="submit" 
+                class="w-full flex items-center space-x-4 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-red-500/20 hover:to-rose-500/20 transition-all duration-200 group">
+          <i class="bi bi-box-arrow-right text-xl group-hover:text-red-400 transition-colors duration-200"></i>
+          <span class="font-medium text-base">Sair do Sistema</span>
+        </button>
+      </form>
     </div>
   </div>
 </aside>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const mobileMenuButton = document.getElementById('mobile-menu-button');
+  const closeSidebarButton = document.getElementById('close-sidebar-button');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('mobile-overlay');
+  const menuIcon = document.getElementById('menu-icon');
+  
+  function openSidebar() {
+    sidebar.classList.remove('-translate-x-full');
+    sidebar.classList.add('translate-x-0');
+    overlay.classList.remove('opacity-0', 'pointer-events-none');
+    overlay.classList.add('opacity-100');
+    menuIcon.className = 'bi bi-x-lg text-xl';
+    document.body.style.overflow = 'hidden';
+  }
+  
+  function closeSidebar() {
+    sidebar.classList.remove('translate-x-0');
+    sidebar.classList.add('-translate-x-full');
+    overlay.classList.remove('opacity-100');
+    overlay.classList.add('opacity-0', 'pointer-events-none');
+    menuIcon.className = 'bi bi-list text-xl';
+    document.body.style.overflow = '';
+  }
+  
+  // Toggle sidebar on mobile
+  if (mobileMenuButton) {
+    mobileMenuButton.addEventListener('click', function() {
+      const isOpen = sidebar.classList.contains('translate-x-0');
+      if (isOpen) {
+        closeSidebar();
+      } else {
+        openSidebar();
+      }
+    });
+  }
+  
+  // Close sidebar when close button is clicked
+  if (closeSidebarButton) {
+    closeSidebarButton.addEventListener('click', closeSidebar);
+  }
+  
+  // Close sidebar when overlay is clicked
+  if (overlay) {
+    overlay.addEventListener('click', closeSidebar);
+  }
+  
+  // Close sidebar when a link is clicked (mobile only)
+  const sidebarLinks = document.querySelectorAll('.sidebar-link');
+  sidebarLinks.forEach(link => {
+    link.addEventListener('click', function() {
+      if (window.innerWidth < 1024) { // lg breakpoint
+        setTimeout(closeSidebar, 100); // Small delay for better UX
+      }
+    });
+  });
+  
+  // Handle window resize
+  window.addEventListener('resize', function() {
+    if (window.innerWidth >= 1024) { // lg breakpoint
+      closeSidebar();
+      document.body.style.overflow = '';
+      // Reset sidebar classes for desktop
+      sidebar.classList.remove('-translate-x-full');
+      sidebar.classList.add('lg:translate-x-0');
+    }
+  });
+  
+  // Prevent body scroll when sidebar is open on mobile
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeSidebar();
+    }
+  });
+});
+</script>

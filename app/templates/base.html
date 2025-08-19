@@ -93,20 +93,30 @@
   </div>
 
   {% if user.is_authenticated %}
-    {% include 'components/_header.html' %}
-    
-    <div class="flex relative z-10">
+    <!-- Main Layout Container -->
+    <div class="flex h-screen">
+      <!-- Sidebar -->
       {% include 'components/_sidebar.html' %}
       
-      <div class="flex-1 p-6 lg:p-8">
-        <main class="animate-fade-in">
-          {% block content %}
-          {% endblock %}
-        </main>
+      <!-- Main Content Area -->
+      <div class="flex-1 flex flex-col min-h-0">
+        <!-- Header -->
+        {% include 'components/_header.html' %}
+        
+        <!-- Page Content -->
+        <div class="flex-1 overflow-y-auto">
+          <div class="p-4 lg:p-8">
+            <main class="animate-fade-in">
+              {% block content %}
+              {% endblock %}
+            </main>
+          </div>
+        </div>
+        
+        <!-- Footer -->
+        {% include 'components/_footer.html' %}
       </div>
     </div>
-    
-    {% include 'components/_footer.html' %}
   {% else %}
     <!-- Login page layout - full screen -->
     <main>
