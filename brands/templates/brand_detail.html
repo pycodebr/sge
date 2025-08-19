@@ -1,16 +1,149 @@
 {% extends 'base.html' %}
 
-{% block content %}
-  <div class="container mt-4">
-    <h3 class="display-4">Detalhes da Marca</h3>
+{% block title %}SGE - {{ object.name }}{% endblock %}
 
-    <div class="card">
-      <div class="card-body">
-        <h3 class="card-title">{{ object.name }}</h3>
-        <p class="card-text">{{ object.description }}</p>
+{% block content %}
+  <!-- Page Header -->
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-2xl font-bold text-white mb-2">Detalhes da Marca</h1>
+      <p class="text-gray-400">Informações completas da marca</p>
+    </div>
+    <div class="flex items-center space-x-3">
+      <a href="{% url 'brand_list' %}" 
+         class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg transition-colors duration-200">
+        <i class="bi bi-arrow-left mr-2"></i>
+        Voltar
+      </a>
+      {% if perms.brands.change_brand %}
+        <a href="{% url 'brand_update' object.id %}" 
+           class="inline-flex items-center px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-medium rounded-lg transition-colors duration-200">
+          <i class="bi bi-pencil mr-2"></i>
+          Editar
+        </a>
+      {% endif %}
+      {% if perms.brands.delete_brand %}
+        <a href="{% url 'brand_delete' object.id %}" 
+           class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors duration-200">
+          <i class="bi bi-trash mr-2"></i>
+          Excluir
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Brand Information Card -->
+  <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-8 mb-8">
+    <!-- Brand Title -->
+    <div class="mb-6">
+      <div class="flex items-center justify-between">
+        <h2 class="text-3xl font-bold text-white">{{ object.name }}</h2>
+        <span class="text-2xl font-bold text-violet-400">#{{ object.id }}</span>
       </div>
     </div>
 
-    <a href="{% url 'brand_list' %}" class="btn btn-secondary mt-3">Voltar para a Lista de Marcas</a>
+    <!-- Basic Information Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+      <!-- Left Column -->
+      <div class="space-y-6">
+        <div>
+          <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
+            <i class="bi bi-tag mr-2 text-violet-400"></i>
+            Informações Básicas
+          </h3>
+          <div class="space-y-4">
+            <div class="flex justify-between items-center py-2 border-b border-white/10">
+              <span class="text-gray-400">Nome</span>
+              <span class="text-white font-medium">{{ object.name }}</span>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-white/10">
+              <span class="text-gray-400">ID</span>
+              <span class="text-white font-medium">#{{ object.id }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column -->
+      <div class="space-y-6">
+        <div>
+          <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
+            <i class="bi bi-calendar mr-2 text-blue-400"></i>
+            Informações de Data
+          </h3>
+          <div class="space-y-4">
+            <div class="flex justify-between items-center py-2 border-b border-white/10">
+              <span class="text-gray-400">Criado em</span>
+              <span class="text-white font-medium">{{ object.created_at|date:"d/m/Y H:i" }}</span>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-white/10">
+              <span class="text-gray-400">Última Atualização</span>
+              <span class="text-white font-medium">{{ object.updated_at|date:"d/m/Y H:i" }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Description Section -->
+    {% if object.description %}
+    <div class="border-t border-white/10 pt-8">
+      <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
+        <i class="bi bi-text-paragraph mr-2 text-green-400"></i>
+        Descrição
+      </h3>
+      <div class="bg-gray-800/50 rounded-lg p-4">
+        <p class="text-gray-300 leading-relaxed">{{ object.description }}</p>
+      </div>
+    </div>
+    {% else %}
+    <div class="border-t border-white/10 pt-8">
+      <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
+        <i class="bi bi-text-paragraph mr-2 text-green-400"></i>
+        Descrição
+      </h3>
+      <div class="bg-gray-800/50 rounded-lg p-4">
+        <p class="text-gray-500 italic">Nenhuma descrição cadastrada para esta marca.</p>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Related Products Section -->
+  <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-8">
+    <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
+      <i class="bi bi-box-seam mr-2 text-purple-400"></i>
+      Produtos Relacionados
+    </h3>
+    {% if object.product_set.all %}
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% for product in object.product_set.all|slice:":6" %}
+          <div class="bg-gray-800/50 rounded-lg p-4 hover:bg-gray-800/70 transition-colors duration-200">
+            <div class="flex justify-between items-start mb-2">
+              <h4 class="text-white font-medium">{{ product.title }}</h4>
+              <span class="text-xs text-violet-400">#{{ product.id }}</span>
+            </div>
+            <p class="text-gray-400 text-sm">{{ product.category }}</p>
+            <div class="flex justify-between items-center mt-3">
+              <span class="text-green-400 font-medium">R$ {{ product.selling_price }}</span>
+              <a href="{% url 'product_detail' product.id %}" 
+                 class="text-xs text-violet-400 hover:text-violet-300 transition-colors duration-200">
+                Ver detalhes →
+              </a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+      {% if object.product_set.count > 6 %}
+        <p class="text-gray-400 text-sm mt-4 text-center">
+          E mais {{ object.product_set.count|add:"-6" }} produto{{ object.product_set.count|add:"-6"|pluralize }} associado{{ object.product_set.count|add:"-6"|pluralize }} a esta marca.
+        </p>
+      {% endif %}
+    {% else %}
+      <div class="text-center py-8">
+        <i class="bi bi-box-seam text-4xl text-gray-500 mb-4"></i>
+        <p class="text-gray-400">Nenhum produto associado a esta marca ainda.</p>
+      </div>
+    {% endif %}
   </div>
 {% endblock %}

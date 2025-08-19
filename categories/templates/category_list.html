@@ -1,74 +1,129 @@
 {% extends 'base.html' %}
 
 {% block title %}
-SGE - Categorias
+  SGE - Categorias
 {% endblock %}
 
 {% block content %}
 
-<div class="row mb-3">
-  <div class="col-md-6">
-    <form method="get" action="{% url 'category_list' %}">
-      <div class="input-group">
-        <input type="text" class="form-control" name="name" placeholder="Nome" value="{{ request.GET.name }}">
-        <button type="submit" class="btn btn-primary">
-          <i class="bi bi-search"></i>
-        </button>
+  <!-- Page Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+    <div>
+      <h1 class="text-2xl font-bold text-white mb-2">Gestão de Categorias</h1>
+      <p class="text-gray-400">Organize os produtos por categorias</p>
+    </div>
+    {% if perms.categories.add_category %}
+      <a href="{% url 'category_create' %}" 
+         class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transform transition-all duration-200 hover:scale-[1.02] mt-4 sm:mt-0">
+        <i class="bi bi-plus mr-2"></i>
+        Nova Categoria
+      </a>
+    {% endif %}
+  </div>
+
+  <!-- Search and Filters Section -->
+  <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-6 mb-8">
+    <div class="grid grid-cols-1 lg:grid-cols-1 gap-6">
+      <!-- Search Form -->
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-3">Buscar Categorias</label>
+        <form method="get" action="{% url 'category_list' %}" class="space-y-4">
+          <div class="flex gap-3">
+            <div class="flex-1">
+              <input type="text" 
+                     name="name" 
+                     placeholder="Nome da categoria" 
+                     value="{{ request.GET.name }}"
+                     class="block w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200">
+            </div>
+            <button type="submit" 
+                    class="inline-flex items-center justify-center px-6 py-3 bg-violet-600 hover:bg-violet-700 text-white font-medium rounded-lg transition-colors duration-200">
+              <i class="bi bi-search mr-2"></i>
+              Buscar
+            </button>
+          </div>
+        </form>
       </div>
-    </form>
+    </div>
   </div>
-  {% if perms.categories.add_category %}
-  <div class="col-md-6">
-    <a href="{% url 'category_create' %}" class="btn btn-success float-end">
-      <i class="bi bi-plus"></i> Nova Categoria
-    </a>
+
+  <!-- Categories Table -->
+  <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead>
+          <tr class="bg-white/10 border-b border-white/10">
+            <th class="px-6 py-4 text-left text-sm font-medium text-gray-300 uppercase tracking-wider">ID</th>
+            <th class="px-6 py-4 text-left text-sm font-medium text-gray-300 uppercase tracking-wider">Nome</th>
+            <th class="px-6 py-4 text-left text-sm font-medium text-gray-300 uppercase tracking-wider">Descrição</th>
+            <th class="px-6 py-4 text-left text-sm font-medium text-gray-300 uppercase tracking-wider">Criado em</th>
+            <th class="px-6 py-4 text-left text-sm font-medium text-gray-300 uppercase tracking-wider">Ações</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-white/10">
+          {% for category in categories %}
+            <tr class="hover:bg-white/5 transition-colors duration-200">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <a href="{% url 'category_detail' category.id %}" 
+                   class="text-violet-400 hover:text-violet-300 font-semibold transition-colors duration-200">
+                  #{{ category.id }}
+                </a>
+              </td>
+              <td class="px-6 py-4">
+                <div class="text-sm font-medium text-white">{{ category.name }}</div>
+              </td>
+              <td class="px-6 py-4">
+                <div class="text-sm text-gray-300">
+                  {% if category.description %}
+                    {{ category.description|truncatewords:15 }}
+                  {% else %}
+                    <span class="text-gray-500 italic">Sem descrição</span>
+                  {% endif %}
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                {{ category.created_at|date:"d/m/Y" }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <div class="flex items-center space-x-2">
+                  <a href="{% url 'category_detail' category.id %}" 
+                     class="inline-flex items-center px-2.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-lg transition-colors duration-200"
+                     title="Ver detalhes">
+                    <i class="bi bi-eye"></i>
+                  </a>
+                  {% if perms.categories.change_category %}
+                    <a href="{% url 'category_update' category.id %}" 
+                       class="inline-flex items-center px-2.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-medium rounded-lg transition-colors duration-200"
+                       title="Editar">
+                      <i class="bi bi-pencil"></i>
+                    </a>
+                  {% endif %}
+                  {% if perms.categories.delete_category %}
+                    <a href="{% url 'category_delete' category.id %}" 
+                       class="inline-flex items-center px-2.5 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-lg transition-colors duration-200"
+                       title="Excluir">
+                      <i class="bi bi-trash"></i>
+                    </a>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="5" class="px-6 py-12 text-center text-gray-400">
+                <div class="flex flex-col items-center">
+                  <i class="bi bi-grid-3x3-gap text-4xl text-gray-500 mb-4"></i>
+                  <p class="text-lg font-medium">Nenhuma categoria encontrada</p>
+                  <p class="text-sm">Tente ajustar os filtros ou adicionar uma nova categoria.</p>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
-  {% endif %}
-</div>
 
-<div class="table-responsive">
-  <table class="table table-striped table-bordered">
-    <thead class="thead-dark">
-      <tr>
-        <th>ID</th>
-        <th>Nome</th>
-        <th>Descrição</th>
-        <th>Ações</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for category in categories %}
-      <tr>
-        <td>
-          <a href="{% url 'category_detail' category.id %}" class="text-primary fw-semibold">
-            {{ category.id }}
-          </a>
-        </td>
-        <td>{{ category.name }}</td>
-        <td>{{ category.description }}</td>
-        <td>
-          <a href="{% url 'category_detail' category.id %}" class="btn btn-info btn-sm">
-            <i class="bi bi-eye"></i>
-          </a>
-
-          {% if perms.categories.change_category %}
-          <a href="{% url 'category_update' category.id %}" class="btn btn-warning btn-sm">
-            <i class="bi bi-pencil"></i>
-          </a>
-          {% endif %}
-
-          {% if perms.categories.delete_category %}
-          <a href="{% url 'category_delete' category.id %}" class="btn btn-danger btn-sm btn-delete">
-            <i class="bi bi-trash"></i>
-          </a>
-          {% endif %}
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
-
-{% include 'components/_pagination.html' %}
+  {% include 'components/_pagination.html' %}
 
 {% endblock %}

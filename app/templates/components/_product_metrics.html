@@ -1,37 +1,69 @@
-<div class="card mt-4">
-  <div class="card-body">
-    <div class="row">
-      <div class="col-md-3">
-        <div class="card bg-primary">
-          <div class="card-body">
-            <h5 class="card-title">Quantidade de produtos</h5>
-            <p class="card-text text-white font-weight-bold display-6">{{ product_metrics.total_quantity }}</p>
-          </div>
+<!-- Product Metrics Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+  <!-- Total Quantity Card -->
+  <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-6 hover:bg-white/15 transition-all duration-300 group">
+    <div class="flex items-center justify-between">
+      <div>
+        <h3 class="text-sm font-medium text-gray-400 mb-2">Quantidade de produtos</h3>
+        <p class="text-3xl font-bold text-white">{{ product_metrics.total_quantity }}</p>
+        <div class="flex items-center mt-2">
+          <div class="h-2 w-2 bg-blue-400 rounded-full mr-2"></div>
+          <span class="text-xs text-gray-400">Total em estoque</span>
         </div>
       </div>
-      <div class="col-md-3">
-        <div class="card bg-danger">
-          <div class="card-body">
-            <h5 class="card-title">Custo do estoque</h5>
-            <p class="card-text text-white font-weight-bold display-6">R$ {{ product_metrics.total_cost_price }}</p>
-          </div>
+      <div class="h-12 w-12 bg-blue-500/20 rounded-xl flex items-center justify-center group-hover:bg-blue-500/30 transition-colors duration-300">
+        <i class="bi bi-box-seam text-2xl text-blue-400"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cost Price Card -->
+  <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-6 hover:bg-white/15 transition-all duration-300 group">
+    <div class="flex items-center justify-between">
+      <div>
+        <h3 class="text-sm font-medium text-gray-400 mb-2">Custo do estoque</h3>
+        <p class="text-3xl font-bold text-white">R$ {{ product_metrics.total_cost_price }}</p>
+        <div class="flex items-center mt-2">
+          <div class="h-2 w-2 bg-red-400 rounded-full mr-2"></div>
+          <span class="text-xs text-gray-400">Valor investido</span>
         </div>
       </div>
-      <div class="col-md-3">
-        <div class="card bg-success">
-          <div class="card-body">
-            <h5 class="card-title">Valor do estoque</h5>
-            <p class="card-text text-white font-weight-bold display-6">R$ {{ product_metrics.total_selling_price }}</p>
-          </div>
+      <div class="h-12 w-12 bg-red-500/20 rounded-xl flex items-center justify-center group-hover:bg-red-500/30 transition-colors duration-300">
+        <i class="bi bi-arrow-down-circle text-2xl text-red-400"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Selling Price Card -->
+  <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-6 hover:bg-white/15 transition-all duration-300 group">
+    <div class="flex items-center justify-between">
+      <div>
+        <h3 class="text-sm font-medium text-gray-400 mb-2">Valor do estoque</h3>
+        <p class="text-3xl font-bold text-white">R$ {{ product_metrics.total_selling_price }}</p>
+        <div class="flex items-center mt-2">
+          <div class="h-2 w-2 bg-green-400 rounded-full mr-2"></div>
+          <span class="text-xs text-gray-400">Valor de venda</span>
         </div>
       </div>
-      <div class="col-md-3">
-        <div class="card bg-warning">
-          <div class="card-body">
-            <h5 class="card-title">Lucro do estoque</h5>
-            <p class="card-text text-white font-weight-bold display-6">R$ {{ product_metrics.total_profit }}</p>
-          </div>
+      <div class="h-12 w-12 bg-green-500/20 rounded-xl flex items-center justify-center group-hover:bg-green-500/30 transition-colors duration-300">
+        <i class="bi bi-arrow-up-circle text-2xl text-green-400"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profit Card -->
+  <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-6 hover:bg-white/15 transition-all duration-300 group">
+    <div class="flex items-center justify-between">
+      <div>
+        <h3 class="text-sm font-medium text-gray-400 mb-2">Lucro do estoque</h3>
+        <p class="text-3xl font-bold text-white">R$ {{ product_metrics.total_profit }}</p>
+        <div class="flex items-center mt-2">
+          <div class="h-2 w-2 bg-yellow-400 rounded-full mr-2"></div>
+          <span class="text-xs text-gray-400">Margem potencial</span>
         </div>
+      </div>
+      <div class="h-12 w-12 bg-yellow-500/20 rounded-xl flex items-center justify-center group-hover:bg-yellow-500/30 transition-colors duration-300">
+        <i class="bi bi-graph-up text-2xl text-yellow-400"></i>
       </div>
     </div>
   </div>

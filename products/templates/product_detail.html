@@ -1,22 +1,151 @@
 {% extends 'base.html' %}
 
-{% block content %}
-  <div class="container mt-4">
-    <h3 class="display-4">Detalhes do Produto</h3>
+{% block title %}SGE - {{ object.title }}{% endblock %}
 
-    <div class="card">
-      <div class="card-body">
-        <h3 class="card-title">{{ object.title }}</h3>
-        <p class="card-text">Categoria: {{ object.category }}</p>
-        <p class="card-text">Marca: {{ object.brand }}</p>
-        <p class="card-text">{{ object.description }}</p>
-        <p class="card-text">Número de Série: <strong>{{ object.serie_number }}</strong></p>
-        <p class="card-text">Preço de Custo: <strong>R$ {{ object.cost_price }}</strong></p>
-        <p class="card-text">Preço de Venda: <strong>R$ {{ object.selling_price }}</strong></p>
-        <p class="card-text">Quantidade em Estoque: <strong>{{ object.quantity }}</strong></p>
+{% block content %}
+  <!-- Page Header -->
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-2xl font-bold text-white mb-2">Detalhes do Produto</h1>
+      <p class="text-gray-400">Informações completas do produto</p>
+    </div>
+    <div class="flex items-center space-x-3">
+      <a href="{% url 'product_list' %}" 
+         class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg transition-colors duration-200">
+        <i class="bi bi-arrow-left mr-2"></i>
+        Voltar
+      </a>
+      {% if perms.products.change_product %}
+        <a href="{% url 'product_update' object.id %}" 
+           class="inline-flex items-center px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-medium rounded-lg transition-colors duration-200">
+          <i class="bi bi-pencil mr-2"></i>
+          Editar
+        </a>
+      {% endif %}
+      {% if perms.products.delete_product %}
+        <a href="{% url 'product_delete' object.id %}" 
+           class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors duration-200">
+          <i class="bi bi-trash mr-2"></i>
+          Excluir
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Product Information Card -->
+  <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-8 mb-8">
+    <!-- Product Title -->
+    <div class="mb-6">
+      <div class="flex items-center justify-between">
+        <h2 class="text-3xl font-bold text-white">{{ object.title }}</h2>
+        <span class="text-2xl font-bold text-violet-400">#{{ object.id }}</span>
       </div>
     </div>
 
-    <a href="{% url 'product_list' %}" class="btn btn-secondary mt-3">Voltar para a Lista de Produtos</a>
+    <!-- Basic Information Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+      <!-- Left Column -->
+      <div class="space-y-6">
+        <div>
+          <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
+            <i class="bi bi-box-seam mr-2 text-violet-400"></i>
+            Informações Básicas
+          </h3>
+          <div class="space-y-4">
+            <div class="flex justify-between items-center py-2 border-b border-white/10">
+              <span class="text-gray-400">Categoria</span>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                {{ object.category }}
+              </span>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-white/10">
+              <span class="text-gray-400">Marca</span>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                {{ object.brand }}
+              </span>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-white/10">
+              <span class="text-gray-400">Número de Série</span>
+              <span class="text-white font-medium">{{ object.serie_number|default:"-" }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column -->
+      <div class="space-y-6">
+        <div>
+          <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
+            <i class="bi bi-currency-dollar mr-2 text-green-400"></i>
+            Informações de Preço e Estoque
+          </h3>
+          <div class="space-y-4">
+            <div class="flex justify-between items-center py-2 border-b border-white/10">
+              <span class="text-gray-400">Preço de Custo</span>
+              <span class="text-white font-medium">R$ {{ object.cost_price }}</span>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-white/10">
+              <span class="text-gray-400">Preço de Venda</span>
+              <span class="text-green-400 font-bold text-lg">R$ {{ object.selling_price }}</span>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-white/10">
+              <span class="text-gray-400">Quantidade em Estoque</span>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                     {% if object.quantity > 10 %}bg-green-100 text-green-800{% elif object.quantity > 0 %}bg-yellow-100 text-yellow-800{% else %}bg-red-100 text-red-800{% endif %}">
+                {{ object.quantity }} unidades
+              </span>
+            </div>
+            {% if object.cost_price and object.selling_price %}
+              <div class="flex justify-between items-center py-2 border-b border-white/10">
+                <span class="text-gray-400">Margem de Lucro</span>
+                <span class="text-green-400 font-medium">
+                  {% widthratio object.selling_price object.cost_price 100 %}%
+                </span>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Description Section -->
+    {% if object.description %}
+    <div class="border-t border-white/10 pt-8">
+      <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
+        <i class="bi bi-text-paragraph mr-2 text-blue-400"></i>
+        Descrição
+      </h3>
+      <div class="bg-gray-800/50 rounded-lg p-4">
+        <p class="text-gray-300 leading-relaxed">{{ object.description }}</p>
+      </div>
+    </div>
+    {% endif %}
   </div>
+
+  <!-- Stock Status Alert -->
+  {% if object.quantity <= 5 %}
+  <div class="bg-{% if object.quantity == 0 %}red{% else %}yellow{% endif %}-500/20 backdrop-blur-sm border border-{% if object.quantity == 0 %}red{% else %}yellow{% endif %}-500/50 rounded-lg p-4 mb-8">
+    <div class="flex items-start">
+      <div class="flex-shrink-0">
+        <i class="bi bi-{% if object.quantity == 0 %}exclamation-triangle-fill text-red-400{% else %}exclamation-triangle text-yellow-400{% endif %}"></i>
+      </div>
+      <div class="ml-3">
+        <h3 class="text-sm font-medium text-{% if object.quantity == 0 %}red{% else %}yellow{% endif %}-200">
+          {% if object.quantity == 0 %}
+            Produto em Falta
+          {% else %}
+            Estoque Baixo
+          {% endif %}
+        </h3>
+        <div class="mt-1 text-sm text-{% if object.quantity == 0 %}red{% else %}yellow{% endif %}-300">
+          {% if object.quantity == 0 %}
+            Este produto está sem estoque. É recomendado fazer uma nova compra.
+          {% else %}
+            Este produto está com estoque baixo ({{ object.quantity }} unidades). Considere repor o estoque.
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
 {% endblock %}

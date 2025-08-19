@@ -1,16 +1,216 @@
 {% extends 'base.html' %}
 
-{% block content %}
-  <div class="container mt-4">
-    <h3 class="display-4">Detalhes do Fornecedor</h3>
+{% block title %}SGE - {{ object.name }}{% endblock %}
 
-    <div class="card">
-      <div class="card-body">
-        <h3 class="card-title">{{ object.name }}</h3>
-        <p class="card-text">{{ object.description }}</p>
+{% block content %}
+  <!-- Page Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+    <div>
+      <h1 class="text-2xl font-bold text-white mb-2">Detalhes do Fornecedor</h1>
+      <p class="text-gray-400">Informações completas sobre o fornecedor</p>
+    </div>
+    <div class="flex flex-col sm:flex-row gap-3 mt-4 sm:mt-0">
+      {% if perms.suppliers.change_supplier %}
+        <a href="{% url 'supplier_update' object.id %}" 
+           class="inline-flex items-center justify-center px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-medium rounded-lg transition-colors duration-200">
+          <i class="bi bi-pencil mr-2"></i>
+          Editar
+        </a>
+      {% endif %}
+      {% if perms.suppliers.delete_supplier %}
+        <a href="{% url 'supplier_delete' object.id %}" 
+           class="inline-flex items-center justify-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors duration-200">
+          <i class="bi bi-trash mr-2"></i>
+          Excluir
+        </a>
+      {% endif %}
+      <a href="{% url 'supplier_list' %}" 
+         class="inline-flex items-center justify-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg transition-colors duration-200">
+        <i class="bi bi-arrow-left mr-2"></i>
+        Voltar
+      </a>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Main Information -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Basic Information Card -->
+      <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-6">
+        <div class="flex items-center mb-6">
+          <div class="p-3 bg-violet-600/20 rounded-xl mr-4">
+            <i class="bi bi-building text-2xl text-violet-400"></i>
+          </div>
+          <div>
+            <h2 class="text-xl font-bold text-white">{{ object.name }}</h2>
+            <p class="text-gray-400">Fornecedor #{{ object.id }}</p>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <div>
+            <h3 class="text-sm font-medium text-gray-300 uppercase tracking-wider mb-2">Descrição</h3>
+            {% if object.description %}
+              <p class="text-white leading-relaxed">{{ object.description }}</p>
+            {% else %}
+              <p class="text-gray-500 italic">Nenhuma descrição fornecida</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Related Data -->
+      <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-6">
+        <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
+          <i class="bi bi-box-seam mr-2 text-violet-400"></i>
+          Dados Relacionados
+        </h3>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- Inflows Count -->
+          <div class="bg-blue-600/20 rounded-xl p-4 border border-blue-500/30">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-blue-200 text-sm font-medium">Total de Entradas</p>
+                <p class="text-2xl font-bold text-white">{{ object.inflows.count }}</p>
+              </div>
+              <div class="p-2 bg-blue-600/30 rounded-lg">
+                <i class="bi bi-arrow-down text-blue-300"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Inflows -->
+          <div class="bg-green-600/20 rounded-xl p-4 border border-green-500/30">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-green-200 text-sm font-medium">Última Entrada</p>
+                {% if object.inflows.first %}
+                  <p class="text-white font-semibold">{{ object.inflows.first.created_at|date:"d/m/Y" }}</p>
+                {% else %}
+                  <p class="text-gray-400 text-sm">Nenhuma entrada</p>
+                {% endif %}
+              </div>
+              <div class="p-2 bg-green-600/30 rounded-lg">
+                <i class="bi bi-calendar-check text-green-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <a href="{% url 'supplier_list' %}" class="btn btn-secondary mt-3">Voltar para a Lista de Fornecedores</a>
+    <!-- Sidebar Information -->
+    <div class="space-y-6">
+      <!-- Quick Stats -->
+      <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-6">
+        <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
+          <i class="bi bi-info-circle mr-2 text-violet-400"></i>
+          Informações Gerais
+        </h3>
+        
+        <div class="space-y-4">
+          <div class="flex justify-between items-center py-2 border-b border-white/10">
+            <span class="text-gray-300 text-sm">ID</span>
+            <span class="text-white font-medium">#{{ object.id }}</span>
+          </div>
+          
+          <div class="flex justify-between items-center py-2 border-b border-white/10">
+            <span class="text-gray-300 text-sm">Criado em</span>
+            <span class="text-white font-medium">{{ object.created_at|date:"d/m/Y" }}</span>
+          </div>
+          
+          <div class="flex justify-between items-center py-2 border-b border-white/10">
+            <span class="text-gray-300 text-sm">Atualizado em</span>
+            <span class="text-white font-medium">{{ object.updated_at|date:"d/m/Y" }}</span>
+          </div>
+
+          <div class="flex justify-between items-center py-2">
+            <span class="text-gray-300 text-sm">Status</span>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+              Ativo
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-6">
+        <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
+          <i class="bi bi-lightning mr-2 text-violet-400"></i>
+          Ações Rápidas
+        </h3>
+        
+        <div class="space-y-3">
+          {% if perms.inflows.add_inflow %}
+            <a href="{% url 'inflow_create' %}?supplier={{ object.id }}" 
+               class="w-full inline-flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors duration-200">
+              <i class="bi bi-plus mr-2"></i>
+              Nova Entrada
+            </a>
+          {% endif %}
+          
+          {% if perms.suppliers.change_supplier %}
+            <a href="{% url 'supplier_update' object.id %}" 
+               class="w-full inline-flex items-center justify-center px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium rounded-lg transition-colors duration-200">
+              <i class="bi bi-pencil mr-2"></i>
+              Editar Fornecedor
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
   </div>
+
+  <!-- Recent Inflows -->
+  {% if object.inflows.exists %}
+    <div class="mt-8">
+      <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-6">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-lg font-semibold text-white flex items-center">
+            <i class="bi bi-arrow-down mr-2 text-violet-400"></i>
+            Entradas Recentes
+          </h3>
+          <a href="{% url 'inflow_list' %}?supplier={{ object.id }}" 
+             class="text-violet-400 hover:text-violet-300 text-sm font-medium transition-colors duration-200">
+            Ver todas
+          </a>
+        </div>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="bg-white/5 border-b border-white/10">
+                <th class="px-4 py-3 text-left text-sm font-medium text-gray-300 uppercase tracking-wider">Data</th>
+                <th class="px-4 py-3 text-left text-sm font-medium text-gray-300 uppercase tracking-wider">Produto</th>
+                <th class="px-4 py-3 text-left text-sm font-medium text-gray-300 uppercase tracking-wider">Quantidade</th>
+                <th class="px-4 py-3 text-left text-sm font-medium text-gray-300 uppercase tracking-wider">Ações</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-white/10">
+              {% for inflow in object.inflows.all|slice:":5" %}
+                <tr class="hover:bg-white/5 transition-colors duration-200">
+                  <td class="px-4 py-3 text-sm text-gray-300">
+                    {{ inflow.created_at|date:"d/m/Y" }}
+                  </td>
+                  <td class="px-4 py-3 text-sm text-white font-medium">
+                    {{ inflow.product.title }}
+                  </td>
+                  <td class="px-4 py-3 text-sm text-white">
+                    {{ inflow.quantity }}
+                  </td>
+                  <td class="px-4 py-3 text-sm">
+                    <a href="{% url 'inflow_detail' inflow.id %}" 
+                       class="inline-flex items-center px-2.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-lg transition-colors duration-200">
+                      <i class="bi bi-eye"></i>
+                    </a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  {% endif %}
 {% endblock %}

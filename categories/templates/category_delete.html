@@ -1,20 +1,110 @@
 {% extends 'base.html' %}
 
+{% block title %}SGE - Excluir Categoria{% endblock %}
+
 {% block content %}
-  <div class="container mt-4">
-    <h3 class="display-4">Deletar Categoria</h3>
+  <!-- Page Header -->
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-2xl font-bold text-white mb-2">Excluir Categoria</h1>
+      <p class="text-gray-400">Esta ação não pode ser desfeita</p>
+    </div>
+    <a href="{% url 'category_list' %}" 
+       class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg transition-colors duration-200">
+      <i class="bi bi-arrow-left mr-2"></i>
+      Voltar
+    </a>
+  </div>
 
-    <div class="card">
-      <div class="card-body">
-        <p class="card-text">Tem certeza de que deseja excluir a categoria <strong>{{ object.name }}</strong>?</p>
-
-        <form method="post">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-danger">Deletar</button>
-        </form>
-        
-        <a href="{% url 'category_list' %}" class="btn btn-secondary mt-3">Cancelar e Voltar para a Lista de Categorias</a>
+  <!-- Confirmation Container -->
+  <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-8">
+    <!-- Warning Header -->
+    <div class="flex items-center mb-6">
+      <div class="flex-shrink-0">
+        <div class="flex items-center justify-center w-12 h-12 bg-red-500/20 rounded-full">
+          <i class="bi bi-exclamation-triangle-fill text-red-400 text-xl"></i>
+        </div>
       </div>
+      <div class="ml-4">
+        <h3 class="text-lg font-semibold text-red-200">Confirmar Exclusão</h3>
+        <p class="text-sm text-red-300">Esta ação não pode ser desfeita</p>
+      </div>
+    </div>
+
+    <!-- Category Information -->
+    <div class="bg-red-500/10 border border-red-500/30 rounded-lg p-6 mb-6">
+      <h4 class="text-white font-semibold mb-4">Categoria a ser excluída:</h4>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="flex justify-between items-center py-2 border-b border-red-500/20">
+          <span class="text-red-300">Nome</span>
+          <span class="text-white font-medium">{{ object.name }}</span>
+        </div>
+        <div class="flex justify-between items-center py-2 border-b border-red-500/20">
+          <span class="text-red-300">ID</span>
+          <span class="text-white font-medium">#{{ object.id }}</span>
+        </div>
+        <div class="flex justify-between items-center py-2 border-b border-red-500/20">
+          <span class="text-red-300">Criado em</span>
+          <span class="text-white font-medium">{{ object.created_at|date:"d/m/Y" }}</span>
+        </div>
+        <div class="flex justify-between items-center py-2 border-b border-red-500/20">
+          <span class="text-red-300">Produtos Associados</span>
+          <span class="text-white font-medium">{{ object.product_set.count }} produto{{ object.product_set.count|pluralize }}</span>
+        </div>
+      </div>
+      
+      {% if object.description %}
+        <div class="mt-4 pt-4 border-t border-red-500/20">
+          <span class="text-red-300 text-sm">Descrição:</span>
+          <p class="text-white text-sm mt-1">{{ object.description|truncatewords:20 }}</p>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Warning about related products -->
+    {% if object.product_set.count > 0 %}
+      <div class="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 mb-6">
+        <div class="flex items-start">
+          <div class="flex-shrink-0">
+            <i class="bi bi-exclamation-triangle text-yellow-400"></i>
+          </div>
+          <div class="ml-3">
+            <h4 class="text-yellow-200 font-medium">Atenção: Produtos Associados</h4>
+            <p class="text-yellow-300 text-sm mt-1">
+              Esta categoria possui {{ object.product_set.count }} produto{{ object.product_set.count|pluralize }} associado{{ object.product_set.count|pluralize }}.
+              Ao excluir esta categoria, os produtos ficarão sem categoria associada.
+            </p>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- Confirmation Message -->
+    <div class="mb-8">
+      <p class="text-gray-300 text-center text-lg">
+        Tem certeza de que deseja excluir a categoria <strong class="text-red-400">{{ object.name }}</strong>?
+      </p>
+      <p class="text-gray-400 text-center text-sm mt-2">
+        Todos os dados relacionados a esta categoria serão permanentemente removidos do sistema.
+      </p>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="{% url 'category_list' %}" 
+         class="inline-flex items-center justify-center px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg transition-colors duration-200 order-2 sm:order-1">
+        <i class="bi bi-x-circle mr-2"></i>
+        Cancelar
+      </a>
+      <form method="post" class="order-1 sm:order-2">
+        {% csrf_token %}
+        <button type="submit" 
+                class="w-full inline-flex items-center justify-center px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                onclick="return confirm('Tem certeza absoluta de que deseja excluir esta categoria? Esta ação não pode ser desfeita.')">
+          <i class="bi bi-trash mr-2"></i>
+          Excluir Categoria
+        </button>
+      </form>
     </div>
   </div>
 {% endblock %}

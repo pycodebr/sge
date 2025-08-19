@@ -1,19 +1,253 @@
 {% extends 'base.html' %}
 
+{% block title %}SGE - Editar Produto{% endblock %}
+
 {% block content %}
-  <div class="container mt-4">
-    <h3 class="display-4">Editar Produto</h3>
-
-    <div class="card">
-      <div class="card-body">
-        <form method="post">
-          {% csrf_token %}
-          {{ form.as_p }}
-          <button type="submit" class="btn btn-primary">Salvar Produto</button>
-        </form>
-      </div>
+  <!-- Page Header -->
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-2xl font-bold text-white mb-2">Editar Produto</h1>
+      <p class="text-gray-400">Atualize as informações do produto</p>
     </div>
+    <a href="{% url 'product_list' %}" 
+       class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg transition-colors duration-200">
+      <i class="bi bi-arrow-left mr-2"></i>
+      Voltar
+    </a>
+  </div>
 
-    <a href="{% url 'product_list' %}" class="btn btn-secondary mt-3">Cancelar e Voltar para a Lista de Produtos</a>
+  <!-- Form Container -->
+  <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-8">
+    <form method="post" class="space-y-6">
+      {% csrf_token %}
+      
+      <!-- Basic Information Section -->
+      <div>
+        <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
+          <i class="bi bi-box-seam mr-2 text-violet-400"></i>
+          Informações Básicas
+        </h3>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Title Field -->
+          <div>
+            <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-gray-300 mb-2">
+              {{ form.title.label }}
+            </label>
+            <input type="text" 
+                   name="{{ form.title.name }}" 
+                   id="{{ form.title.id_for_label }}"
+                   value="{{ form.title.value|default:'' }}"
+                   required="{{ form.title.field.required }}"
+                   class="block w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200"
+                   placeholder="Digite o nome do produto">
+            {% if form.title.errors %}
+              <div class="mt-1 text-sm text-red-400">{{ form.title.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          <!-- Serie Number Field -->
+          <div>
+            <label for="{{ form.serie_number.id_for_label }}" class="block text-sm font-medium text-gray-300 mb-2">
+              {{ form.serie_number.label }}
+            </label>
+            <input type="text" 
+                   name="{{ form.serie_number.name }}" 
+                   id="{{ form.serie_number.id_for_label }}"
+                   value="{{ form.serie_number.value|default:'' }}"
+                   class="block w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200"
+                   placeholder="Número de série (opcional)">
+            {% if form.serie_number.errors %}
+              <div class="mt-1 text-sm text-red-400">{{ form.serie_number.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          <!-- Category Field -->
+          <div>
+            <label for="{{ form.category.id_for_label }}" class="block text-sm font-medium text-gray-300 mb-2">
+              {{ form.category.label }}
+            </label>
+            <select name="{{ form.category.name }}" 
+                    id="{{ form.category.id_for_label }}"
+                    required="{{ form.category.field.required }}"
+                    class="block w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200">
+              <option value="">Selecione uma categoria</option>
+              {% for value, text in form.category.field.choices %}
+                {% if value %}
+                  <option value="{{ value }}" {% if form.category.value == value %}selected{% endif %}>{{ text }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+            {% if form.category.errors %}
+              <div class="mt-1 text-sm text-red-400">{{ form.category.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          <!-- Brand Field -->
+          <div>
+            <label for="{{ form.brand.id_for_label }}" class="block text-sm font-medium text-gray-300 mb-2">
+              {{ form.brand.label }}
+            </label>
+            <select name="{{ form.brand.name }}" 
+                    id="{{ form.brand.id_for_label }}"
+                    required="{{ form.brand.field.required }}"
+                    class="block w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200">
+              <option value="">Selecione uma marca</option>
+              {% for value, text in form.brand.field.choices %}
+                {% if value %}
+                  <option value="{{ value }}" {% if form.brand.value == value %}selected{% endif %}>{{ text }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+            {% if form.brand.errors %}
+              <div class="mt-1 text-sm text-red-400">{{ form.brand.errors.0 }}</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Pricing Section -->
+      <div class="border-t border-white/10 pt-6">
+        <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
+          <i class="bi bi-currency-dollar mr-2 text-green-400"></i>
+          Informações de Preço
+        </h3>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Cost Price -->
+          <div>
+            <label for="{{ form.cost_price.id_for_label }}" class="block text-sm font-medium text-gray-300 mb-2">
+              {{ form.cost_price.label }}
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <span class="text-gray-400">R$</span>
+              </div>
+              <input type="number" 
+                     name="{{ form.cost_price.name }}" 
+                     id="{{ form.cost_price.id_for_label }}"
+                     value="{{ form.cost_price.value|default:'' }}"
+                     step="0.01"
+                     min="0"
+                     required="{{ form.cost_price.field.required }}"
+                     class="block w-full pl-10 pr-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200"
+                     placeholder="0,00">
+            </div>
+            {% if form.cost_price.errors %}
+              <div class="mt-1 text-sm text-red-400">{{ form.cost_price.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          <!-- Selling Price -->
+          <div>
+            <label for="{{ form.selling_price.id_for_label }}" class="block text-sm font-medium text-gray-300 mb-2">
+              {{ form.selling_price.label }}
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <span class="text-gray-400">R$</span>
+              </div>
+              <input type="number" 
+                     name="{{ form.selling_price.name }}" 
+                     id="{{ form.selling_price.id_for_label }}"
+                     value="{{ form.selling_price.value|default:'' }}"
+                     step="0.01"
+                     min="0"
+                     required="{{ form.selling_price.field.required }}"
+                     class="block w-full pl-10 pr-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200"
+                     placeholder="0,00">
+            </div>
+            {% if form.selling_price.errors %}
+              <div class="mt-1 text-sm text-red-400">{{ form.selling_price.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Stock Section -->
+      <div class="border-t border-white/10 pt-6">
+        <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
+          <i class="bi bi-boxes mr-2 text-blue-400"></i>
+          Informações de Estoque
+        </h3>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Quantity -->
+          <div>
+            <label for="{{ form.quantity.id_for_label }}" class="block text-sm font-medium text-gray-300 mb-2">
+              {{ form.quantity.label }}
+            </label>
+            <input type="number" 
+                   name="{{ form.quantity.name }}" 
+                   id="{{ form.quantity.id_for_label }}"
+                   value="{{ form.quantity.value|default:0 }}"
+                   min="0"
+                   required="{{ form.quantity.field.required }}"
+                   class="block w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200"
+                   placeholder="0">
+            {% if form.quantity.errors %}
+              <div class="mt-1 text-sm text-red-400">{{ form.quantity.errors.0 }}</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Description Section -->
+      {% if form.description %}
+      <div class="border-t border-white/10 pt-6">
+        <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
+          <i class="bi bi-text-paragraph mr-2 text-blue-400"></i>
+          Descrição
+        </h3>
+        <div>
+          <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-gray-300 mb-2">
+            {{ form.description.label }}
+          </label>
+          <textarea name="{{ form.description.name }}" 
+                    id="{{ form.description.id_for_label }}"
+                    rows="4"
+                    class="block w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200 resize-none"
+                    placeholder="Descreva as características do produto...">{{ form.description.value|default:'' }}</textarea>
+          {% if form.description.errors %}
+            <div class="mt-1 text-sm text-red-400">{{ form.description.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Submit Buttons -->
+      <div class="border-t border-white/10 pt-6">
+        <div class="flex flex-col sm:flex-row gap-4 justify-end">
+          <a href="{% url 'product_list' %}" 
+             class="inline-flex items-center justify-center px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg transition-colors duration-200">
+            Cancelar
+          </a>
+          <button type="submit" 
+                  class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transform transition-all duration-200 hover:scale-[1.02]">
+            <i class="bi bi-check2 mr-2"></i>
+            Salvar Alterações
+          </button>
+        </div>
+      </div>
+
+      <!-- Form Errors -->
+      {% if form.non_field_errors %}
+        <div class="bg-red-500/20 backdrop-blur-sm border border-red-500/50 rounded-lg p-4">
+          <div class="flex items-start">
+            <div class="flex-shrink-0">
+              <i class="bi bi-exclamation-triangle-fill text-red-400"></i>
+            </div>
+            <div class="ml-3">
+              <h3 class="text-sm font-medium text-red-200">Erro no formulário</h3>
+              <div class="mt-2 text-sm text-red-300">
+                <ul class="list-disc pl-5 space-y-1">
+                  {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    </form>
   </div>
 {% endblock %}

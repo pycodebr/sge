@@ -1,15 +1,149 @@
-<div class="accordion" id="accordionExample">
-  <div class="accordion-item">
-    <h2 class="accordion-header">
-      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo"
-        aria-expanded="false" aria-controls="collapseTwo">
-        SGE Agent
+<!-- SGE Agent - AI Results Component -->
+{% if ai_result %}
+<div class="mb-8">
+  <div class="bg-gradient-to-r from-violet-600/20 to-purple-600/20 backdrop-blur-md rounded-2xl border border-violet-500/30 overflow-hidden">
+    <!-- Agent Header -->
+    <div class="flex items-center justify-between p-6">
+      <div class="flex items-center space-x-4">
+        <!-- Agent Avatar -->
+        <div class="h-12 w-12 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+          <i class="bi bi-robot text-2xl text-white"></i>
+        </div>
+        
+        <!-- Agent Info -->
+        <div>
+          <div class="flex items-center space-x-3 mb-1">
+            <h3 class="text-lg font-semibold text-white">SGE Agent</h3>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500/20 text-green-300 border border-green-500/30">
+              <i class="bi bi-circle-fill text-green-400 mr-1" style="font-size: 6px;"></i>
+              Online
+            </span>
+          </div>
+          <p class="text-sm text-gray-300">Análise inteligente baseada nos dados do sistema</p>
+        </div>
+      </div>
+      
+      <!-- Toggle Button -->
+      <button class="ai-toggle-btn flex items-center space-x-2 px-4 py-2 bg-white/10 hover:bg-white/15 rounded-lg transition-all duration-300 text-gray-300 hover:text-white group">
+        <span class="text-sm font-medium">Expandir Análise</span>
+        <i class="bi bi-chevron-down transform transition-transform duration-300 group-hover:scale-110"></i>
       </button>
-    </h2>
-    <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-      <div class="accordion-body">
-        {{ ai_result|linebreaks }}
+    </div>
+    
+    <!-- Expandable AI Content -->
+    <div class="ai-content hidden">
+      <!-- Content Header -->
+      <div class="px-6 pb-4">
+        <div class="flex items-center space-x-2 mb-3">
+          <i class="bi bi-lightbulb text-amber-400"></i>
+          <h4 class="text-white font-medium">Insights e Recomendações</h4>
+        </div>
+      </div>
+      
+      <!-- AI Analysis Result -->
+      <div class="px-6 pb-6">
+        <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50">
+          <!-- Analysis Icon -->
+          <div class="flex items-center space-x-3 mb-4">
+            <div class="h-8 w-8 bg-violet-500/20 rounded-lg flex items-center justify-center">
+              <i class="bi bi-brain text-violet-400"></i>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-white">Análise Completa</p>
+              <p class="text-xs text-gray-400">Baseada nos dados atuais do sistema</p>
+            </div>
+          </div>
+          
+          <!-- AI Result Content -->
+          <div class="prose prose-invert max-w-none">
+            <div class="text-gray-200 leading-relaxed whitespace-pre-line">{{ ai_result }}</div>
+          </div>
+          
+          <!-- Analysis Footer -->
+          <div class="mt-6 pt-4 border-t border-gray-700/50">
+            <div class="flex items-center justify-between text-xs text-gray-400">
+              <div class="flex items-center space-x-2">
+                <i class="bi bi-clock"></i>
+                <span>Última atualização: Recente</span>
+              </div>
+              <div class="flex items-center space-x-2">
+                <i class="bi bi-database"></i>
+                <span>Dados do banco SGE</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const toggleBtn = document.querySelector('.ai-toggle-btn');
+  const content = document.querySelector('.ai-content');
+  const icon = toggleBtn.querySelector('i');
+  const text = toggleBtn.querySelector('span');
+
+  if (toggleBtn && content) {
+    toggleBtn.addEventListener('click', function() {
+      const isHidden = content.classList.contains('hidden');
+      
+      if (isHidden) {
+        // Expand
+        content.classList.remove('hidden');
+        content.style.animation = 'slideDown 0.3s ease-out';
+        icon.style.transform = 'rotate(180deg)';
+        text.textContent = 'Recolher Análise';
+      } else {
+        // Collapse
+        content.style.animation = 'slideUp 0.3s ease-out';
+        setTimeout(() => {
+          content.classList.add('hidden');
+        }, 300);
+        icon.style.transform = 'rotate(0deg)';
+        text.textContent = 'Expandir Análise';
+      }
+    });
+  }
+});
+
+// Add CSS animations
+if (!document.querySelector('#ai-result-styles')) {
+  const style = document.createElement('style');
+  style.id = 'ai-result-styles';
+  style.textContent = `
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+        max-height: 0;
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+        max-height: 1000px;
+      }
+    }
+    
+    @keyframes slideUp {
+      from {
+        opacity: 1;
+        transform: translateY(0);
+        max-height: 1000px;
+      }
+      to {
+        opacity: 0;
+        transform: translateY(-10px);
+        max-height: 0;
+      }
+    }
+    
+    .ai-content {
+      overflow: hidden;
+    }
+  `;
+  document.head.appendChild(style);
+}
+</script>
+{% endif %}

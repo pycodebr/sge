@@ -1,37 +1,69 @@
-<div class="card mt-4">
-  <div class="card-body">
-    <div class="row">
-      <div class="col-md-3">
-        <div class="card bg-primary">
-          <div class="card-body">
-            <h5 class="card-title">Quantidade de vendas</h5>
-            <p class="card-text text-white font-weight-bold display-6">{{ sales_metrics.total_sales }}</p>
-          </div>
+<!-- Sales Metrics Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+  <!-- Total Sales Card -->
+  <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-6 hover:bg-white/15 transition-all duration-300 group">
+    <div class="flex items-center justify-between">
+      <div>
+        <h3 class="text-sm font-medium text-gray-400 mb-2">Quantidade de vendas</h3>
+        <p class="text-3xl font-bold text-white">{{ sales_metrics.total_sales }}</p>
+        <div class="flex items-center mt-2">
+          <div class="h-2 w-2 bg-purple-400 rounded-full mr-2"></div>
+          <span class="text-xs text-gray-400">Transações realizadas</span>
         </div>
       </div>
-      <div class="col-md-3">
-        <div class="card bg-danger">
-          <div class="card-body">
-            <h5 class="card-title">Produtos vendidos</h5>
-            <p class="card-text text-white font-weight-bold display-6">{{ sales_metrics.total_products_sold }}</p>
-          </div>
+      <div class="h-12 w-12 bg-purple-500/20 rounded-xl flex items-center justify-center group-hover:bg-purple-500/30 transition-colors duration-300">
+        <i class="bi bi-cart-check text-2xl text-purple-400"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Products Sold Card -->
+  <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-6 hover:bg-white/15 transition-all duration-300 group">
+    <div class="flex items-center justify-between">
+      <div>
+        <h3 class="text-sm font-medium text-gray-400 mb-2">Produtos vendidos</h3>
+        <p class="text-3xl font-bold text-white">{{ sales_metrics.total_products_sold }}</p>
+        <div class="flex items-center mt-2">
+          <div class="h-2 w-2 bg-indigo-400 rounded-full mr-2"></div>
+          <span class="text-xs text-gray-400">Unidades vendidas</span>
         </div>
       </div>
-      <div class="col-md-3">
-        <div class="card bg-success">
-          <div class="card-body">
-            <h5 class="card-title">Valor das vendas</h5>
-            <p class="card-text text-white font-weight-bold display-6">R$ {{ sales_metrics.total_sales_value }}</p>
-          </div>
+      <div class="h-12 w-12 bg-indigo-500/20 rounded-xl flex items-center justify-center group-hover:bg-indigo-500/30 transition-colors duration-300">
+        <i class="bi bi-bag-check text-2xl text-indigo-400"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sales Value Card -->
+  <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-6 hover:bg-white/15 transition-all duration-300 group">
+    <div class="flex items-center justify-between">
+      <div>
+        <h3 class="text-sm font-medium text-gray-400 mb-2">Valor das vendas</h3>
+        <p class="text-3xl font-bold text-white">R$ {{ sales_metrics.total_sales_value }}</p>
+        <div class="flex items-center mt-2">
+          <div class="h-2 w-2 bg-emerald-400 rounded-full mr-2"></div>
+          <span class="text-xs text-gray-400">Receita total</span>
         </div>
       </div>
-      <div class="col-md-3">
-        <div class="card bg-warning">
-          <div class="card-body">
-            <h5 class="card-title">Lucro das vendas</h5>
-            <p class="card-text text-white font-weight-bold display-6">R$ {{ sales_metrics.total_sales_profit }}</p>
-          </div>
+      <div class="h-12 w-12 bg-emerald-500/20 rounded-xl flex items-center justify-center group-hover:bg-emerald-500/30 transition-colors duration-300">
+        <i class="bi bi-cash-stack text-2xl text-emerald-400"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sales Profit Card -->
+  <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-6 hover:bg-white/15 transition-all duration-300 group">
+    <div class="flex items-center justify-between">
+      <div>
+        <h3 class="text-sm font-medium text-gray-400 mb-2">Lucro das vendas</h3>
+        <p class="text-3xl font-bold text-white">R$ {{ sales_metrics.total_sales_profit }}</p>
+        <div class="flex items-center mt-2">
+          <div class="h-2 w-2 bg-amber-400 rounded-full mr-2"></div>
+          <span class="text-xs text-gray-400">Lucro líquido</span>
         </div>
+      </div>
+      <div class="h-12 w-12 bg-amber-500/20 rounded-xl flex items-center justify-center group-hover:bg-amber-500/30 transition-colors duration-300">
+        <i class="bi bi-trophy text-2xl text-amber-400"></i>
       </div>
     </div>
   </div>

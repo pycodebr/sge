@@ -1,5 +1,31 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-dark">
-  <div class="container-fluid">
-    <a class="navbar-brand text-white" href="{% url 'home' %}">Sistema de Gestão de Estoque (SGE)</a>
+<!-- Top Header -->
+<header class="bg-black/20 backdrop-blur-md border-b border-white/10 sticky top-0 z-40">
+  <div class="px-6 py-4">
+    <div class="flex items-center justify-between">
+      <!-- Left side - System info -->
+      <div class="flex items-center space-x-4">
+        <h2 class="text-xl font-semibold text-white">Sistema de Gestão de Estoque</h2>
+        <div class="h-6 w-px bg-white/20"></div>
+        <div class="flex items-center space-x-2">
+          <div class="h-2 w-2 bg-green-400 rounded-full animate-pulse"></div>
+          <span class="text-sm text-gray-400">Sistema Online</span>
+        </div>
+      </div>
+
+      <!-- Right side - User info -->
+      <div class="flex items-center space-x-4">
+        {% if user.is_authenticated %}
+          <div class="flex items-center space-x-3">
+            <div class="text-right">
+              <p class="text-sm font-medium text-white">{{ user.get_full_name|default:user.username }}</p>
+              <p class="text-xs text-gray-400">{{ user.groups.all|first|default:"Usuário" }}</p>
+            </div>
+            <div class="h-10 w-10 bg-gradient-to-r from-violet-500 to-purple-600 rounded-full flex items-center justify-center">
+              <i class="bi bi-person text-white"></i>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
   </div>
-</nav>
+</header>

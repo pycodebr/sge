@@ -1,18 +1,250 @@
 {% extends 'base.html' %}
 
-{% block content %}
-  <div class="container mt-4">
-    <h3 class="display-4">Detalhes da Saída</h3>
+{% block title %}SGE - Saída #{{ object.id }}{% endblock %}
 
-    <div class="card">
-      <div class="card-body">
-        <h3 class="card-title">{{ object.product }}</h3>
-        <p class="card-text">Fornecedor: <strong>{{ object.supplier }}</strong></p>
-        <p class="card-text">Quantidade: <strong>{{ object.quantity }}</strong></p>
-        <p class="card-text">{{ object.description }}</p>
+{% block content %}
+  <!-- Page Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+    <div>
+      <h1 class="text-2xl font-bold text-white mb-2">Detalhes da Saída</h1>
+      <p class="text-gray-400">Informações completas sobre a saída de estoque</p>
+    </div>
+    <div class="flex flex-col sm:flex-row gap-3 mt-4 sm:mt-0">
+      <a href="{% url 'product_detail' object.product.id %}" 
+         class="inline-flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200">
+        <i class="bi bi-box mr-2"></i>
+        Ver Produto
+      </a>
+      <a href="{% url 'outflow_list' %}" 
+         class="inline-flex items-center justify-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg transition-colors duration-200">
+        <i class="bi bi-arrow-left mr-2"></i>
+        Voltar
+      </a>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Main Information -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Transaction Information Card -->
+      <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-6">
+        <div class="flex items-center mb-6">
+          <div class="p-3 bg-red-600/20 rounded-xl mr-4">
+            <i class="bi bi-arrow-up-circle text-2xl text-red-400"></i>
+          </div>
+          <div>
+            <h2 class="text-xl font-bold text-white">Saída #{{ object.id }}</h2>
+            <p class="text-gray-400">{{ object.created_at|date:"d/m/Y H:i" }}</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-6">
+          <div>
+            <h3 class="text-sm font-medium text-gray-300 uppercase tracking-wider mb-2">Produto</h3>
+            <div class="flex items-center p-4 bg-gray-800/50 rounded-lg">
+              <div class="p-2 bg-blue-600/20 rounded-lg mr-3">
+                <i class="bi bi-box text-blue-400"></i>
+              </div>
+              <div>
+                <p class="text-white font-semibold">{{ object.product.title }}</p>
+                <p class="text-gray-400 text-sm">{{ object.product.category.name }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6">
+          <h3 class="text-sm font-medium text-gray-300 uppercase tracking-wider mb-2">Quantidade</h3>
+          <div class="flex items-center p-4 bg-red-600/20 rounded-lg border border-red-500/30">
+            <div class="p-2 bg-red-600/30 rounded-lg mr-3">
+              <i class="bi bi-dash-circle text-red-300 text-xl"></i>
+            </div>
+            <div>
+              <p class="text-2xl font-bold text-white">-{{ object.quantity }}</p>
+              <p class="text-red-200 text-sm">Unidades removidas do estoque</p>
+            </div>
+          </div>
+        </div>
+
+        {% if object.description %}
+          <div class="mt-6">
+            <h3 class="text-sm font-medium text-gray-300 uppercase tracking-wider mb-2">Observações</h3>
+            <div class="p-4 bg-gray-800/50 rounded-lg">
+              <p class="text-white leading-relaxed">{{ object.description }}</p>
+            </div>
+          </div>
+        {% endif %}
       </div>
+
+      <!-- Impact Analysis -->
+      <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-6">
+        <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
+          <i class="bi bi-graph-down mr-2 text-violet-400"></i>
+          Impacto no Estoque
+        </h3>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- Before -->
+          <div class="bg-gray-800/50 rounded-xl p-4">
+            <div class="text-center">
+              <i class="bi bi-arrow-up text-2xl text-gray-400 mb-2"></i>
+              <p class="text-gray-300 text-sm font-medium">Estoque Anterior</p>
+              <p class="text-2xl font-bold text-white">
+                {% widthratio object.product.quantity 1 1 as current_stock %}
+                {{ current_stock|add:object.quantity }}
+              </p>
+              <p class="text-gray-500 text-xs">unidades</p>
+            </div>
+          </div>
+
+          <!-- After -->
+          <div class="bg-red-600/20 rounded-xl p-4 border border-red-500/30">
+            <div class="text-center">
+              <i class="bi bi-arrow-down text-2xl text-red-300 mb-2"></i>
+              <p class="text-red-200 text-sm font-medium">Estoque Atual</p>
+              <p class="text-2xl font-bold text-white">{{ object.product.quantity }}</p>
+              <p class="text-red-100 text-xs">unidades</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 p-4 bg-orange-600/20 rounded-lg border border-orange-500/30">
+          <div class="flex items-center justify-center">
+            <i class="bi bi-dash-circle text-orange-300 text-xl mr-3"></i>
+            <div class="text-center">
+              <p class="text-orange-200 text-sm">Variação</p>
+              <p class="text-xl font-bold text-white">-{{ object.quantity }} unidades</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stock Status Alert -->
+      {% if object.product.quantity <= 10 %}
+        <div class="bg-amber-500/20 backdrop-blur-sm border border-amber-500/50 rounded-2xl p-6">
+          <div class="flex items-start">
+            <div class="flex-shrink-0">
+              <i class="bi bi-exclamation-triangle-fill text-2xl text-amber-400"></i>
+            </div>
+            <div class="ml-4">
+              <h3 class="text-lg font-medium text-amber-200 mb-2">Alerta de Estoque Baixo</h3>
+              <p class="text-amber-300 text-sm leading-relaxed">
+                O produto <strong>{{ object.product.title }}</strong> está com estoque baixo 
+                ({{ object.product.quantity }} unidades restantes). 
+                Considere fazer uma nova entrada para repor o estoque.
+              </p>
+            </div>
+          </div>
+        </div>
+      {% endif %}
     </div>
 
-    <a href="{% url 'outflow_list' %}" class="btn btn-secondary mt-3">Voltar para a Lista de Saídas</a>
+    <!-- Sidebar Information -->
+    <div class="space-y-6">
+      <!-- Transaction Details -->
+      <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-6">
+        <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
+          <i class="bi bi-info-circle mr-2 text-violet-400"></i>
+          Detalhes da Transação
+        </h3>
+        
+        <div class="space-y-4">
+          <div class="flex justify-between items-center py-2 border-b border-white/10">
+            <span class="text-gray-300 text-sm">ID da Saída</span>
+            <span class="text-white font-medium">#{{ object.id }}</span>
+          </div>
+          
+          <div class="flex justify-between items-center py-2 border-b border-white/10">
+            <span class="text-gray-300 text-sm">Data/Hora</span>
+            <div class="text-right">
+              <div class="text-white font-medium">{{ object.created_at|date:"d/m/Y" }}</div>
+              <div class="text-gray-400 text-xs">{{ object.created_at|date:"H:i:s" }}</div>
+            </div>
+          </div>
+          
+          <div class="flex justify-between items-center py-2 border-b border-white/10">
+            <span class="text-gray-300 text-sm">Tipo</span>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+              Saída
+            </span>
+          </div>
+
+          <div class="flex justify-between items-center py-2">
+            <span class="text-gray-300 text-sm">Status</span>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+              Processado
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-6">
+        <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
+          <i class="bi bi-lightning mr-2 text-violet-400"></i>
+          Ações Rápidas
+        </h3>
+        
+        <div class="space-y-3">
+          <a href="{% url 'product_detail' object.product.id %}" 
+             class="w-full inline-flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors duration-200">
+            <i class="bi bi-box mr-2"></i>
+            Ver Produto
+          </a>
+
+          {% if perms.outflows.add_outflow %}
+            <a href="{% url 'outflow_create' %}?product={{ object.product.id }}" 
+               class="w-full inline-flex items-center justify-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors duration-200">
+              <i class="bi bi-dash mr-2"></i>
+              Nova Saída Similar
+            </a>
+          {% endif %}
+
+          {% if perms.inflows.add_inflow %}
+            <a href="{% url 'inflow_create' %}?product={{ object.product.id }}" 
+               class="w-full inline-flex items-center justify-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors duration-200">
+              <i class="bi bi-plus mr-2"></i>
+              Repor Estoque
+            </a>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Product Info -->
+      <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-6">
+        <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
+          <i class="bi bi-box mr-2 text-violet-400"></i>
+          Informações do Produto
+        </h3>
+        
+        <div class="space-y-3">
+          <div class="p-3 bg-gray-800/50 rounded-lg">
+            <p class="text-gray-300 text-xs uppercase tracking-wider">Nome</p>
+            <p class="text-white font-medium">{{ object.product.title }}</p>
+          </div>
+
+          <div class="p-3 bg-gray-800/50 rounded-lg">
+            <p class="text-gray-300 text-xs uppercase tracking-wider">Categoria</p>
+            <p class="text-white font-medium">{{ object.product.category.name }}</p>
+          </div>
+
+          <div class="p-3 bg-gray-800/50 rounded-lg">
+            <p class="text-gray-300 text-xs uppercase tracking-wider">Estoque Atual</p>
+            <p class="text-white font-medium">{{ object.product.quantity }} unidades</p>
+            {% if object.product.quantity <= 10 %}
+              <p class="text-amber-400 text-xs mt-1">
+                <i class="bi bi-exclamation-triangle-fill mr-1"></i>
+                Estoque baixo
+              </p>
+            {% endif %}
+          </div>
+
+          <div class="p-3 bg-gray-800/50 rounded-lg">
+            <p class="text-gray-300 text-xs uppercase tracking-wider">Total de Saídas</p>
+            <p class="text-white font-medium">{{ object.product.outflows.count }} registros</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 {% endblock %}

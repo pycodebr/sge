@@ -1,18 +1,198 @@
 {% extends 'base.html' %}
 
-{% block content %}
-  <div class="container mt-4">
-    <h3 class="display-4">Cadastrar Entrada</h3>
+{% block title %}SGE - Registrar Entrada{% endblock %}
 
-    <div class="card">
-      <div class="card-body">
-        <form method="post">
-          {% csrf_token %}
-          {{ form.as_p }}
-          <button type="submit" class="btn btn-primary">Registrar Entrada</button>
-        </form>
-      </div>
+{% block content %}
+  <!-- Page Header -->
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-2xl font-bold text-white mb-2">Registrar Entrada</h1>
+      <p class="text-gray-400">Adicione produtos ao estoque</p>
     </div>
-    <a href="{% url 'inflow_list' %}" class="btn btn-secondary mt-3">Cancelar e Voltar para a Lista de Entradas</a>
+    <a href="{% url 'inflow_list' %}" 
+       class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg transition-colors duration-200">
+      <i class="bi bi-arrow-left mr-2"></i>
+      Voltar
+    </a>
+  </div>
+
+  <!-- Form Container -->
+  <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-8">
+    <form method="post" class="space-y-8">
+      {% csrf_token %}
+      
+      <!-- Transaction Information Section -->
+      <div>
+        <h3 class="text-lg font-semibold text-white mb-6 flex items-center">
+          <i class="bi bi-arrow-down-circle mr-2 text-violet-400"></i>
+          Informações da Entrada
+        </h3>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Product Field -->
+          <div>
+            <label for="{{ form.product.id_for_label }}" class="block text-sm font-medium text-gray-300 mb-2">
+              {{ form.product.label }}
+            </label>
+            <select name="{{ form.product.name }}" 
+                    id="{{ form.product.id_for_label }}"
+                    required="{{ form.product.field.required }}"
+                    class="block w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200">
+              <option value="" class="text-gray-500">Selecione um produto...</option>
+              {% for choice in form.product.field.queryset %}
+                <option value="{{ choice.pk }}" 
+                        {% if form.product.value == choice.pk %}selected{% endif %}
+                        class="text-white">
+                  {{ choice.title }} - {{ choice.category.name }}
+                </option>
+              {% endfor %}
+            </select>
+            {% if form.product.errors %}
+              <div class="mt-1 text-sm text-red-400">{{ form.product.errors.0 }}</div>
+            {% endif %}
+            <p class="mt-1 text-xs text-gray-500">Selecione o produto que está sendo adicionado ao estoque.</p>
+          </div>
+
+          <!-- Supplier Field -->
+          <div>
+            <label for="{{ form.supplier.id_for_label }}" class="block text-sm font-medium text-gray-300 mb-2">
+              {{ form.supplier.label }}
+            </label>
+            <select name="{{ form.supplier.name }}" 
+                    id="{{ form.supplier.id_for_label }}"
+                    required="{{ form.supplier.field.required }}"
+                    class="block w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200">
+              <option value="" class="text-gray-500">Selecione um fornecedor...</option>
+              {% for choice in form.supplier.field.queryset %}
+                <option value="{{ choice.pk }}" 
+                        {% if form.supplier.value == choice.pk %}selected{% endif %}
+                        class="text-white">
+                  {{ choice.name }}
+                </option>
+              {% endfor %}
+            </select>
+            {% if form.supplier.errors %}
+              <div class="mt-1 text-sm text-red-400">{{ form.supplier.errors.0 }}</div>
+            {% endif %}
+            <p class="mt-1 text-xs text-gray-500">Fornecedor responsável pela entrada dos produtos.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-1 gap-6 mt-6">
+          <!-- Quantity Field -->
+          <div>
+            <label for="{{ form.quantity.id_for_label }}" class="block text-sm font-medium text-gray-300 mb-2">
+              {{ form.quantity.label }}
+            </label>
+            <div class="relative">
+              <input type="number" 
+                     name="{{ form.quantity.name }}" 
+                     id="{{ form.quantity.id_for_label }}"
+                     value="{{ form.quantity.value|default:'' }}"
+                     required="{{ form.quantity.field.required }}"
+                     min="1"
+                     class="block w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200"
+                     placeholder="Digite a quantidade">
+              <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                <i class="bi bi-plus-circle text-gray-400"></i>
+              </div>
+            </div>
+            {% if form.quantity.errors %}
+              <div class="mt-1 text-sm text-red-400">{{ form.quantity.errors.0 }}</div>
+            {% endif %}
+            <p class="mt-1 text-xs text-gray-500">Quantidade de produtos sendo adicionados ao estoque.</p>
+          </div>
+
+          <!-- Description Field -->
+          <div>
+            <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-gray-300 mb-2">
+              {{ form.description.label }}
+            </label>
+            <textarea name="{{ form.description.name }}" 
+                      id="{{ form.description.id_for_label }}"
+                      rows="4"
+                      class="block w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200 resize-none"
+                      placeholder="Observações sobre a entrada... (opcional)">{{ form.description.value|default:'' }}</textarea>
+            {% if form.description.errors %}
+              <div class="mt-1 text-sm text-red-400">{{ form.description.errors.0 }}</div>
+            {% endif %}
+            <p class="mt-1 text-xs text-gray-500">Campo opcional. Adicione informações relevantes sobre a entrada.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary Section -->
+      <div class="bg-blue-600/20 backdrop-blur-sm border border-blue-500/30 rounded-xl p-6">
+        <h4 class="text-lg font-semibold text-blue-200 mb-4 flex items-center">
+          <i class="bi bi-info-circle mr-2"></i>
+          Resumo da Operação
+        </h4>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div class="bg-blue-700/20 rounded-lg p-4">
+            <div class="flex items-center">
+              <i class="bi bi-arrow-up-circle text-blue-300 text-xl mr-3"></i>
+              <div>
+                <p class="text-blue-200 text-sm">Tipo de Operação</p>
+                <p class="text-white font-semibold">Entrada de Estoque</p>
+              </div>
+            </div>
+          </div>
+          <div class="bg-green-700/20 rounded-lg p-4">
+            <div class="flex items-center">
+              <i class="bi bi-plus-circle text-green-300 text-xl mr-3"></i>
+              <div>
+                <p class="text-green-200 text-sm">Efeito no Estoque</p>
+                <p class="text-white font-semibold">Aumenta Quantidade</p>
+              </div>
+            </div>
+          </div>
+          <div class="bg-violet-700/20 rounded-lg p-4">
+            <div class="flex items-center">
+              <i class="bi bi-clock text-violet-300 text-xl mr-3"></i>
+              <div>
+                <p class="text-violet-200 text-sm">Data da Entrada</p>
+                <p class="text-white font-semibold">{{ "now"|date:"d/m/Y H:i" }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Buttons -->
+      <div class="border-t border-white/10 pt-6">
+        <div class="flex flex-col sm:flex-row gap-4 justify-end">
+          <a href="{% url 'inflow_list' %}" 
+             class="inline-flex items-center justify-center px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg transition-colors duration-200">
+            Cancelar
+          </a>
+          <button type="submit" 
+                  class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transform transition-all duration-200 hover:scale-[1.02]">
+            <i class="bi bi-check2 mr-2"></i>
+            Registrar Entrada
+          </button>
+        </div>
+      </div>
+
+      <!-- Form Errors -->
+      {% if form.non_field_errors %}
+        <div class="bg-red-500/20 backdrop-blur-sm border border-red-500/50 rounded-lg p-4">
+          <div class="flex items-start">
+            <div class="flex-shrink-0">
+              <i class="bi bi-exclamation-triangle-fill text-red-400"></i>
+            </div>
+            <div class="ml-3">
+              <h3 class="text-sm font-medium text-red-200">Erro no formulário</h3>
+              <div class="mt-2 text-sm text-red-300">
+                <ul class="list-disc pl-5 space-y-1">
+                  {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    </form>
   </div>
 {% endblock %}

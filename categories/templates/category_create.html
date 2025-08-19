@@ -1,18 +1,103 @@
 {% extends 'base.html' %}
 
-{% block content %}
-  <div class="container mt-4">
-    <h3 class="display-4">Cadastrar Categoria</h3>
+{% block title %}SGE - Cadastrar Categoria{% endblock %}
 
-    <div class="card">
-      <div class="card-body">
-        <form method="post" class="form">
-          {% csrf_token %}
-          {{ form.as_p }}
-          <button type="submit" class="btn btn-primary">Salvar Categoria</button>
-        </form>
-      </div>
+{% block content %}
+  <!-- Page Header -->
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-2xl font-bold text-white mb-2">Cadastrar Categoria</h1>
+      <p class="text-gray-400">Adicione uma nova categoria ao sistema</p>
     </div>
-    <a href="{% url 'category_list' %}" class="btn btn-secondary mt-3">Cancelar e Voltar para a Lista de Categorias</a>
+    <a href="{% url 'category_list' %}" 
+       class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg transition-colors duration-200">
+      <i class="bi bi-arrow-left mr-2"></i>
+      Voltar
+    </a>
+  </div>
+
+  <!-- Form Container -->
+  <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-8">
+    <form method="post" class="space-y-6">
+      {% csrf_token %}
+      
+      <!-- Basic Information Section -->
+      <div>
+        <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
+          <i class="bi bi-grid-3x3-gap mr-2 text-violet-400"></i>
+          Informações da Categoria
+        </h3>
+        <div class="grid grid-cols-1 gap-6">
+          <!-- Name Field -->
+          <div>
+            <label for="{{ form.name.id_for_label }}" class="block text-sm font-medium text-gray-300 mb-2">
+              {{ form.name.label }}
+            </label>
+            <input type="text" 
+                   name="{{ form.name.name }}" 
+                   id="{{ form.name.id_for_label }}"
+                   value="{{ form.name.value|default:'' }}"
+                   required="{{ form.name.field.required }}"
+                   class="block w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200"
+                   placeholder="Digite o nome da categoria">
+            {% if form.name.errors %}
+              <div class="mt-1 text-sm text-red-400">{{ form.name.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          <!-- Description Field -->
+          <div>
+            <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-gray-300 mb-2">
+              {{ form.description.label }}
+            </label>
+            <textarea name="{{ form.description.name }}" 
+                      id="{{ form.description.id_for_label }}"
+                      rows="4"
+                      class="block w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200 resize-none"
+                      placeholder="Descreva as características da categoria... (opcional)">{{ form.description.value|default:'' }}</textarea>
+            {% if form.description.errors %}
+              <div class="mt-1 text-sm text-red-400">{{ form.description.errors.0 }}</div>
+            {% endif %}
+            <p class="mt-1 text-xs text-gray-500">Campo opcional. Adicione informações relevantes sobre a categoria.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Buttons -->
+      <div class="border-t border-white/10 pt-6">
+        <div class="flex flex-col sm:flex-row gap-4 justify-end">
+          <a href="{% url 'category_list' %}" 
+             class="inline-flex items-center justify-center px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg transition-colors duration-200">
+            Cancelar
+          </a>
+          <button type="submit" 
+                  class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transform transition-all duration-200 hover:scale-[1.02]">
+            <i class="bi bi-check2 mr-2"></i>
+            Cadastrar Categoria
+          </button>
+        </div>
+      </div>
+
+      <!-- Form Errors -->
+      {% if form.non_field_errors %}
+        <div class="bg-red-500/20 backdrop-blur-sm border border-red-500/50 rounded-lg p-4">
+          <div class="flex items-start">
+            <div class="flex-shrink-0">
+              <i class="bi bi-exclamation-triangle-fill text-red-400"></i>
+            </div>
+            <div class="ml-3">
+              <h3 class="text-sm font-medium text-red-200">Erro no formulário</h3>
+              <div class="mt-2 text-sm text-red-300">
+                <ul class="list-disc pl-5 space-y-1">
+                  {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    </form>
   </div>
 {% endblock %}
