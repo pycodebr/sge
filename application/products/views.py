@@ -6,6 +6,9 @@ from app import metrics
 from brands.models import Brand
 from categories.models import Category
 from . import models, forms, serializers
+from django.http import HttpResponse
+import csv
+
 
 
 class ProductListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
@@ -79,3 +82,15 @@ class ProductCreateListAPIView(generics.ListCreateAPIView):
 class ProductRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = models.Product.objects.all()
     serializer_class = serializers.ProductSerializer
+
+def products_export(request):
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = 'attachment; filename="clientes.csv"'
+    writer = csv.writer(response)
+    writer.writerow(["Título", "Categoria", "Marca", "Descrição", "Número de Série", "Preço de Custo", "Preço de Venda"])
+
+    for c in models.Product.objects.all():
+        writer.writerow([c.title, c.category, c.brand, c.description, c.serie_number, c.cost_price, c.selling_price])
+
+    return response
+
