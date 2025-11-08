@@ -21,6 +21,8 @@ SGE - Fornecedores
   <div class="col-md-6">
     <a href="{% url 'supplier_create' %}" class="btn btn-success float-end">
       <i class="bi bi-plus"></i> Novo Fornecedor
+    <a href='{% url "suppliers_export" %}' class='btn btn-secondary'>Exportar CSV</a>  
+
     </a>
   </div>
   {% endif %}
