@@ -21,6 +21,14 @@
               </a>
             </li>
           {% endif %}
+          {% if perms.costumers.view_costumer %}
+            <li>
+              <a href="{% url 'costumer_list' %}" class="nav-link px-0 align-middle">
+                <i class="bi bi-people fs-4"></i>
+                <span class="ms-1">Clientes</span>
+              </a>
+            </li>
+          {% endif %}
           {% if perms.brands.view_brand %}
             <li>
               <a href="{% url 'brand_list' %}" class="nav-link px-0 align-middle">
