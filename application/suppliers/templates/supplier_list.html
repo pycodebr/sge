@@ -38,11 +38,8 @@ SGE - Fornecedores
         <th>Telefone</th>
         <th>Site/MediaSocial</th>
         <th>CPF/CNPJ</th>
-        <th>Representante/Vendedor</th>
-        <th>Contato Representante/Vendedor</th>
-        <th>Cidade</th>
-        <th>Estado</th>
-        <th>Ações</th>
+        <th>Vendedor</th>
+        <th>Contato Vendedor</th>
       </tr>
     </thead>
     <tbody>
@@ -54,7 +51,14 @@ SGE - Fornecedores
           </a>
         </td>
         <td>{{ supplier.name }}</td>
-        <td>{{ supplier.description }}</td>
+        <td>{{ supplier.mail }}</td>
+        <td>{{ supplier.phone }}</td>
+        <td>{{ supplier.site }}</td>
+        <td>{{ supplier.document_id }}</td>
+        <td>{{ supplier.contact }}</td>
+        <td>{{ supplier.contact_phone }}</td>
+        <td>{{ supplier.contact_city }}</td>
+        <td>{{ supplier.contact_state }}</td>
         <td>
           <a href="{% url 'supplier_detail' supplier.id %}" class="btn btn-info btn-sm">
             <i class="bi bi-eye"></i>
