@@ -3,7 +3,9 @@ services:
     sge_web:
         build: .
         env_file:
-            - .env
+            - ./application/.env
+        volumes:
+            - ./application:/sge:rw           
         restart: always
         ports:
             - 8000:8000
