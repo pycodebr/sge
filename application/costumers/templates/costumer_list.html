@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
-SGE - Fornecedores
+SGE - Clientes
 {% endblock %}
 
 {% block content %}
@@ -20,7 +20,7 @@ SGE - Fornecedores
   {% if perms.costumers.add_costumer %}
   <div class="col-md-6">
     <a href="{% url 'costumer_create' %}" class="btn btn-success float-end">
-      <i class="bi bi-plus"></i> Novo Fornecedor
+      <i class="bi bi-plus"></i> Novo Cliente
     </a>
   </div>
   {% endif %}
@@ -32,8 +32,13 @@ SGE - Fornecedores
       <tr>
         <th>ID</th>
         <th>Nome</th>
-        <th>Descrição</th>
-        <th>Ações</th>
+        <th>E-mail</th>
+        <th>Telefone</th>        
+        <th>CPF/CNPJ</th>
+        <th>Endereço</th>
+        <th>Cidade</th>
+        <th>Estado</th>
+        <th>CEP</th>
       </tr>
     </thead>
     <tbody>
@@ -45,7 +50,13 @@ SGE - Fornecedores
           </a>
         </td>
         <td>{{ costumer.name }}</td>
-        <td>{{ costumer.description }}</td>
+        <td>{{ costumer.mail }}</td>
+        <td>{{ costumer.phone }}</td>
+        <td>{{ costumer.document_id }}</td>
+        <td>{{ costumer.address }}</td>
+        <td>{{ costumer.city }}</td>
+        <td>{{ costumer.state }}</td>
+        <td>{{ costumer.zip_code }}</td>
         <td>
           <a href="{% url 'costumer_detail' costumer.id %}" class="btn btn-info btn-sm">
             <i class="bi bi-eye"></i>

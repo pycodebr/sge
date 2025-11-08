@@ -2,9 +2,9 @@ from django.contrib import admin
 from . import models
 
 
-class SupplierAdmin(admin.ModelAdmin):
-    list_display = ('name', 'description',)
+class CostumerAdmin(admin.ModelAdmin):
+    list_display = ('name', 'mail', 'phone', 'document_id', 'address', 'city' , 'state' , 'zip_code')
     search_fields = ('name',)
 
 
-admin.site.register(models.Supplier, SupplierAdmin)
+admin.site.register(models.Costumer, CostumerAdmin)

@@ -2,15 +2,21 @@
 
 {% block content %}
   <div class="container mt-4">
-    <h3 class="display-4">Detalhes do Fornecedor</h3>
+    <h3 class="display-4">Detalhes do Cliente</h3>
 
     <div class="card">
       <div class="card-body">
         <h3 class="card-title">{{ object.name }}</h3>
-        <p class="card-text">{{ object.description }}</p>
+        <p class="card-text">{{ object.mail }}</p>
+        <p class="card-text">{{ object.phone }}</p>
+        <p class="card-text">{{ object.document_id }}</p>
+        <p class="card-text">{{ object.address }}</p>
+        <p class="card-text">{{ object.city }}</p>
+        <p class="card-text">{{ object.state }}</p>
+        <p class="card-text">{{ object.zip_code }}</p>
       </div>
     </div>
 
-    <a href="{% url 'costumer_list' %}" class="btn btn-secondary mt-3">Voltar para a Lista de Fornecedores</a>
+    <a href="{% url 'costumer_list' %}" class="btn btn-secondary mt-3">Voltar para a Lista de Clientes</a>
   </div>
 {% endblock %}

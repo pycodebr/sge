@@ -5,8 +5,8 @@ from django.views.generic import ListView, CreateView, DetailView, UpdateView, D
 from . import models, forms, serializers
 
 
-class SupplierListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
-    model = models.Supplier
+class CostumerListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    model = models.Costumer
     template_name = 'costumer_list.html'
     context_object_name = 'costumers'
     paginate_by = 10
@@ -22,40 +22,40 @@ class SupplierListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
         return queryset
 
 
-class SupplierCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
-    model = models.Supplier
+class CostumerCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    model = models.Costumer
     template_name = 'costumer_create.html'
-    form_class = forms.SupplierForm
+    form_class = forms.CostumerForm
     success_url = reverse_lazy('costumer_list')
     permission_required = 'costumers.add_costumer'
 
 
-class SupplierDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
-    model = models.Supplier
+class CostumerDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
+    model = models.Costumer
     template_name = 'costumer_detail.html'
     permission_required = 'costumers.view_costumer'
 
 
-class SupplierUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
-    model = models.Supplier
+class CostumerUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    model = models.Costumer
     template_name = 'costumer_update.html'
-    form_class = forms.SupplierForm
+    form_class = forms.CostumerForm
     success_url = reverse_lazy('costumer_list')
     permission_required = 'costumers.change_costumer'
 
 
-class SupplierDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
-    model = models.Supplier
+class CostumerDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    model = models.Costumer
     template_name = 'costumer_delete.html'
     success_url = reverse_lazy('costumer_list')
     permission_required = 'costumers.delete_costumer'
 
 
-class SupplierCreateListAPIView(generics.ListCreateAPIView):
-    queryset = models.Supplier.objects.all()
-    serializer_class = serializers.SupplierSerializer
+class CostumerCreateListAPIView(generics.ListCreateAPIView):
+    queryset = models.Costumer.objects.all()
+    serializer_class = serializers.CostumerSerializer
 
 
-class SupplierRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = models.Supplier.objects.all()
-    serializer_class = serializers.SupplierSerializer
+class CostumerRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = models.Costumer.objects.all()
+    serializer_class = serializers.CostumerSerializer

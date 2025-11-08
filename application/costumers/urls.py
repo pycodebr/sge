@@ -3,12 +3,12 @@ from . import views
 
 
 urlpatterns = [
-    path('costumers/list/', views.SupplierListView.as_view(), name='costumer_list'),
-    path('costumers/create/', views.SupplierCreateView.as_view(), name='costumer_create'),
-    path('costumers/<int:pk>/detail/', views.SupplierDetailView.as_view(), name='costumer_detail'),
-    path('costumers/<int:pk>/update/', views.SupplierUpdateView.as_view(), name='costumer_update'),
-    path('costumers/<int:pk>/delete/', views.SupplierDeleteView.as_view(), name='costumer_delete'),
+    path('costumers/list/', views.CostumerListView.as_view(), name='costumer_list'),
+    path('costumers/create/', views.CostumerCreateView.as_view(), name='costumer_create'),
+    path('costumers/<int:pk>/detail/', views.CostumerDetailView.as_view(), name='costumer_detail'),
+    path('costumers/<int:pk>/update/', views.CostumerUpdateView.as_view(), name='costumer_update'),
+    path('costumers/<int:pk>/delete/', views.CostumerDeleteView.as_view(), name='costumer_delete'),
 
-    path('api/v1/costumers/', views.SupplierCreateListAPIView.as_view(), name='costumer-create-list-api-view'),
-    path('api/v1/costumers/<int:pk>/', views.SupplierRetrieveUpdateDestroyAPIView.as_view(), name='costumer-detail-api-view'),
+    path('api/v1/costumers/', views.CostumerCreateListAPIView.as_view(), name='costumer-create-list-api-view'),
+    path('api/v1/costumers/<int:pk>/', views.CostumerRetrieveUpdateDestroyAPIView.as_view(), name='costumer-detail-api-view'),
 ]
