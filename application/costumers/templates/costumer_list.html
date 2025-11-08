@@ -21,6 +21,7 @@ SGE - Clientes
   <div class="col-md-6">
     <a href="{% url 'costumer_create' %}" class="btn btn-success float-end">
       <i class="bi bi-plus"></i> Novo Cliente
+    <a href='{% url "costumers_export" %}' class='btn btn-secondary'>Exportar CSV</a>  
     </a>
   </div>
   {% endif %}

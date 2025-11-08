@@ -3,6 +3,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from . import models, forms, serializers
+from django.http import HttpResponse
+import csv
 
 
 class CostumerListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
@@ -59,3 +61,14 @@ class CostumerCreateListAPIView(generics.ListCreateAPIView):
 class CostumerRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = models.Costumer.objects.all()
     serializer_class = serializers.CostumerSerializer
+
+def costumers_export(request):
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = 'attachment; filename="clientes.csv"'
+    writer = csv.writer(response)
+    writer.writerow(["Nome", "E-mail", "Telefone", "CPF/CNPJ", "Endereço", "Cidade", "Estado", "CEP", "Data de Criação"])
+
+    for c in models.Costumer.objects.all():
+        writer.writerow([c.name, c.mail, c.phone, c.document_id, c.address, c.city, c.state, c.zip_code, c.created_at])
+
+    return response
