@@ -3,7 +3,7 @@ from . import models
 
 
 class SupplierAdmin(admin.ModelAdmin):
-    list_display = ('name', 'description',)
+    list_display = ('name', 'mail', 'phone', 'site', 'document_id', 'contact', 'contact_phone', 'address', 'city' , 'state' , 'zip_code', 'description')
     search_fields = ('name',)
 
 
