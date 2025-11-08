@@ -85,7 +85,7 @@ class ProductRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)
 
 def products_export(request):
     response = HttpResponse(content_type="text/csv")
-    response["Content-Disposition"] = 'attachment; filename="clientes.csv"'
+    response["Content-Disposition"] = 'attachment; filename="produtos.csv"'
     writer = csv.writer(response)
     writer.writerow(["Título", "Categoria", "Marca", "Descrição", "Número de Série", "Preço de Custo", "Preço de Venda"])
 

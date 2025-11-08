@@ -64,7 +64,7 @@ class SupplierRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView
 
 def suppliers_export(request):
     response = HttpResponse(content_type="text/csv")
-    response["Content-Disposition"] = 'attachment; filename="clientes.csv"'
+    response["Content-Disposition"] = 'attachment; filename="fornecedores.csv"'
     writer = csv.writer(response)
     writer.writerow(["Nome", "Descrição"])
 
