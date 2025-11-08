@@ -66,9 +66,9 @@ def costumers_export(request):
     response = HttpResponse(content_type="text/csv")
     response["Content-Disposition"] = 'attachment; filename="clientes.csv"'
     writer = csv.writer(response)
-    writer.writerow(["Nome", "E-mail", "Telefone", "CPF/CNPJ", "Endereço", "Cidade", "Estado", "CEP", "Data de Criação"])
+    writer.writerow(["Nome", "E-mail", "Telefone", "Site/MediaSocial", "CPF/CNPJ", "Endereço", "Cidade", "Estado", "CEP", "Data de Criação"])
 
     for c in models.Costumer.objects.all():
-        writer.writerow([c.name, c.mail, c.phone, c.document_id, c.address, c.city, c.state, c.zip_code, c.created_at])
+        writer.writerow([c.name, c.mail, c.phone, c.document_id, c.social_media, c.address, c.city, c.state, c.zip_code, c.created_at])
 
     return response
