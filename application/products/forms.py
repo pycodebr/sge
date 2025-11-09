@@ -10,7 +10,10 @@ class ProductForm(forms.ModelForm):
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'category': forms.Select(attrs={'class': 'form-control'}),
-            'brand': forms.Select(attrs={'class': 'form-control'}),
+            'color': forms.TextInput(attrs={'class': 'form-control'}),            
+            'size': forms.TextInput(attrs={'class': 'form-control'}),            
+            'type': forms.TextInput(attrs={'class': 'form-control'}),                     
+            'brand': forms.Select(attrs={'class': 'form-control'}),   
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'serie_number': forms.TextInput(attrs={'class': 'form-control'}),
             'cost_price': forms.NumberInput(attrs={'class': 'form-control'}),
@@ -19,6 +22,9 @@ class ProductForm(forms.ModelForm):
         labels = {
             'title': 'Título',
             'category': 'Categoria',
+            'color': 'Cor',
+            'size': 'Tamanho',
+            'type': 'Tipo',
             'brand': 'Marca',
             'description': 'Descrição',
             'serie_number': 'Número de Série',

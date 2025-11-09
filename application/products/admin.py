@@ -3,7 +3,7 @@ from . import models
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('title', 'serie_number',)
+    list_display = ('title', 'serie_number', 'color')
     search_fields = ('title',)
 
 

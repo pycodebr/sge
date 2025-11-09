@@ -90,7 +90,7 @@ def products_export(request):
     writer.writerow(["Título", "Categoria", "Marca", "Descrição", "Número de Série", "Preço de Custo", "Preço de Venda"])
 
     for c in models.Product.objects.all():
-        writer.writerow([c.title, c.category, c.brand, c.description, c.serie_number, c.cost_price, c.selling_price])
+        writer.writerow([c.title, c.category, c.brand, c.color , c.size, c.type, c.description, c.serie_number, c.cost_price, c.selling_price])
 
     return response
 
