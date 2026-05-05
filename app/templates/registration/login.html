@@ -1,44 +1,289 @@
-{% extends 'base.html' %}
-{% block title %}Login{% endblock %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — SGE</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          animation: {
+            'fade-in-up': 'fadeInUp 0.5s ease-out forwards',
+            'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          },
+          keyframes: {
+            fadeInUp: {
+              '0%': { opacity: '0', transform: 'translateY(24px) scale(0.97)' },
+              '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
+            },
+          },
+        },
+      },
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .input-field {
+        @apply w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 pl-11
+               text-slate-100 placeholder-slate-500
+               focus:outline-none focus:ring-2 focus:ring-violet-500/60 focus:border-violet-500/60
+               transition-all duration-200;
+      }
+      .input-icon {
+        @apply absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .animate-pulse-slow { animation: none; }
+        .animate-fade-in-up { animation: none; opacity: 1 !important; transform: none !important; }
+      }
+    }
+  </style>
+</head>
 
-{% block content %}
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title text-center mb-4">Login</h5>
-          <form method="post">
-            {% csrf_token %}
-            <div class="mb-3">
-              <label for="username" class="form-label">Usuário</label>
-              <input type="text" class="form-control" id="username" name="username" required>
-            </div>
-            <div class="mb-3">
-              <label for="password" class="form-label">Senha</label>
-              <input type="password" class="form-control" id="password" name="password" required>
-            </div>
-            <div class="d-grid gap-2">
-              <button type="submit" class="btn btn-primary">Entrar</button>
-            </div>
-          </form>
-          {% if form.errors %}
-            <div class="alert alert-danger mt-4">
-              <ul class="mb-0">
-                {% for field in form %}
-                  {% for error in field.errors %}
-                    <li>{{ error }}</li>
-                  {% endfor %}
-                {% endfor %}
-                {% for error in form.non_field_errors %}
-                  <li>{{ error }}</li>
-                {% endfor %}
-              </ul>
-            </div>
-          {% endif %}
-        </div>
-      </div>
-    </div>
+<body class="min-h-screen bg-gradient-to-br from-gray-950 via-slate-900 to-indigo-950 flex items-center justify-center p-4 antialiased">
+
+  <!-- Orbs decorativos de fundo -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+    <div class="absolute -top-40 -left-40 w-96 h-96 bg-violet-700/20 rounded-full blur-3xl animate-pulse-slow"></div>
+    <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-indigo-700/20 rounded-full blur-3xl animate-pulse-slow" style="animation-delay: 2s;"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-purple-800/10 rounded-full blur-3xl"></div>
   </div>
-</div>
-{% endblock %}
+
+  <!-- Card principal -->
+  <main id="login-card" class="relative w-full max-w-md opacity-0 animate-fade-in-up">
+
+    <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl shadow-black/40 p-8 sm:p-10">
+
+      <!-- Logo / Ícone do sistema -->
+      <div class="flex flex-col items-center mb-8">
+        <div class="relative mb-4">
+          <div class="absolute inset-0 bg-violet-600/30 rounded-xl blur-xl scale-150" aria-hidden="true"></div>
+          <div class="relative flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 shadow-lg shadow-violet-900/50">
+            <svg class="w-8 h-8 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+                 aria-hidden="true">
+              <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
+              <path d="m3.3 7 8.7 5 8.7-5"/>
+              <path d="M12 22V12"/>
+            </svg>
+          </div>
+        </div>
+
+        <h1 class="text-2xl font-bold tracking-tight bg-gradient-to-r from-violet-300 via-purple-200 to-indigo-300 bg-clip-text text-transparent">
+          SGE
+        </h1>
+        <p class="mt-1 text-sm text-slate-400 tracking-wide">
+          Sistema de Gestão de Estoque
+        </p>
+      </div>
+
+      <h2 class="text-lg font-semibold text-slate-100 mb-6 text-center">
+        Acesse sua conta
+      </h2>
+
+      <!-- Mensagens de erro do Django -->
+      {% if form.errors %}
+        <div class="mb-6 flex gap-3 items-start bg-red-500/10 border border-red-500/25 rounded-lg p-4"
+             role="alert" aria-live="assertive">
+          <svg class="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg"
+               viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <ul class="text-sm text-red-300 space-y-1">
+            {% for field in form %}
+              {% for error in field.errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+              <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
+      <!-- Formulário de login -->
+      <form id="login-form" method="post" action="" novalidate>
+        {% csrf_token %}
+
+        <!-- Campo: Usuário -->
+        <div class="mb-5">
+          <label for="username" class="block text-sm font-medium text-slate-300 mb-2">
+            Usuário
+          </label>
+          <div class="relative">
+            <span class="input-icon" aria-hidden="true">
+              <svg class="w-[18px] h-[18px]" xmlns="http://www.w3.org/2000/svg"
+                   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="8" r="4"/>
+                <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+              </svg>
+            </span>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              class="input-field"
+              placeholder="Digite seu usuário"
+              autocomplete="username"
+              autofocus
+              required
+            >
+          </div>
+        </div>
+
+        <!-- Campo: Senha -->
+        <div class="mb-5">
+          <label for="password" class="block text-sm font-medium text-slate-300 mb-2">
+            Senha
+          </label>
+          <div class="relative">
+            <span class="input-icon" aria-hidden="true">
+              <svg class="w-[18px] h-[18px]" xmlns="http://www.w3.org/2000/svg"
+                   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </span>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              class="input-field pr-11"
+              placeholder="Digite sua senha"
+              autocomplete="current-password"
+              required
+            >
+            <!-- Toggle visibilidade da senha -->
+            <button
+              type="button"
+              id="toggle-password"
+              class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors duration-150 focus:outline-none focus:text-violet-400"
+              aria-label="Mostrar senha"
+              aria-pressed="false"
+            >
+              <!-- Olho aberto (senha oculta) -->
+              <svg id="icon-eye" class="w-[18px] h-[18px]" xmlns="http://www.w3.org/2000/svg"
+                   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              <!-- Olho fechado (senha visível) -->
+              <svg id="icon-eye-off" class="w-[18px] h-[18px] hidden" xmlns="http://www.w3.org/2000/svg"
+                   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                <line x1="1" y1="1" x2="23" y2="23"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Link esqueci a senha -->
+        <div class="flex justify-end mb-7">
+          <a href="/accounts/password_reset/"
+             class="text-xs text-slate-400 hover:text-violet-300 transition-colors duration-150">
+            Esqueceu sua senha?
+          </a>
+        </div>
+
+        <!-- Botão de submit -->
+        <button
+          id="submit-btn"
+          type="submit"
+          class="w-full relative inline-flex items-center justify-center gap-2
+                 bg-gradient-to-r from-violet-600 to-indigo-600
+                 hover:from-violet-500 hover:to-indigo-500
+                 active:from-violet-700 active:to-indigo-700
+                 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:from-violet-600 disabled:hover:to-indigo-600
+                 text-white font-semibold text-sm
+                 px-6 py-3.5 rounded-lg
+                 shadow-lg shadow-violet-900/40
+                 hover:shadow-violet-700/50 hover:shadow-xl
+                 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 focus:ring-offset-transparent
+                 transition-all duration-200 ease-out
+                 hover:-translate-y-px active:translate-y-0"
+        >
+          <!-- Ícone padrão (seta de login) -->
+          <svg id="btn-icon-login" class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2.2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+            <polyline points="10 17 15 12 10 7"/>
+            <line x1="15" y1="12" x2="3" y2="12"/>
+          </svg>
+          <!-- Spinner de loading (oculto por padrão) -->
+          <svg id="btn-icon-loading" class="w-4 h-4 hidden animate-spin" xmlns="http://www.w3.org/2000/svg"
+               viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+          </svg>
+          <span id="btn-label">Entrar</span>
+        </button>
+      </form>
+
+    </div>
+
+    <!-- Rodapé discreto -->
+    <p class="mt-6 text-center text-xs text-slate-400">
+      &copy; {% now "Y" %} SGE &mdash; Todos os direitos reservados
+    </p>
+
+  </main>
+
+  <script>
+    // Remove opacity-0 assim que o DOM carrega, evitando atributo inline permanente
+    document.addEventListener('DOMContentLoaded', function () {
+      var card = document.getElementById('login-card');
+      if (card) card.classList.remove('opacity-0');
+    });
+
+    // Toggle visibilidade da senha
+    (function () {
+      var btn = document.getElementById('toggle-password');
+      var input = document.getElementById('password');
+      var iconEye = document.getElementById('icon-eye');
+      var iconEyeOff = document.getElementById('icon-eye-off');
+
+      if (!btn || !input) return;
+
+      btn.addEventListener('click', function () {
+        var isPassword = input.type === 'password';
+        input.type = isPassword ? 'text' : 'password';
+        btn.setAttribute('aria-pressed', isPassword ? 'true' : 'false');
+        btn.setAttribute('aria-label', isPassword ? 'Ocultar senha' : 'Mostrar senha');
+        iconEye.classList.toggle('hidden', isPassword);
+        iconEyeOff.classList.toggle('hidden', !isPassword);
+      });
+    })();
+
+    // Estado de loading no submit
+    (function () {
+      var form = document.getElementById('login-form');
+      var btn = document.getElementById('submit-btn');
+      var iconLogin = document.getElementById('btn-icon-login');
+      var iconLoading = document.getElementById('btn-icon-loading');
+      var label = document.getElementById('btn-label');
+
+      if (!form || !btn) return;
+
+      form.addEventListener('submit', function () {
+        btn.disabled = true;
+        iconLogin.classList.add('hidden');
+        iconLoading.classList.remove('hidden');
+        label.textContent = 'Entrando…';
+      });
+    })();
+  </script>
+
+</body>
+</html>
